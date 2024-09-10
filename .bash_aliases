@@ -14,5 +14,5 @@ alias pacdiff=eos-pacdiff
 alias tt="tt -t 30 -theme one-dark"
 alias hackerman="docker run -it --rm svenstaro/genact -m botnet"
 alias todo="nvim ~/Documents/todo.txt"
-alias init='steam >/dev/null 2>&1 & disown; webcord >/dev/null 2>&1 & disown; tutanota-desktop >/dev/null 2>&1 & disown'
+alias init='steam >/dev/null 2>&1 & disown; webcord >/dev/null 2>&1 & disown; tutanota-desktop >/dev/null 2>&1 & disown & todo'
 
