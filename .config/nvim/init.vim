@@ -259,6 +259,8 @@ lspconfig.cssls.setup {
 vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
 vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
+vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
+	{ desc = "Toggle neotree" })
 
 map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
@@ -266,33 +268,5 @@ map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
 map('n', '<C-y>', ':red<CR>', opts)
 map('n', '=', ':ToggleTerm size=15 direction=horizontal <CR>', opts )
 map('t', '<C-t>',[[<C-\><C-n><C-w>k]], opts)
-
-vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
-	{ desc = "Toggle neotree" })
-
-
-
-
-
-
-map('n', '<leader>nm', ':Neominimap toggle<CR>', opts)
-map('n', '<leader>no', ':Neominimap on<CR>', opts)
-map('n', '<leader>nc', ':Neominimap off<CR>', opts)
-map('n', '<leader>nr', ':Neominimap refresh<CR>', opts)
-map('n', '<leader>nwt', ':Neominimap winToggle<CR>', opts)
-map('n', '<leader>nwr', ':Neominimap winRefresh<CR>', opts)
-map('n', '<leader>nwo', ':Neominimap winOn<CR>', opts)
-map('n', '<leader>nwc', ':Neominimap winOff<CR>', opts)
-map('n', '<leader>ntt', ':Neominimap tabToggle<CR>', opts)
-map('n', '<leader>ntr', ':Neominimap tabRefresh<CR>', opts)
-map('n', '<leader>nto', ':Neominimap tabOn<CR>', opts)
-map('n', '<leader>ntc', ':Neominimap tabOff<CR>', opts)
-map('n', '<leader>nbt', ':Neominimap bufToggle<CR>', opts)
-map('n', '<leader>nbr', ':Neominimap bufRefresh<CR>', opts)
-map('n', '<leader>nbo', ':Neominimap bufOn<CR>', opts)
-map('n', '<leader>nbc', ':Neominimap bufOff<CR>', opts)
-map('n', '<leader>nf', ':Neominimap focus<CR>', opts)
-map('n', '<leader>nu', ':Neominimap unfocus<CR>', opts)
-map('n', '<leader>ns', ':Neominimap toggleFocus<CR>', opts)
 
 EOF
