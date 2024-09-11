@@ -19,6 +19,7 @@ Plug 'nvim-tree/nvim-web-devicons'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'https://github.com/lewis6991/gitsigns.nvim'
+Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/Isrothy/neominimap.nvim'
 Plug 'https://github.com/lewis6991/satellite.nvim'
 Plug 'https://github.com/jmbuhr/otter.nvim'
@@ -51,6 +52,8 @@ Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --producti
 Plug 'hail2u/vim-css3-syntax'
 Plug 'roobert/tailwindcss-colorizer-cmp.nvim'
 Plug 'https://github.com/onsails/lspkind.nvim'
+Plug 'voldikss/vim-floaterm'
+
 call plug#end()
 
 filetype plugin indent on
@@ -214,11 +217,11 @@ vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
 vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
 
-map('i', '<C-z>', ':u<CR>', opts)
+map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
 map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
-map('i', '<C-y>', ':red<CR>', opts)
-
+map('n', '<C-y>', ':red<CR>', opts)
+map('n', '=', ':botright split | resize 10 | terminal<CR>', opts )
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
 	{ desc = "Toggle neotree" })
 
