@@ -54,7 +54,7 @@ Plug 'roobert/tailwindcss-colorizer-cmp.nvim'
 Plug 'https://github.com/onsails/lspkind.nvim'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
-
+Plug 'kdheepak/lazygit.nvim'
 call plug#end()
 
 filetype plugin indent on
@@ -255,13 +255,13 @@ lspconfig.cssls.setup {
 
 
 
-
 vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
 vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
 	{ desc = "Toggle neotree" })
 
+map('n', '<leader>gg', ':LazyGit<CR>', opts)
 map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
 map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
