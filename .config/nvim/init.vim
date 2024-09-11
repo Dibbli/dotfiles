@@ -52,6 +52,8 @@ Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --producti
 Plug 'hail2u/vim-css3-syntax'
 Plug 'roobert/tailwindcss-colorizer-cmp.nvim'
 Plug 'https://github.com/onsails/lspkind.nvim'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 
 call plug#end()
 
@@ -194,25 +196,63 @@ cmp.setup.cmdline(':', {
 	matching = { disallow_symbol_nonprefix_matching = false }
 })
 
+require("mason").setup()
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "angularls", -- Angular HTML/TS LSP
+        "cssls",     -- CSS LSP
+        "tailwindcss", -- TailwindCSS LSP
+        "jsonls",    -- JSON LSP
+        "eslint",    -- ESLint LSP
+        "lua_ls",    -- Lua LSP (for Neovim configurations)
+    },
+    automatic_installation = true,
+})
+local lspconfig = require("lspconfig")
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+lspconfig.tailwindcss.setup {
+    capabilities = capabilities,
+}
+lspconfig.jsonls.setup {
+    capabilities = capabilities,
+}
+lspconfig.eslint.setup {
+    capabilities = capabilities,
+}
+lspconfig.lua_ls.setup {
+    capabilities = capabilities,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" },
+                },
+        },
+    },
+}
+lspconfig.angularls.setup {
+  cmd = { "ngserver", "--stdio" },
+  on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap=true, silent=true })
+  end, 
+  on_new_config = function(new_config, new_root_dir)
+    new_config.cmd = {
+      "ngserver",
+      "--stdio",
+      "--tsProbeLocations", new_root_dir,
+      "--ngProbeLocations", new_root_dir
+    }
+  end,
+  filetypes = { "typescript", "html" },
+  root_dir = require('lspconfig').util.root_pattern("angular.json", ".git"),
+  on_attach = function(client, bufnr)
+  end
+}
+lspconfig.cssls.setup {
+    capabilities = capabilities,
 
-require'lspconfig'.angularls.setup {
-    cmd = { "ngserver", "--stdio" },
-    on_new_config = function(new_config, new_root_dir)
-      new_config.cmd = {
-        "ngserver",
-        "--stdio",
-        "--tsProbeLocations", new_root_dir,
-        "--ngProbeLocations", new_root_dir
-      }
-    end,
-    filetypes = { "typescript", "html" },
-    root_dir = require('lspconfig').util.root_pattern("angular.json", ".git"),
-    on_attach = function(client, bufnr)
-    end
 }
-require'lspconfig'.cssls.setup {
-  capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-}
+
 
 
 
