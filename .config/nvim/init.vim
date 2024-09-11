@@ -52,7 +52,6 @@ Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --producti
 Plug 'hail2u/vim-css3-syntax'
 Plug 'roobert/tailwindcss-colorizer-cmp.nvim'
 Plug 'https://github.com/onsails/lspkind.nvim'
-Plug 'voldikss/vim-floaterm'
 
 call plug#end()
 
@@ -98,6 +97,7 @@ require('gitsigns').setup()
 require('satellite').setup()
 require'nvim-web-devicons'.setup()
 require('hypersonic').setup()
+require('toggleterm').setup()
 require("cmp").config.formatting = {
   format = require("tailwindcss-colorizer-cmp").formatter
 }
@@ -224,8 +224,9 @@ map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
 map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
 map('n', '<C-y>', ':red<CR>', opts)
-map('n', '=', ':FloatermNew --position=bottom --width=0.8 --height=0.2<CR>', opts )
-map('t', '<C-t>', '<C-\\><C-n>:FloatermToggle<CR>', opts)
+map('n', '=', ':ToggleTerm size=15 direction=horizontal <CR>', opts )
+map('t', '<C-t>',[[<C-\><C-n><C-w>k]], opts)
+
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
 	{ desc = "Toggle neotree" })
 
