@@ -55,6 +55,8 @@ Plug 'https://github.com/onsails/lspkind.nvim'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'kdheepak/lazygit.nvim'
+Plug 'jose-elias-alvarez/null-ls.nvim'
+
 call plug#end()
 
 filetype plugin indent on
@@ -229,6 +231,39 @@ lspconfig.lua_ls.setup {
         },
     },
 }
+local null_ls = require("null-ls")
+local lsp_formatting = function(bufnr)
+    vim.lsp.buf.format({
+        bufnr = bufnr,
+        filter = function(client)
+            -- Use only null-ls for formatting
+            return client.name == "null-ls"
+        end,
+    })
+end
+
+null_ls.setup({
+    sources = {
+        null_ls.builtins.code_actions.eslint, -- Add ESLint for JavaScript/TypeScript
+        null_ls.builtins.diagnostics.eslint,  -- Add ESLint diagnostics
+        null_ls.builtins.formatting.prettier, -- Add Prettier formatting
+    },
+    on_attach = function(client, bufnr)
+        if client.server_capabilities.documentFormattingProvider then
+            vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                group = augroup,
+                buffer = bufnr,
+                callback = function()
+                    lsp_formatting(bufnr)
+                end,
+            })
+        end
+    end,
+})
+
+-- Map the import to a key
+vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
 lspconfig.angularls.setup {
   cmd = { "ngserver", "--stdio" },
   on_attach = function(client, bufnr)
@@ -261,6 +296,7 @@ vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
 	{ desc = "Toggle neotree" })
 
+map("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>",opts)
 map('n', '<leader>gg', ':LazyGit<CR>', opts)
 map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
