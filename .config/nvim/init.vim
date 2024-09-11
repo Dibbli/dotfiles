@@ -213,6 +213,9 @@ require'lspconfig'.angularls.setup {
 require'lspconfig'.cssls.setup {
   capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 }
+
+
+
 vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
 vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
@@ -221,9 +224,15 @@ map('n', '<C-z>', ':u<CR>', opts)
 map('n', '<C-g>', ':Telescope find_files<CR>', opts)
 map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
 map('n', '<C-y>', ':red<CR>', opts)
-map('n', '=', ':botright split | resize 10 | terminal<CR>', opts )
+map('n', '=', ':FloatermNew --position=bottom --width=0.8 --height=0.2<CR>', opts )
+map('t', '<C-t>', '<C-\\><C-n>:FloatermToggle<CR>', opts)
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
 	{ desc = "Toggle neotree" })
+
+
+
+
+
 
 map('n', '<leader>nm', ':Neominimap toggle<CR>', opts)
 map('n', '<leader>no', ':Neominimap on<CR>', opts)
