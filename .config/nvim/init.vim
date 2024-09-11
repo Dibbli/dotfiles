@@ -233,8 +233,9 @@ lspconfig.angularls.setup {
   cmd = { "ngserver", "--stdio" },
   on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap=true, silent=true })
-  end, 
+    -- Add the keymap for <leader>g
+    buf_set_keymap('n', '<leader>g', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap=true, silent=true })
+  end,
   on_new_config = function(new_config, new_root_dir)
     new_config.cmd = {
       "ngserver",
@@ -244,10 +245,9 @@ lspconfig.angularls.setup {
     }
   end,
   filetypes = { "typescript", "html" },
-  root_dir = require('lspconfig').util.root_pattern("angular.json", ".git"),
-  on_attach = function(client, bufnr)
-  end
+  root_dir = require('lspconfig').util.root_pattern("angular.json", ".git")
 }
+
 lspconfig.cssls.setup {
     capabilities = capabilities,
 
