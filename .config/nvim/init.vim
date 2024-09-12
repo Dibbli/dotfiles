@@ -89,7 +89,7 @@ endif
 
 lua << EOF
 vim.cmd("colorscheme gruvbox")
-
+vim.opt.autoread = true
 local map = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
 require("tailwind-tools").setup()
