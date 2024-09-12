@@ -297,9 +297,7 @@ lspconfig.cssls.setup {
 vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
 vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
-vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",
-	{ desc = "Toggle neotree" })
-
+vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",{ desc = "Toggle neotree" })
 map("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>",opts)
 map('n', '<leader>gg', ':LazyGit<CR>', opts)
 map('n', '<C-z>', ':u<CR>', opts)
