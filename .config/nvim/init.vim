@@ -56,6 +56,7 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'kdheepak/lazygit.nvim'
 Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'udalov/kotlin-vim'
 
 call plug#end()
 
@@ -201,17 +202,21 @@ cmp.setup.cmdline(':', {
 require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
-        "angularls", -- Angular HTML/TS LSP
-        "cssls",     -- CSS LSP
-        "tailwindcss", -- TailwindCSS LSP
-        "jsonls",    -- JSON LSP
-        "eslint",    -- ESLint LSP
-        "lua_ls",    -- Lua LSP (for Neovim configurations)
+        "angularls", 
+        "cssls",    
+        "tailwindcss",
+        "jsonls",    
+        "eslint",    
+        "lua_ls",   
+        "kotlin_language_server",
     },
     automatic_installation = true,
 })
 local lspconfig = require("lspconfig")
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+lspconfig.kotlin_language_server.setup {
+    capabilities = capabilities,
+}
 lspconfig.tailwindcss.setup {
     capabilities = capabilities,
 }
@@ -247,6 +252,7 @@ null_ls.setup({
         null_ls.builtins.code_actions.eslint, -- Add ESLint for JavaScript/TypeScript
         null_ls.builtins.diagnostics.eslint,  -- Add ESLint diagnostics
         null_ls.builtins.formatting.prettier, -- Add Prettier formatting
+        null_ls.builtins.formatting.ktlint,
     },
     on_attach = function(client, bufnr)
         if client.server_capabilities.documentFormattingProvider then
@@ -262,13 +268,11 @@ null_ls.setup({
     end,
 })
 
--- Map the import to a key
 vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
 lspconfig.angularls.setup {
   cmd = { "ngserver", "--stdio" },
   on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    -- Add the keymap for <leader>g
     buf_set_keymap('n', '<leader>g', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap=true, silent=true })
   end,
   on_new_config = function(new_config, new_root_dir)
