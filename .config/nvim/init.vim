@@ -1,5 +1,4 @@
 call plug#begin('~/.vim/plugged')
-
 " List the plugins you want to install here, for example:
 Plug 'tpope/vim-sensible'
 Plug 'https://github.com/leafgarland/typescript-vim'
