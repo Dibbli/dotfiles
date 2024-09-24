@@ -296,15 +296,15 @@ lspconfig.cssls.setup {
 
 vim.keymap.set("n", "K", require("hover").hover, {desc = "hover.nvim"})
 vim.keymap.set("n", "gK", require("hover").hover_select, {desc = "hover.nvim (select)"})
-vim.keymap.set("i", "<A-g>", require("neocodeium").accept)
+vim.keymap.set("i", "<leader>a", require("neocodeium").accept)
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>",{ desc = "Toggle neotree" })
 map("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>",opts)
 map('n', '<leader>gg', ':LazyGit<CR>', opts)
-map('n', '<C-z>', ':u<CR>', opts)
-map('n', '<C-g>', ':Telescope find_files<CR>', opts)
-map('n', '<C-f>', ':Telescope live_grep<CR>', opts)
-map('n', '<C-y>', ':red<CR>', opts)
+map('n', '<leader>z', ':u<CR>', opts)
+map('n', '<leader>g', ':Telescope find_files<CR>', opts)
+map('n', '<leader>f', ':Telescope live_grep<CR>', opts)
+map('n', '<leader>y', ':red<CR>', opts)
 map('n', '=', ':ToggleTerm size=15 direction=horizontal <CR>', opts )
-map('t', '<C-t>',[[<C-\><C-n><C-w>k]], opts)
-
+map('t', '<leader><Esc>',[[<C-\><C-n><C-w>k]], opts)
+map('n', '<leader>sv',":source $MYVIMRC<CR>", opts)
 EOF
