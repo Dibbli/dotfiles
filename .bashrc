@@ -15,7 +15,7 @@ export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$
 export MANPAGER='nvim +Man!'
 export EDITOR=nvim
 export TERMINAL=kitty
-export BROWSER=firefox
+export BROWSER=librewolf
 
 eval "$(starship init bash)"
 source ~/.bash_aliases
