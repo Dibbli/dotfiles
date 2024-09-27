@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Set leader key
 vim.g.mapleader = " "
 
--- Vim options (converted from your Vimscript settings)
+-- Vim options
 vim.opt.number = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -34,6 +34,9 @@ vim.opt.foldenable = false
 vim.opt.foldmethod = "syntax"
 vim.opt.autoread = true
 vim.opt.termguicolors = true
+vim.opt.autoread = true
+vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
+vim.cmd("filetype plugin indent on")
 
 -- Terminal compatibility
 if vim.fn.empty(vim.env.TMUX) == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
@@ -45,7 +48,7 @@ if vim.fn.empty(vim.env.TMUX) == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" 
 	end
 end
 
--- Plugin setup using lazy.nvim
+-- Plugin setup
 require("lazy").setup({
 
 	-- Sensible Defaults
@@ -264,7 +267,7 @@ require("lazy").setup({
 			-- Set configuration for specific filetype
 			cmp.setup.filetype("gitcommit", {
 				sources = cmp.config.sources({
-					{ name = "cmp_git" }, -- You can specify the `cmp_git` source if you were using it
+					{ name = "cmp_git" },
 				}, {
 					{ name = "buffer" },
 				}),
@@ -299,7 +302,8 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Lush (optional, if needed for colorschemes)
+
+	-- Lush
 	{ "rktjmp/lush.nvim" },
 
 	-- Indentation Detection
@@ -413,7 +417,7 @@ require("lazy").setup({
 			ft("lua"):fmt("stylua")
 			ft("kotlin"):fmt("ktlint")
 			ft("html"):lint({
-				cmd = "eslint", -- Use 'eslint' or 'eslint_d' if installed
+				cmd = "eslint",
 				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
 				stdin = true,
 				ignore_exitcode = true,
@@ -470,19 +474,8 @@ require("lazy").setup({
 		end,
 	},
 })
-
--- Additional configurations
-
--- Set colorscheme
 vim.cmd("colorscheme gruvbox")
-
--- Autoread files when changed externally
-vim.opt.autoread = true
-
--- Vsnip Snippet Directory
-vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
-
--- nvim-web-devicons setup (if needed)
+-- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 
 -- Mason and LSP configurations
@@ -521,7 +514,6 @@ lspconfig.lua_ls.setup({
 			},
 			workspace = {
 				library = vim.api.nvim_get_runtime_file("", true),
-				-- Adjust the following path if necessary
 				checkThirdParty = false,
 			},
 			telemetry = {
@@ -533,38 +525,39 @@ lspconfig.lua_ls.setup({
 
 -- Function to get the node_modules path
 local function get_node_modules(root_dir)
-  local root_node = lspconfig.util.find_node_modules_ancestor(root_dir)
-  return root_node and lspconfig.util.path.join(root_node, 'node_modules') or ''
+	local root_node = lspconfig.util.find_node_modules_ancestor(root_dir)
+	return root_node and lspconfig.util.path.join(root_node, "node_modules") or ""
 end
 
 -- Angularls setup
 lspconfig.angularls.setup({
-  on_attach = function(client, bufnr)
-    local buf_set_keymap = function(...)
-      vim.api.nvim_buf_set_keymap(bufnr, ...)
-    end
-    buf_set_keymap('n', '<leader>l', '<cmd>lua vim.lsp.buf.definition()<CR>', { noremap = true, silent = true })
-  end,
-  on_new_config = function(new_config, new_root_dir)
-    local node_modules = get_node_modules(new_root_dir)
-    if node_modules ~= '' then
-      new_config.cmd = {
-        'ngserver',
-        '--stdio',
-        '--tsProbeLocations', node_modules,
-        '--ngProbeLocations', node_modules,
-      }
-    end
-  end,
-root_dir = function(fname)
-  local util = lspconfig.util
-  return util.root_pattern('angular.json', 'project.json')(fname) or util.root_pattern('nx.json', '.git')(fname)
-end,
+	on_attach = function(client, bufnr)
+		local buf_set_keymap = function(...)
+			vim.api.nvim_buf_set_keymap(bufnr, ...)
+		end
+		buf_set_keymap("n", "<leader>l", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
+	end,
+	on_new_config = function(new_config, new_root_dir)
+		local node_modules = get_node_modules(new_root_dir)
+		if node_modules ~= "" then
+			new_config.cmd = {
+				"ngserver",
+				"--stdio",
+				"--tsProbeLocations",
+				node_modules,
+				"--ngProbeLocations",
+				node_modules,
+			}
+		end
+	end,
+	root_dir = function(fname)
+		local util = lspconfig.util
+		return util.root_pattern("angular.json", "project.json")(fname) or util.root_pattern("nx.json", ".git")(fname)
+	end,
 
-  filetypes = { 'typescript', 'html', 'typescriptreact', 'typescript.tsx', 'htmlangular' },
-  capabilities = capabilities,
+	filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
+	capabilities = capabilities,
 })
-
 
 -- Tailwind Tools
 require("tailwind-tools").setup({})
@@ -585,7 +578,7 @@ require("neocodeium").setup()
 require("nvim-ts-autotag").setup()
 
 -- guess-indent
-require("guess-indent").setup()
+require("guess-indent").setup({})
 
 -- Keymaps
 local opts = { noremap = true, silent = true }
@@ -609,8 +602,3 @@ map("n", "<leader>y", ":red<CR>", opts)
 map("n", "=", ":ToggleTerm size=15 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>sv", ":source $MYVIMRC<CR>", opts)
-
--- Ensure filetype plugins and indent are on
-vim.cmd("filetype plugin indent on")
-
--- Additional configurations as needed
