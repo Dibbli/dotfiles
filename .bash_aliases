@@ -4,6 +4,7 @@ alias l="ls -al --no-user"
 alias tree="ls --tree"
 alias c=clear
 alias v=nvim
+alias ..="cd .."
 alias ...="cd ../../"
 alias ....="cd ../../../"
 alias def="xdg-open"
