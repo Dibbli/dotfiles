@@ -608,3 +608,6 @@ map("n", "<leader>y", ":red<CR>", opts)
 map("n", "=", ":ToggleTerm size=15 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>s", ":wall<CR>", opts)
+
+-- Bound higher up
+-- <leader>l = Go to Definition (LSP)
