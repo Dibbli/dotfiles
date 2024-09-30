@@ -113,6 +113,13 @@ require("lazy").setup({
 		end,
 	},
 	{
+		'nvim-telescope/telescope-ui-select.nvim',
+		config = function()
+			require("telescope").load_extension("ui-select")
+		end,
+	},
+
+	{
 		"nvim-telescope/telescope-fzf-native.nvim",
 		build = "make",
 		config = function()
@@ -301,7 +308,6 @@ require("lazy").setup({
 			vim.cmd("colorscheme gruvbox")
 		end,
 	},
-
 
 	-- Lush
 	{ "rktjmp/lush.nvim" },
@@ -601,4 +607,4 @@ map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "=", ":ToggleTerm size=15 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
-map("n", "<leader>sv", ":source $MYVIMRC<CR>", opts)
+map("n", "<leader>s", ":wall<CR>", opts)
