@@ -113,7 +113,7 @@ require("lazy").setup({
 		end,
 	},
 	{
-		'nvim-telescope/telescope-ui-select.nvim',
+		"nvim-telescope/telescope-ui-select.nvim",
 		config = function()
 			require("telescope").load_extension("ui-select")
 		end,
@@ -428,6 +428,13 @@ require("lazy").setup({
 				stdin = true,
 				ignore_exitcode = true,
 			})
+			ft("htmlangular"):lint({
+				cmd = "eslint",
+				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
+				stdin = true,
+				ignore_exitcode = true,
+			})
+			ft("htmlangular"):fmt("prettier")
 			require("guard").setup({
 				fmt_on_save = true,
 				lsp_as_default_formatter = false,
@@ -504,13 +511,21 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- LSP servers setup
-local servers = { "kotlin_language_server", "tailwindcss", "jsonls", "eslint", "cssls", "angularls" }
+local servers = { "kotlin_language_server", "jsonls", "cssls", "angularls" }
 
 for _, server in ipairs(servers) do
 	lspconfig[server].setup({
 		capabilities = capabilities,
 	})
 end
+lspconfig.eslint.setup({
+	capabilities = capabilities,
+	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss" },
+})
+lspconfig.tailwindcss.setup({
+	capabilities = capabilities,
+	filetypes = { "html", "htmlangular", "scss" },
+})
 lspconfig.lua_ls.setup({
 	capabilities = capabilities,
 	settings = {
@@ -607,7 +622,8 @@ map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "=", ":ToggleTerm size=15 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
-map("n", "<leader>s", ":wall<CR>", opts)
+map("n", "<leader>s", ":w<CR>", opts)
+map("n", "<leader>ss", ":wall<CR>", opts)
 
 -- Bound higher up
 -- <leader>l = Go to Definition (LSP)
