@@ -85,6 +85,21 @@ require("lazy").setup({
 	-- UI Components
 	{ "MunifTanjim/nui.nvim" },
 
+	{
+		"akinsho/bufferline.nvim",
+		dependencies = "nvim-tree/nvim-web-devicons",
+		config = function()
+			require("bufferline").setup({})
+		end,
+	},
+	--Substitute
+	{
+		"gbprod/substitute.nvim",
+		config = function()
+			require("substitute").setup({})
+		end,
+	},
+
 	-- File Explorer
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -636,6 +651,10 @@ vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", 
 vim.keymap.set("n", "K", require("hover").hover, { desc = "hover.nvim" })
 vim.keymap.set("n", "gK", require("hover").hover_select, { desc = "hover.nvim (select)" })
 vim.keymap.set("i", "<leader>a", require("neocodeium").accept)
+vim.keymap.set("n", "s", require("substitute").operator, { noremap = true })
+vim.keymap.set("n", "ss", require("substitute").line, { noremap = true })
+vim.keymap.set("n", "S", require("substitute").eol, { noremap = true })
+vim.keymap.set("x", "s", require("substitute").visual, { noremap = true })
 
 -- Neo-tree
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
@@ -652,6 +671,8 @@ map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
+map("n", "<Tab>", ":BufferLineCycleNext<CR>", opts)
+map("n", "<S-Tab>", ":BufferLineCyclePrev<CR>", opts)
 
 -- Bound higher up
 -- <leader>l = Go to Definition (LSP)
