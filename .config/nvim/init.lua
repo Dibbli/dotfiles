@@ -301,11 +301,24 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Colorscheme
+	-- Colorschemes
 	{
 		"morhetz/gruvbox",
 		config = function()
 			vim.cmd("colorscheme gruvbox")
+		end,
+	},
+
+	{
+		"maxmx03/solarized.nvim",
+		config = function()
+			require("solarized").setup({
+				theme = "neovim",
+				config = {
+					theme = "dark",
+					italics = true,
+				},
+			})
 		end,
 	},
 
@@ -503,6 +516,7 @@ require("mason-lspconfig").setup({
 		"eslint",
 		"lua_ls",
 		"kotlin_language_server",
+		"pyright",
 	},
 	automatic_installation = true,
 })
@@ -511,7 +525,7 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- LSP servers setup
-local servers = { "kotlin_language_server", "jsonls", "cssls", "angularls" }
+local servers = { "kotlin_language_server", "jsonls", "cssls", "angularls", "pyright" }
 
 for _, server in ipairs(servers) do
 	lspconfig[server].setup({
@@ -521,7 +535,15 @@ end
 lspconfig.eslint.setup({
 	capabilities = capabilities,
 	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss" },
+	on_attach = function(client, bufnr)
+		-- Auto-fix ESLint issues on save
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			buffer = bufnr,
+			command = "EslintFixAll",
+		})
+	end,
 })
+
 lspconfig.tailwindcss.setup({
 	capabilities = capabilities,
 	filetypes = { "html", "htmlangular", "scss" },
@@ -605,6 +627,10 @@ require("guess-indent").setup({})
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
 
+-- Keymaps to switch themes
+map("n", "<leader>gt", ":lua vim.cmd('colorscheme gruvbox')<CR>", opts)
+map("n", "<leader>st", ":lua require('solarized').load('dark')<CR>", opts)
+
 -- LSP keymaps
 vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", opts)
 vim.keymap.set("n", "K", require("hover").hover, { desc = "hover.nvim" })
@@ -620,10 +646,10 @@ map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>g", ":Telescope find_files<CR>", opts)
 map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
-map("n", "=", ":ToggleTerm size=15 direction=horizontal <CR>", opts)
+map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
-map("n", "<leader>s", ":w<CR>", opts)
-map("n", "<leader>ss", ":wall<CR>", opts)
+map("n", "<leader>w", ":w<CR>", opts)
+map("n", "<leader>ww", ":wall<CR>", opts)
 
 -- Bound higher up
 -- <leader>l = Go to Definition (LSP)
