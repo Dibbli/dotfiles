@@ -641,6 +641,8 @@ vim.keymap.set("i", "<leader>a", require("neocodeium").accept)
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
 
 -- Additional keymaps
+map("n", "<leader>c", ":Commentary<CR>", opts)
+map("v", "<leader>c", ":Commentary<CR>", opts)
 map("n", "<leader>gg", ":LazyGit<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>g", ":Telescope find_files<CR>", opts)
