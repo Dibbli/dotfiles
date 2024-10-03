@@ -148,7 +148,7 @@ require("lazy").setup({
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { "lua", "javascript", "typescript", "css", "html", "kotlin", "json" },
+				ensure_installed = { "lua", "javascript", "typescript", "css", "html", "kotlin", "json", "jsonc", "angular", "dockerfile", "scss" },
 				highlight = {
 					enable = true,
 				},
