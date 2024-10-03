@@ -175,6 +175,10 @@ require("lazy").setup({
 		end,
 	},
 	{
+    "f-person/git-blame.nvim",
+    event = "VeryLazy",
+	},
+	{
 		"kdheepak/lazygit.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 	},
