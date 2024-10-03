@@ -177,6 +177,9 @@ require("lazy").setup({
 	{
     "f-person/git-blame.nvim",
     event = "VeryLazy",
+    		opts ={
+		        date_format = "%r",
+		        }
 	},
 	{
 		"kdheepak/lazygit.nvim",
