@@ -467,7 +467,12 @@ require("lazy").setup({
 		config = function()
 			local ft = require("guard.filetype")
 
-			ft("javascript,typescript"):fmt("prettier")
+			ft("javascript,typescript"):lint({
+				cmd = "eslint",
+				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
+				stdin = true,
+				ignore_exitcode = true,
+			}):fmt("prettier")
 			ft("lua"):fmt("stylua")
 			ft("kotlin"):fmt("ktlint")
 			ft("html"):lint({
@@ -586,12 +591,6 @@ lspconfig.eslint.setup({
 			command = "EslintFixAll",
 		})
 	end,
-	handlers = {
-		["textDocument/publishDiagnostics"] = vim.lsp.with(
-			vim.lsp.diagnostic.on_publish_diagnostics,
-			{ virtual_text = false, signs = true, update_in_insert = false, underline = true }
-		),
-	},
 })
 
 lspconfig.tailwindcss.setup({
