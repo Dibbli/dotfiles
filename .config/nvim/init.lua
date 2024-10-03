@@ -148,7 +148,20 @@ require("lazy").setup({
 		build = ":TSUpdate",
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { "lua", "javascript", "typescript", "css", "html", "kotlin", "json", "jsonc", "angular", "dockerfile", "scss" },
+				ensure_installed = {
+					"lua",
+					"javascript",
+					"typescript",
+					"css",
+					"html",
+					"kotlin",
+					"json",
+					"jsonc",
+					"angular",
+					"dockerfile",
+					"scss",
+					"xml",
+				},
 				highlight = {
 					enable = true,
 				},
@@ -175,11 +188,11 @@ require("lazy").setup({
 		end,
 	},
 	{
-    "f-person/git-blame.nvim",
-    event = "VeryLazy",
-    		opts ={
-		        date_format = "%r",
-		        }
+		"f-person/git-blame.nvim",
+		event = "VeryLazy",
+		opts = {
+			date_format = "%r",
+		},
 	},
 	{
 		"kdheepak/lazygit.nvim",
@@ -491,6 +504,15 @@ require("lazy").setup({
 					command_palette = true,
 					long_message_to_split = true,
 				},
+				messages = {
+					view = "mini",
+					opts = {
+						position = {
+							row = "100%",
+							col = "100%",
+						},
+					},
+				},
 			})
 		end,
 	},
@@ -565,11 +587,11 @@ lspconfig.eslint.setup({
 		})
 	end,
 	handlers = {
-    ["textDocument/publishDiagnostics"] = vim.lsp.with(
-        vim.lsp.diagnostic.on_publish_diagnostics,
-        { virtual_text = false, signs = true, update_in_insert = false, underline = true}
-    ),
-  }
+		["textDocument/publishDiagnostics"] = vim.lsp.with(
+			vim.lsp.diagnostic.on_publish_diagnostics,
+			{ virtual_text = false, signs = true, update_in_insert = false, underline = true }
+		),
+	},
 })
 
 lspconfig.tailwindcss.setup({
