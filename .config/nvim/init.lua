@@ -98,6 +98,14 @@ require("lazy").setup({
 			require("substitute").setup({})
 		end,
 	},
+	--Find and Replace
+	{
+		"nvim-pack/nvim-spectre",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("spectre").setup({})
+		end,
+	},
 
 	-- File Explorer
 	{
@@ -504,6 +512,14 @@ require("lazy").setup({
 			})
 		end,
 	},
+	-- Status line
+	{
+		"windwp/windline.nvim",
+		config = function()
+			-- Load the default configuration for windline
+			require("wlsample.airline")
+		end,
+	},
 
 	-- Trouble.nvim for Diagnostics List
 	{
@@ -672,7 +688,20 @@ vim.keymap.set("n", "s", require("substitute").operator, { noremap = true })
 vim.keymap.set("n", "ss", require("substitute").line, { noremap = true })
 vim.keymap.set("n", "S", require("substitute").eol, { noremap = true })
 vim.keymap.set("x", "s", require("substitute").visual, { noremap = true })
-
+vim.keymap.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+vim.keymap.set(
+	"n",
+	"<leader>s",
+	'<cmd>lua require("spectre").open_visual({select_word=true})<CR>',
+	{ desc = "Search current word" }
+)
+vim.keymap.set("v", "<leader>s", '<esc><cmd>lua require("spectre").open_visual()<CR>', { desc = "Search current word" })
+vim.keymap.set(
+	"n",
+	"<leader>sc",
+	'<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
+	{ desc = "Search on current file" }
+)
 -- Neo-tree
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
 
