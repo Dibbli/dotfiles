@@ -460,40 +460,24 @@ require("lazy").setup({
 
 	-- Guard.nvim for Formatting and Linting
 	{
-		"nvimdev/guard.nvim",
-		dependencies = {
-			"nvimdev/guard-collection",
-		},
-		config = function()
-			local ft = require("guard.filetype")
-
-			ft("javascript,typescript"):lint({
-				cmd = "eslint",
-				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
-				stdin = true,
-				ignore_exitcode = true,
-			}):fmt("prettier")
-			ft("lua"):fmt("stylua")
-			ft("kotlin"):fmt("ktlint")
-			ft("html"):lint({
-				cmd = "eslint",
-				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
-				stdin = true,
-				ignore_exitcode = true,
-			})
-			ft("htmlangular"):lint({
-				cmd = "eslint",
-				args = { "--stdin", "--stdin-filename", "%filepath", "--format", "json" },
-				stdin = true,
-				ignore_exitcode = true,
-			})
-			ft("htmlangular"):fmt("prettier")
-			require("guard").setup({
-				fmt_on_save = true,
-				lsp_as_default_formatter = false,
-			})
-		end,
+	"nvimdev/guard.nvim",
+	dependencies = {
+		"nvimdev/guard-collection",
 	},
+	config = function()
+		local ft = require("guard.filetype")
+		ft("javascript,typescript"):lint("eslint"):fmt("prettier")
+		ft("lua"):fmt("stylua")
+		ft("kotlin"):fmt("ktlint")
+		ft("html,htmlangular"):lint("eslint"):fmt("prettier")
+		vim.g.guard_config = {
+		fmt_on_save = true,
+		lsp_as_default_formatter = false,
+		save_on_fmt = true,
+		}
+	end,
+	},
+
 
 	-- Noice.nvim for Enhanced UI
 	{
