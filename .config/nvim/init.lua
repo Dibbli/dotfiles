@@ -466,10 +466,11 @@ require("lazy").setup({
 	},
 	config = function()
 		local ft = require("guard.filetype")
-		ft("javascript,typescript"):lint("eslint"):fmt("prettier")
+		ft("typescript"):lint("eslint"):fmt("prettier")
 		ft("lua"):fmt("stylua")
 		ft("kotlin"):fmt("ktlint")
-		ft("html,htmlangular"):lint("eslint"):fmt("prettier")
+		ft("htmlangular"):lint("eslint"):fmt("prettier")
+		ft("html"):lint("eslint"):fmt("prettier")
 		vim.g.guard_config = {
 		fmt_on_save = true,
 		lsp_as_default_formatter = false,
