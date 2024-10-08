@@ -16,7 +16,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Set leader key
 vim.g.mapleader = " "
-
 -- Vim options
 vim.opt.number = true
 vim.opt.tabstop = 4
@@ -460,25 +459,24 @@ require("lazy").setup({
 
 	-- Guard.nvim for Formatting and Linting
 	{
-	"nvimdev/guard.nvim",
-	dependencies = {
-		"nvimdev/guard-collection",
+		"nvimdev/guard.nvim",
+		dependencies = {
+			"nvimdev/guard-collection",
+		},
+		config = function()
+			local ft = require("guard.filetype")
+			ft("typescript"):lint("eslint"):fmt("prettier")
+			ft("lua"):fmt("stylua")
+			ft("kotlin"):fmt("ktlint")
+			ft("htmlangular"):lint("eslint"):fmt("prettier")
+			ft("html"):lint("eslint"):fmt("prettier")
+			vim.g.guard_config = {
+				fmt_on_save = true,
+				lsp_as_default_formatter = false,
+				save_on_fmt = true,
+			}
+		end,
 	},
-	config = function()
-		local ft = require("guard.filetype")
-		ft("typescript"):lint("eslint"):fmt("prettier")
-		ft("lua"):fmt("stylua")
-		ft("kotlin"):fmt("ktlint")
-		ft("htmlangular"):lint("eslint"):fmt("prettier")
-		ft("html"):lint("eslint"):fmt("prettier")
-		vim.g.guard_config = {
-		fmt_on_save = true,
-		lsp_as_default_formatter = false,
-		save_on_fmt = true,
-		}
-	end,
-	},
-
 
 	-- Noice.nvim for Enhanced UI
 	{
