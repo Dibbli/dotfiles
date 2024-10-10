@@ -474,6 +474,7 @@ require("lazy").setup({
 		config = function()
 			local ft = require("guard.filetype")
 			ft("typescript"):lint("eslint"):fmt("prettier")
+			ft("scss"):lint("eslint"):fmt("prettier")
 			ft("lua"):fmt("stylua")
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint"):fmt("prettier")
@@ -702,6 +703,14 @@ vim.keymap.set(
 	'<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
 	{ desc = "Search on current file" }
 )
+vim.keymap.set("v", "<leader>f", function()
+	vim.cmd('normal! "zy')
+	local text = vim.fn.getreg("z")
+	require("telescope.builtin").live_grep({
+		default_text = text,
+	})
+end, { noremap = true, silent = true })
+
 -- Neo-tree
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
 
