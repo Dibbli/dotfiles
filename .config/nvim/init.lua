@@ -726,8 +726,7 @@ map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
-map("n", "<Tab>", ":BufferLineCycleNext<CR>", opts)
-map("n", "<S-Tab>", ":BufferLineCyclePrev<CR>", opts)
+
 
 -- Bound higher up
 -- <leader>l = Go to Definition (LSP)
