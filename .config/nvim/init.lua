@@ -689,7 +689,9 @@ vim.keymap.set("n", "s", require("substitute").operator, { noremap = true })
 vim.keymap.set("n", "ss", require("substitute").line, { noremap = true })
 vim.keymap.set("n", "S", require("substitute").eol, { noremap = true })
 vim.keymap.set("x", "s", require("substitute").visual, { noremap = true })
-vim.keymap.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+
+-- Spectre
+vim.keymap.set("n", "<leader>s", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
 vim.keymap.set(
 	"n",
 	"<leader>s",
@@ -703,6 +705,14 @@ vim.keymap.set(
 	'<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
 	{ desc = "Search on current file" }
 )
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>r",
+	':lua require("spectre.actions").run_replace()<CR>',
+	{ noremap = true, silent = true }
+)
+
+-- Telescope
 vim.keymap.set("v", "<leader>f", function()
 	vim.cmd('normal! "zy')
 	local text = vim.fn.getreg("z")
@@ -726,7 +736,6 @@ map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
-
 
 -- Bound higher up
 -- <leader>l = Go to Definition (LSP)
