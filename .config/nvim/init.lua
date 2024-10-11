@@ -475,6 +475,7 @@ require("lazy").setup({
 			local ft = require("guard.filetype")
 			ft("typescript"):lint("eslint"):fmt("prettier")
 			ft("scss"):lint("eslint"):fmt("prettier")
+			ft("css"):lint("eslint"):fmt("prettier")
 			ft("lua"):fmt("stylua")
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint"):fmt("prettier")
