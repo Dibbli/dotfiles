@@ -41,4 +41,10 @@
   --text-muted: #928374;
   --header-secondary: #a89984;
   --channel-icon: #bdae93;
+  --mention-foreground: #1d2021;
+  --mention-background: #fabd2f;
+}
+.theme-dark .mention:hover {
+  color: #1d2021;
+  background-color: #d79921;
 }
