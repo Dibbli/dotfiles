@@ -1,0 +1,44 @@
+/**
+* @name NvimGruvBox
+* @author dibbli
+* @description Gruvbox theme based off an nvim theme
+* @version 1.0
+*/
+
+/* Variables */
+
+.theme-dark {
+  --background-primary: #1d2021;
+  --background-primary-alt: #1f1d1a;
+  --background-secondary: #252320;
+  --background-secondary-alt: #2b2825;
+  --background-tertiary: #2e2b28;
+  --background-modifier-active: #665c54;
+  --background-modifier-selected: #3c3836;
+  --background-modifier-accent: #504945;
+  --background-floating: #1d2021;
+  --background-accent: #3c3836;
+  --border: #665c54;
+  --brand-experiment-30a: #fb4934;
+  --brand-experiment-200: #d5c4a1;
+  --brand-experiment-560: #3c3836;
+  --channels-default: #8f8772;
+  --color-transition-hover: #504945;
+  --elevation-low: none;
+  --elevation-medium: none;
+  --elevation-high: none;
+  --scrollbar-thin-thumb: #665c547c;
+  --scrollbar-auto-track: #282828;
+  --header-primary: #bdae93;
+  --interactive-normal: #ebdbb2;
+  --interactive-hover: #9dba98;
+  --interactive-active: #a1c179;
+  --elevation-stroke: #504945;
+  --text-normal: #ebdbb2;
+  --text-link: #fabd2f;
+  --speaking: #b8bb26;
+  --brand-experiment: #3d5b5b;
+  --text-muted: #928374;
+  --header-secondary: #a89984;
+  --channel-icon: #bdae93;
+}
