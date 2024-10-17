@@ -747,16 +747,26 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- LSP servers setup
-local servers = { "kotlin_language_server", "jsonls", "cssls", "angularls", "pyright" }
+lspconfig.jsonls.setup({
+	capabilities = capabilities,
+	filetypes = { "json", "jsonc" },
+})
 
-for _, server in ipairs(servers) do
-	lspconfig[server].setup({
-		capabilities = capabilities,
-	})
-end
+lspconfig.pyright.setup({
+	capabilities = capabilities,
+	filetypes = { "python" },
+})
+lspconfig.kotlin_language_server.setup({
+	capabilities = capabilities,
+	filetypes = { "kotlin" },
+})
+lspconfig.cssls.setup({
+	capabilities = capabilities,
+	filetypes = { "html", "htmlangular", "scss", "css" },
+})
 lspconfig.eslint.setup({
 	capabilities = capabilities,
-	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss" },
+	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
 	on_attach = function(client, bufnr)
 		-- Auto-fix ESLint issues on save
 		vim.api.nvim_create_autocmd("BufWritePre", {
@@ -768,7 +778,7 @@ lspconfig.eslint.setup({
 
 lspconfig.tailwindcss.setup({
 	capabilities = capabilities,
-	filetypes = { "html", "htmlangular", "scss" },
+	filetypes = { "html", "htmlangular", "scss", "css" },
 })
 lspconfig.lua_ls.setup({
 	capabilities = capabilities,
