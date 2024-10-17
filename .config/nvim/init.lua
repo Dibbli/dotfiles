@@ -1,5 +1,3 @@
--- init.lua
-
 -- Install lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
@@ -59,7 +57,28 @@ require("lazy").setup({
 	{ "pangloss/vim-javascript" },
 
 	-- LSP Configurations
-	{ "neovim/nvim-lspconfig" },
+	{
+		"neovim/nvim-lspconfig",
+		keys = {
+			{
+				"<leader>i",
+				":lua vim.lsp.buf.code_action()<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Code Action",
+			},
+			{
+				"<leader>l",
+				":lua vim.lsp.buf.definition()<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Go to Definition",
+			},
+		},
+	},
+
 	{
 		"pmizio/typescript-tools.nvim",
 		config = function()
@@ -91,20 +110,94 @@ require("lazy").setup({
 			require("bufferline").setup({})
 		end,
 	},
-	--Substitute
+	-- Substitute
 	{
 		"gbprod/substitute.nvim",
 		config = function()
 			require("substitute").setup({})
 		end,
+		keys = {
+			{
+				"s",
+				function()
+					require("substitute").operator()
+				end,
+				mode = "n",
+				noremap = true,
+				desc = "Substitute Operator",
+			},
+			{
+				"ss",
+				function()
+					require("substitute").line()
+				end,
+				mode = "n",
+				noremap = true,
+				desc = "Substitute Line",
+			},
+			{
+				"S",
+				function()
+					require("substitute").eol()
+				end,
+				mode = "n",
+				noremap = true,
+				desc = "Substitute to End of Line",
+			},
+			{
+				"s",
+				function()
+					require("substitute").visual()
+				end,
+				mode = "x",
+				noremap = true,
+				desc = "Substitute Visual",
+			},
+		},
 	},
-	--Find and Replace
+	-- Find and Replace
 	{
 		"nvim-pack/nvim-spectre",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("spectre").setup({})
 		end,
+		keys = {
+			{
+				"<leader>s",
+				function()
+					require("spectre").toggle()
+				end,
+				mode = "n",
+				desc = "Toggle Spectre",
+			},
+			{
+				"<leader>s",
+				function()
+					require("spectre").open_visual({ select_word = true })
+				end,
+				mode = "v",
+				desc = "Search Current Word",
+			},
+			{
+				"<leader>sc",
+				function()
+					require("spectre").open_file_search({ select_word = true })
+				end,
+				mode = "n",
+				desc = "Search in Current File",
+			},
+			{
+				"<leader>r",
+				function()
+					require("spectre.actions").run_replace()
+				end,
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Run Replace",
+			},
+		},
 	},
 
 	-- File Explorer
@@ -124,6 +217,9 @@ require("lazy").setup({
 				},
 			})
 		end,
+		keys = {
+			{ "-", ":Neotree reveal position=left toggle<cr>", desc = "Toggle Neo-tree" },
+		},
 	},
 
 	-- Telescope Fuzzy Finder
@@ -133,6 +229,31 @@ require("lazy").setup({
 		config = function()
 			require("telescope").setup()
 		end,
+		keys = {
+			{
+				"<leader>f",
+				function()
+					vim.cmd('normal! "zy')
+					local text = vim.fn.getreg("z")
+					require("telescope.builtin").live_grep({
+						default_text = text,
+					})
+				end,
+				mode = "v",
+				noremap = true,
+				silent = true,
+				desc = "Live Grep Selected Text",
+			},
+			{
+				"<leader>g",
+				":Telescope find_files<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Find Files",
+			},
+			{ "<leader>f", ":Telescope live_grep<CR>", mode = "n", noremap = true, silent = true, desc = "Live Grep" },
+		},
 	},
 	{
 		"nvim-telescope/telescope-ui-select.nvim",
@@ -202,6 +323,9 @@ require("lazy").setup({
 	{
 		"kdheepak/lazygit.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
+		keys = {
+			{ "<leader>gg", ":LazyGit<CR>", mode = "n", noremap = true, silent = true, desc = "Open LazyGit" },
+		},
 	},
 
 	-- Minimap and Scrollbar
@@ -232,6 +356,16 @@ require("lazy").setup({
 		config = function()
 			require("neocodeium").setup()
 		end,
+		keys = {
+			{
+				"<leader>a",
+				function()
+					require("neocodeium").accept()
+				end,
+				mode = "i",
+				desc = "Accept Neocodeium Suggestion",
+			},
+		},
 	},
 
 	-- Image Support
@@ -252,7 +386,13 @@ require("lazy").setup({
 	},
 
 	-- Commenting
-	{ "tpope/vim-commentary" },
+	{
+		"tpope/vim-commentary",
+		keys = {
+			{ "<leader>c", ":Commentary<CR>", mode = "n", noremap = true, silent = true, desc = "Toggle Comment" },
+			{ "<leader>c", ":Commentary<CR>", mode = "v", noremap = true, silent = true, desc = "Toggle Comment" },
+		},
+	},
 
 	-- Hover
 	{
@@ -269,6 +409,24 @@ require("lazy").setup({
 				title = true,
 			})
 		end,
+		keys = {
+			{
+				"k",
+				function()
+					require("hover").hover()
+				end,
+				mode = "n",
+				desc = "Hover Documentation",
+			},
+			{
+				"gk",
+				function()
+					require("hover").hover_select()
+				end,
+				mode = "n",
+				desc = "Hover Select",
+			},
+		},
 	},
 
 	-- Completion Plugins
@@ -343,6 +501,9 @@ require("lazy").setup({
 		config = function()
 			vim.cmd("colorscheme gruvbox")
 		end,
+		keys = {
+			{ "<leader>gt", ":lua vim.cmd('colorscheme gruvbox')<CR>", mode = "n", desc = "Switch to Gruvbox" },
+		},
 	},
 
 	{
@@ -356,6 +517,9 @@ require("lazy").setup({
 				},
 			})
 		end,
+		keys = {
+			{ "<leader>st", ":lua require('solarized').load('dark')<CR>", mode = "n", desc = "Switch to Solarized" },
+		},
 	},
 
 	-- Lush
@@ -409,6 +573,24 @@ require("lazy").setup({
 		config = function()
 			require("toggleterm").setup()
 		end,
+		keys = {
+			{
+				"=",
+				":ToggleTerm size=10 direction=horizontal <CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Toggle Terminal",
+			},
+			{
+				"<leader><Esc>",
+				[[<C-\><C-n><C-w>k]],
+				mode = "t",
+				noremap = true,
+				silent = true,
+				desc = "Exit Terminal Mode",
+			},
+		},
 	},
 
 	-- Surround
@@ -531,6 +713,24 @@ require("lazy").setup({
 		config = function()
 			require("telescope").load_extension("harpoon")
 		end,
+		keys = {
+			{
+				"<leader>a",
+				function()
+					require("harpoon").mark.add_file()
+				end,
+				mode = "n",
+				desc = "Add File to Harpoon",
+			},
+			{
+				"<leader>h",
+				":Telescope harpoon marks<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Harpoon Marks",
+			},
+		},
 	},
 
 	-- Grapple for File Tagging
@@ -658,76 +858,12 @@ require("nvim-ts-autotag").setup()
 -- guess-indent
 require("guess-indent").setup({})
 
-require("harpoon"):setup()
--- Keymaps
+require("harpoon").setup()
+
+-- Additional keymaps for built-in commands
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
-
--- Keymaps to switch themes
-map("n", "<leader>gt", ":lua vim.cmd('colorscheme gruvbox')<CR>", opts)
-map("n", "<leader>st", ":lua require('solarized').load('dark')<CR>", opts)
-
--- LSP keymaps
-vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", opts)
-vim.keymap.set("n", "k", require("hover").hover, { desc = "hover.nvim" })
-vim.keymap.set("n", "gk", require("hover").hover_select, { desc = "hover.nvim (select)" })
-vim.keymap.set("i", "<leader>a", require("neocodeium").accept)
-vim.keymap.set("n", "s", require("substitute").operator, { noremap = true })
-vim.keymap.set("n", "ss", require("substitute").line, { noremap = true })
-vim.keymap.set("n", "S", require("substitute").eol, { noremap = true })
-vim.keymap.set("x", "s", require("substitute").visual, { noremap = true })
-
--- Spectre
-vim.keymap.set("n", "<leader>s", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
-vim.keymap.set(
-	"n",
-	"<leader>s",
-	'<cmd>lua require("spectre").open_visual({select_word=true})<CR>',
-	{ desc = "Search current word" }
-)
-vim.keymap.set("v", "<leader>s", '<esc><cmd>lua require("spectre").open_visual()<CR>', { desc = "Search current word" })
-vim.keymap.set(
-	"n",
-	"<leader>sc",
-	'<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
-	{ desc = "Search on current file" }
-)
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>r",
-	':lua require("spectre.actions").run_replace()<CR>',
-	{ noremap = true, silent = true }
-)
-
--- Telescope
-vim.keymap.set("v", "<leader>f", function()
-	vim.cmd('normal! "zy')
-	local text = vim.fn.getreg("z")
-	require("telescope.builtin").live_grep({
-		default_text = text,
-	})
-end, { noremap = true, silent = true })
-map("n", "<leader>g", ":Telescope find_files<CR>", opts)
-map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
-
---Harpoon
-vim.keymap.set("n", "<leader>a", function()
-	require("harpoon"):list():add()
-end)
-vim.keymap.set("n", "<leader>h", ":Telescope harpoon marks<CR>", opts)
--- Neo-tree
-vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
-
--- Additional keymaps
-map("n", "<leader>c", ":Commentary<CR>", opts)
-map("v", "<leader>c", ":Commentary<CR>", opts)
-map("n", "<leader>gg", ":LazyGit<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
-map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
-map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
-
--- Bound higher up
--- <leader>l = Go to Definition (LSP)
