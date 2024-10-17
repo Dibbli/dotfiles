@@ -13,7 +13,7 @@ if not vim.uv.fs_stat(lazypath) then
 	})
 end
 vim.opt.rtp:prepend(lazypath)
-
+vim.opt.clipboard = { "unnamed", "unnamedplus" }
 -- Set leader key
 vim.g.mapleader = " "
 -- Vim options
