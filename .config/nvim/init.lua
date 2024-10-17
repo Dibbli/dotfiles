@@ -2,7 +2,7 @@
 
 -- Install lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
 		"clone",
@@ -668,8 +668,8 @@ map("n", "<leader>st", ":lua require('solarized').load('dark')<CR>", opts)
 
 -- LSP keymaps
 vim.api.nvim_set_keymap("n", "<leader>i", ":lua vim.lsp.buf.code_action()<CR>", opts)
-vim.keymap.set("n", "K", require("hover").hover, { desc = "hover.nvim" })
-vim.keymap.set("n", "gK", require("hover").hover_select, { desc = "hover.nvim (select)" })
+vim.keymap.set("n", "k", require("hover").hover, { desc = "hover.nvim" })
+vim.keymap.set("n", "gk", require("hover").hover_select, { desc = "hover.nvim (select)" })
 vim.keymap.set("i", "<leader>a", require("neocodeium").accept)
 vim.keymap.set("n", "s", require("substitute").operator, { noremap = true })
 vim.keymap.set("n", "ss", require("substitute").line, { noremap = true })
