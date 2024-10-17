@@ -186,8 +186,6 @@ require("lazy").setup({
 	{ "nvim-tree/nvim-web-devicons" },
 
 	-- Git Integration
-	{ "tpope/vim-fugitive" },
-	{ "tpope/vim-rhubarb" },
 	{
 		"lewis6991/gitsigns.nvim",
 		config = function()
@@ -514,10 +512,15 @@ require("lazy").setup({
 	-- Trouble.nvim for Diagnostics List
 	{
 		"folke/trouble.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("trouble").setup()
-		end,
+		opts = {},
+		cmd = "Trouble",
+		keys = {
+			{
+				"<leader>xx",
+				"<cmd>Trouble diagnostics toggle<cr>",
+				desc = "Diagnostics (Trouble)",
+			},
+		},
 	},
 
 	-- Harpoon for Quick File Navigation
@@ -526,7 +529,7 @@ require("lazy").setup({
 		branch = "harpoon2",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
-			require("harpoon").setup()
+			require("telescope").load_extension("harpoon")
 		end,
 	},
 
@@ -646,9 +649,6 @@ require("colorizer").setup()
 -- nvim-surround
 require("nvim-surround").setup()
 
--- Telescope extensions
-require("telescope").load_extension("fzf")
-
 -- neocodeium
 require("neocodeium").setup()
 
@@ -658,6 +658,7 @@ require("nvim-ts-autotag").setup()
 -- guess-indent
 require("guess-indent").setup({})
 
+require("harpoon"):setup()
 -- Keymaps
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
@@ -708,6 +709,12 @@ vim.keymap.set("v", "<leader>f", function()
 end, { noremap = true, silent = true })
 map("n", "<leader>g", ":Telescope find_files<CR>", opts)
 map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
+
+--Harpoon
+vim.keymap.set("n", "<leader>a", function()
+	require("harpoon"):list():add()
+end)
+vim.keymap.set("n", "<leader>h", ":Telescope harpoon marks<CR>", opts)
 -- Neo-tree
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
 
