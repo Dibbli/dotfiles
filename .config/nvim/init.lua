@@ -706,7 +706,8 @@ vim.keymap.set("v", "<leader>f", function()
 		default_text = text,
 	})
 end, { noremap = true, silent = true })
-
+map("n", "<leader>g", ":Telescope find_files<CR>", opts)
+map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
 -- Neo-tree
 vim.keymap.set({ "n" }, "-", ":Neotree reveal position=left toggle<cr>", { desc = "Toggle neotree" })
 
@@ -715,8 +716,6 @@ map("n", "<leader>c", ":Commentary<CR>", opts)
 map("v", "<leader>c", ":Commentary<CR>", opts)
 map("n", "<leader>gg", ":LazyGit<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
-map("n", "<leader>g", ":Telescope find_files<CR>", opts)
-map("n", "<leader>f", ":Telescope live_grep<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "=", ":ToggleTerm size=10 direction=horizontal <CR>", opts)
 map("t", "<leader><Esc>", [[<C-\><C-n><C-w>k]], opts)
