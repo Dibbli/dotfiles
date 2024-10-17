@@ -301,13 +301,9 @@ require("lazy").setup({
 					["<C-e>"] = cmp.mapping.abort(),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
-				formatting = {
-					format = require("tailwindcss-colorizer-cmp").formatter,
-				},
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "vsnip" },
-					{ name = "tailwind_tools" },
 				}, {
 					{ name = "path" },
 				}),
@@ -438,14 +434,6 @@ require("lazy").setup({
 		"windwp/nvim-ts-autotag",
 		config = function()
 			require("nvim-ts-autotag").setup()
-		end,
-	},
-
-	-- Tailwind Tools
-	{
-		"luckasRanarison/tailwind-tools.nvim",
-		config = function()
-			require("tailwind-tools").setup({})
 		end,
 	},
 
@@ -651,9 +639,6 @@ lspconfig.angularls.setup({
 	filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
 	capabilities = capabilities,
 })
-
--- Tailwind Tools
-require("tailwind-tools").setup({})
 
 -- Colorizer
 require("colorizer").setup()
