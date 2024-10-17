@@ -2,6 +2,21 @@
   "Class": {
     "prefix": ["class"],
     "body": ["class=''"],
-    "description": "Class definition template."
+    "description": "html class"
+  },
+  "For": {
+    "prefix": ["for"],
+    "body": ["@for (x of y; track z){"],
+    "description": "@for"
+  },
+  "If": {
+    "prefix": ["if"],
+    "body": ["@if (){"],
+    "description": "@if"
+  },
+  "Icon": {
+    "prefix": ["icon"],
+    "body": ["<span class='iconify solar--'></span>"],
+    "description": "ionic icon"
   }
 }
