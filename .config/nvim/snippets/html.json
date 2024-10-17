@@ -1,0 +1,7 @@
+{
+  "Class": {
+    "prefix": ["class"],
+    "body": ["class=''"],
+    "description": "Class definition template."
+  }
+}
