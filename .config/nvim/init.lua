@@ -641,6 +641,7 @@ require("lazy").setup({
 		},
 		config = function()
 			local ft = require("guard.filetype")
+			ft("json"):fmt("prettier")
 			ft("typescript"):lint("eslint"):fmt("prettier")
 			ft("scss"):lint("eslint"):fmt("prettier")
 			ft("css"):lint("eslint"):fmt("prettier")
@@ -705,40 +706,20 @@ require("lazy").setup({
 		},
 	},
 
-	-- Harpoon for Quick File Navigation
-	{
-		"ThePrimeagen/harpoon",
-		branch = "harpoon2",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("telescope").load_extension("harpoon")
-		end,
-		keys = {
-			{
-				"<leader>a",
-				function()
-					require("harpoon").mark.add_file()
-				end,
-				mode = "n",
-				desc = "Add File to Harpoon",
-			},
-			{
-				"<leader>h",
-				":Telescope harpoon marks<CR>",
-				mode = "n",
-				noremap = true,
-				silent = true,
-				desc = "Harpoon Marks",
-			},
-		},
-	},
-
 	-- Grapple for File Tagging
 	{
 		"cbochs/grapple.nvim",
-		config = function()
-			require("grapple").setup()
-		end,
+		dependencies = "nvim-tree/nvim-web-devicons",
+		opts = {
+			scope = "git",
+			icons = true,
+			status = false,
+		},
+		keys = {
+			{ "<leader>a", "<cmd>Grapple toggle<cr>", desc = "Tag a file" },
+			{ "<leader>h", "<cmd>Grapple toggle_tags<cr>", desc = "Toggle tags menu" },
+			{ "<leader><tab>", "<cmd>Grapple cycle_tags next<cr>", desc = "Go to next tag" },
+		},
 	},
 })
 vim.cmd("colorscheme gruvbox")
@@ -857,8 +838,6 @@ require("nvim-ts-autotag").setup()
 
 -- guess-indent
 require("guess-indent").setup({})
-
-require("harpoon").setup()
 
 -- Additional keymaps for built-in commands
 local opts = { noremap = true, silent = true }
