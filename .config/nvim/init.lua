@@ -739,7 +739,6 @@ require("mason-lspconfig").setup({
 		"lua_ls",
 		"kotlin_language_server",
 		"pyright",
-		"prettier",
 	},
 	automatic_installation = true,
 })
