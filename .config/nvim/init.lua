@@ -571,27 +571,24 @@ require("lazy").setup({
 	-- Kotlin Support
 	{ "udalov/kotlin-vim" },
 
-	-- Guard.nvim for Formatting and Linting
+	-- Add conform.nvim
 	{
-		"nvimdev/guard.nvim",
-		dependencies = {
-			"nvimdev/guard-collection",
-		},
+		"stevearc/conform.nvim",
 		config = function()
-			local ft = require("guard.filetype")
-			ft("json"):fmt("prettier")
-			ft("typescript"):lint("eslint"):fmt("prettier")
-			ft("scss"):lint("eslint"):fmt("prettier")
-			ft("css"):lint("eslint"):fmt("prettier")
-			ft("lua"):fmt("stylua")
-			ft("kotlin"):fmt("ktlint")
-			ft("htmlangular"):lint("eslint"):fmt("prettier")
-			ft("html"):lint("eslint"):fmt("prettier")
-			vim.g.guard_config = {
-				fmt_on_save = true,
-				lsp_as_default_formatter = false,
-				save_on_fmt = true,
-			}
+			require("conform").setup({
+				formatters_by_ft = {
+					json = { "prettier" },
+					typescript = { "eslint_d", "prettier" },
+					scss = { "prettier" },
+					css = { "prettier" },
+					lua = { "stylua" },
+					kotlin = { "ktlint" },
+					html = { "prettier" },
+				},
+				format_on_save = {
+					lsp_fallback = true,
+				},
+			})
 		end,
 	},
 
