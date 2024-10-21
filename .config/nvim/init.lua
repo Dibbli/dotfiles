@@ -779,17 +779,6 @@ require("mason-lspconfig").setup_handlers({
 		require("lspconfig").angularls.setup({
 			capabilities = capabilities,
 			filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
-			on_attach = function(client, bufnr)
-				local buf_set_keymap = function(...)
-					vim.api.nvim_buf_set_keymap(bufnr, ...)
-				end
-				buf_set_keymap(
-					"n",
-					"<leader>l",
-					"<cmd>lua vim.lsp.buf.definition()<CR>",
-					{ noremap = true, silent = true }
-				)
-			end,
 			on_new_config = function(new_config, new_root_dir)
 				local node_modules = get_node_modules(new_root_dir)
 				if node_modules ~= "" then
