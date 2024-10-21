@@ -678,97 +678,138 @@ require("mason-lspconfig").setup({
 	automatic_installation = true,
 })
 
-local lspconfig = require("lspconfig")
+-- Capabilities for LSP servers
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
--- LSP servers setup
-lspconfig.jsonls.setup({
-	capabilities = capabilities,
-	filetypes = { "json", "jsonc" },
-})
+-- Function to get the node_modules path
+local lspconfig_util = require("lspconfig.util")
 
-lspconfig.pyright.setup({
-	capabilities = capabilities,
-	filetypes = { "python" },
-})
-lspconfig.kotlin_language_server.setup({
-	capabilities = capabilities,
-	filetypes = { "kotlin" },
-})
-lspconfig.cssls.setup({
-	capabilities = capabilities,
-	filetypes = { "html", "htmlangular", "scss", "css" },
-})
-lspconfig.eslint.setup({
-	capabilities = capabilities,
-	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
-	on_attach = function(client, bufnr)
-		-- Auto-fix ESLint issues on save
-		vim.api.nvim_create_autocmd("BufWritePre", {
-			buffer = bufnr,
-			command = "EslintFixAll",
+local function get_node_modules(root_dir)
+	local root_node = lspconfig_util.find_node_modules_ancestor(root_dir)
+	return root_node and lspconfig_util.path.join(root_node, "node_modules") or ""
+end
+
+-- Setup handlers for Mason LSPconfig
+require("mason-lspconfig").setup_handlers({
+	-- Default handler for all servers
+	function(server_name)
+		require("lspconfig")[server_name].setup({
+			capabilities = capabilities,
+		})
+	end,
+
+	-- JSON Language Server
+	["jsonls"] = function()
+		require("lspconfig").jsonls.setup({
+			capabilities = capabilities,
+			filetypes = { "json", "jsonc" },
+		})
+	end,
+
+	-- Python Language Server
+	["pyright"] = function()
+		require("lspconfig").pyright.setup({
+			capabilities = capabilities,
+			filetypes = { "python" },
+		})
+	end,
+
+	-- Kotlin Language Server
+	["kotlin_language_server"] = function()
+		require("lspconfig").kotlin_language_server.setup({
+			capabilities = capabilities,
+			filetypes = { "kotlin" },
+		})
+	end,
+
+	-- CSS Language Server
+	["cssls"] = function()
+		require("lspconfig").cssls.setup({
+			capabilities = capabilities,
+			filetypes = { "html", "htmlangular", "scss", "css" },
+		})
+	end,
+
+	-- ESLint Language Server
+	["eslint"] = function()
+		require("lspconfig").eslint.setup({
+			capabilities = capabilities,
+			filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
+			on_attach = function(client, bufnr)
+				-- Auto-fix ESLint issues on save
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					buffer = bufnr,
+					command = "EslintFixAll",
+				})
+			end,
+		})
+	end,
+
+	-- Tailwind CSS Language Server
+	["tailwindcss"] = function()
+		require("lspconfig").tailwindcss.setup({
+			capabilities = capabilities,
+			filetypes = { "html", "htmlangular", "scss", "css" },
+		})
+	end,
+
+	-- Lua Language Server
+	["lua_ls"] = function()
+		require("lspconfig").lua_ls.setup({
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					diagnostics = {
+						globals = { "vim" },
+					},
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true),
+						checkThirdParty = false,
+					},
+					telemetry = {
+						enable = false,
+					},
+				},
+			},
+		})
+	end,
+
+	-- Angular Language Server
+	["angularls"] = function()
+		require("lspconfig").angularls.setup({
+			capabilities = capabilities,
+			filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
+			on_attach = function(client, bufnr)
+				local buf_set_keymap = function(...)
+					vim.api.nvim_buf_set_keymap(bufnr, ...)
+				end
+				buf_set_keymap(
+					"n",
+					"<leader>l",
+					"<cmd>lua vim.lsp.buf.definition()<CR>",
+					{ noremap = true, silent = true }
+				)
+			end,
+			on_new_config = function(new_config, new_root_dir)
+				local node_modules = get_node_modules(new_root_dir)
+				if node_modules ~= "" then
+					new_config.cmd = {
+						"ngserver",
+						"--stdio",
+						"--tsProbeLocations",
+						node_modules,
+						"--ngProbeLocations",
+						node_modules,
+					}
+				end
+			end,
+			root_dir = function(fname)
+				return lspconfig_util.root_pattern("angular.json", "project.json")(fname)
+					or lspconfig_util.root_pattern("nx.json", ".git")(fname)
+			end,
 		})
 	end,
 })
-
-lspconfig.tailwindcss.setup({
-	capabilities = capabilities,
-	filetypes = { "html", "htmlangular", "scss", "css" },
-})
-lspconfig.lua_ls.setup({
-	capabilities = capabilities,
-	settings = {
-		Lua = {
-			diagnostics = {
-				globals = { "vim" },
-			},
-			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true),
-				checkThirdParty = false,
-			},
-			telemetry = {
-				enable = false,
-			},
-		},
-	},
-})
-
--- Function to get the node_modules path
-local function get_node_modules(root_dir)
-	local root_node = lspconfig.util.find_node_modules_ancestor(root_dir)
-	return root_node and lspconfig.util.path.join(root_node, "node_modules") or ""
-end
-
--- Angularls setup
-lspconfig.angularls.setup({
-	on_attach = function(client, bufnr)
-		local buf_set_keymap = function(...)
-			vim.api.nvim_buf_set_keymap(bufnr, ...)
-		end
-		buf_set_keymap("n", "<leader>l", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
-	end,
-	on_new_config = function(new_config, new_root_dir)
-		local node_modules = get_node_modules(new_root_dir)
-		if node_modules ~= "" then
-			new_config.cmd = {
-				"ngserver",
-				"--stdio",
-				"--tsProbeLocations",
-				node_modules,
-				"--ngProbeLocations",
-				node_modules,
-			}
-		end
-	end,
-	root_dir = function(fname)
-		local util = lspconfig.util
-		return util.root_pattern("angular.json", "project.json")(fname) or util.root_pattern("nx.json", ".git")(fname)
-	end,
-
-	filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
-	capabilities = capabilities,
-})
-
 -- Colorizer
 require("colorizer").setup()
 
