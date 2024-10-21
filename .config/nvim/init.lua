@@ -81,6 +81,7 @@ require("lazy").setup({
 
 	{
 		"pmizio/typescript-tools.nvim",
+		config = true,
 	},
 
 	-- LSP Installer
@@ -778,24 +779,8 @@ require("mason-lspconfig").setup_handlers({
 	["angularls"] = function()
 		require("lspconfig").angularls.setup({
 			capabilities = capabilities,
-			filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx", "htmlangular" },
-			on_new_config = function(new_config, new_root_dir)
-				local node_modules = get_node_modules(new_root_dir)
-				if node_modules ~= "" then
-					new_config.cmd = {
-						"ngserver",
-						"--stdio",
-						"--tsProbeLocations",
-						node_modules,
-						"--ngProbeLocations",
-						node_modules,
-					}
-				end
-			end,
-			root_dir = function(fname)
-				return lspconfig_util.root_pattern("angular.json", "project.json")(fname)
-					or lspconfig_util.root_pattern("nx.json", ".git")(fname)
-			end,
+			filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx" },
+			root_dir = lspconfig_util.root_pattern("package.json"),
 		})
 	end,
 })
