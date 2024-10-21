@@ -270,9 +270,13 @@ require("lazy").setup({
 					"scss",
 					"xml",
 				},
+				sync_install = false,
+				ignore_install = {},
+				auto_install = true,
 				highlight = {
 					enable = true,
 				},
+				modules = {},
 			})
 		end,
 	},
