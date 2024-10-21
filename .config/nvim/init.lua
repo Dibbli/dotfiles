@@ -81,23 +81,14 @@ require("lazy").setup({
 
 	{
 		"pmizio/typescript-tools.nvim",
-		config = function()
-			require("typescript-tools").setup({})
-		end,
 	},
 
 	-- LSP Installer
 	{
 		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup()
-		end,
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
-		config = function()
-			require("mason-lspconfig").setup()
-		end,
 	},
 
 	-- UI Components
@@ -106,16 +97,10 @@ require("lazy").setup({
 	{
 		"akinsho/bufferline.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
-		config = function()
-			require("bufferline").setup({})
-		end,
 	},
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
-		config = function()
-			require("substitute").setup({})
-		end,
 		keys = {
 			{
 				"s",
@@ -159,9 +144,6 @@ require("lazy").setup({
 	{
 		"nvim-pack/nvim-spectre",
 		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("spectre").setup({})
-		end,
 		keys = {
 			{
 				"<leader>s",
@@ -226,9 +208,6 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
-		config = function()
-			require("telescope").setup()
-		end,
 		keys = {
 			{
 				"<leader>f",
@@ -298,9 +277,6 @@ require("lazy").setup({
 	},
 	{
 		"windwp/nvim-ts-autotag",
-		config = function()
-			require("nvim-ts-autotag").setup()
-		end,
 	},
 
 	-- Icons
@@ -309,9 +285,6 @@ require("lazy").setup({
 	-- Git Integration
 	{
 		"lewis6991/gitsigns.nvim",
-		config = function()
-			require("gitsigns").setup()
-		end,
 	},
 	{
 		"f-person/git-blame.nvim",
@@ -331,31 +304,19 @@ require("lazy").setup({
 	-- Minimap and Scrollbar
 	{
 		"Isrothy/neominimap.nvim",
-		config = function()
-			require("neominimap").setup()
-		end,
 	},
 	{
 		"lewis6991/satellite.nvim",
-		config = function()
-			require("satellite").setup()
-		end,
 	},
 
-	-- Otter for R and Quarto files
+	-- Otter
 	{
 		"jmbuhr/otter.nvim",
-		config = function()
-			require("otter").setup()
-		end,
 	},
 
 	-- AI Code Completion
 	{
 		"monkoose/neocodeium",
-		config = function()
-			require("neocodeium").setup()
-		end,
 		keys = {
 			{
 				"<leader>a",
@@ -371,18 +332,12 @@ require("lazy").setup({
 	-- Image Support
 	{
 		"3rd/image.nvim",
-		config = function()
-			require("image").setup()
-		end,
 	},
 
 	-- Sniprun
 	{
 		"michaelb/sniprun",
 		build = "bash ./install.sh",
-		config = function()
-			require("sniprun").setup()
-		end,
 	},
 
 	-- Commenting
@@ -527,9 +482,6 @@ require("lazy").setup({
 	-- Indentation Detection
 	{
 		"nmac427/guess-indent.nvim",
-		config = function()
-			require("guess-indent").setup({})
-		end,
 	},
 
 	-- Highlight Code Chunks
@@ -561,17 +513,13 @@ require("lazy").setup({
 	-- Debugging
 	{
 		"mfussenegger/nvim-dap",
-		config = function()
-			-- nvim-dap configurations
-		end,
 	},
 
 	-- Terminal Management
 	{
 		"akinsho/toggleterm.nvim",
-		config = function()
-			require("toggleterm").setup()
-		end,
+		version = "*",
+		config = true,
 		keys = {
 			{
 				"=",
@@ -595,25 +543,16 @@ require("lazy").setup({
 	-- Surround
 	{
 		"kylechui/nvim-surround",
-		config = function()
-			require("nvim-surround").setup()
-		end,
 	},
 
 	-- Colorizer
 	{
 		"norcalli/nvim-colorizer.lua",
-		config = function()
-			require("colorizer").setup()
-		end,
 	},
 
 	-- Auto-tagging
 	{
 		"windwp/nvim-ts-autotag",
-		config = function()
-			require("nvim-ts-autotag").setup()
-		end,
 	},
 
 	-- CSS Syntax
