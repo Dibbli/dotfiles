@@ -98,6 +98,7 @@ require("lazy").setup({
 	{
 		"akinsho/bufferline.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
+		config = true,
 	},
 	-- Substitute
 	{
@@ -282,6 +283,7 @@ require("lazy").setup({
 	},
 	{
 		"windwp/nvim-ts-autotag",
+		config = true,
 	},
 
 	-- Icons
@@ -314,14 +316,10 @@ require("lazy").setup({
 		"lewis6991/satellite.nvim",
 	},
 
-	-- Otter
-	{
-		"jmbuhr/otter.nvim",
-	},
-
 	-- AI Code Completion
 	{
 		"monkoose/neocodeium",
+		config = true,
 		keys = {
 			{
 				"<leader>a",
@@ -332,17 +330,6 @@ require("lazy").setup({
 				desc = "Accept Neocodeium Suggestion",
 			},
 		},
-	},
-
-	-- Image Support
-	{
-		"3rd/image.nvim",
-	},
-
-	-- Sniprun
-	{
-		"michaelb/sniprun",
-		build = "bash ./install.sh",
 	},
 
 	-- Commenting
@@ -487,6 +474,7 @@ require("lazy").setup({
 	-- Indentation Detection
 	{
 		"nmac427/guess-indent.nvim",
+		config = true,
 	},
 
 	-- Highlight Code Chunks
@@ -548,16 +536,19 @@ require("lazy").setup({
 	-- Surround
 	{
 		"kylechui/nvim-surround",
+		config = true,
 	},
 
 	-- Colorizer
 	{
 		"norcalli/nvim-colorizer.lua",
+		config = true,
 	},
 
 	-- Auto-tagging
 	{
 		"windwp/nvim-ts-autotag",
+		config = true,
 	},
 
 	-- CSS Syntax
@@ -788,20 +779,6 @@ require("mason-lspconfig").setup_handlers({
 		})
 	end,
 })
--- Colorizer
-require("colorizer").setup()
-
--- nvim-surround
-require("nvim-surround").setup()
-
--- neocodeium
-require("neocodeium").setup()
-
--- nvim-ts-autotag
-require("nvim-ts-autotag").setup()
-
--- guess-indent
-require("guess-indent").setup({})
 
 -- Additional keymaps for built-in commands
 local opts = { noremap = true, silent = true }
