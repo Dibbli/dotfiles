@@ -293,6 +293,7 @@ require("lazy").setup({
 	-- Git Integration
 	{
 		"lewis6991/gitsigns.nvim",
+		config = true,
 	},
 	{
 		"f-person/git-blame.nvim",
