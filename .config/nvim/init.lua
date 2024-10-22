@@ -101,6 +101,14 @@ require("lazy").setup({
 		dependencies = "nvim-tree/nvim-web-devicons",
 		config = true,
 	},
+	{
+		"oncomouse/lushwal.nvim",
+		cmd = { "LushwalCompile" },
+		dependencies = {
+			{ "rktjmp/lush.nvim" },
+			{ "rktjmp/shipwright.nvim" },
+		},
+	},
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
@@ -539,7 +547,6 @@ require("lazy").setup({
 	-- Colorizer
 	{
 		"norcalli/nvim-colorizer.lua",
-		config = true,
 	},
 
 	-- Auto-tagging
@@ -654,7 +661,7 @@ require("lazy").setup({
 vim.cmd("colorscheme gruvbox")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
-
+require("colorizer").setup()
 -- Mason and LSP configurations
 require("mason").setup()
 

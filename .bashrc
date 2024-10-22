@@ -18,5 +18,7 @@ export EDITOR=nvim
 export TERMINAL=kitty
 export BROWSER=librewolf
 
+cat ~/.cache/wal/sequences
+source ~/.cache/wal/colors-tty.sh
 eval "$(starship init bash)"
 source ~/.bash_aliases
