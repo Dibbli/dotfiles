@@ -19,7 +19,7 @@
     "format": "{name}: {icon}",
     "format-icons": {
       "active": "",
-      "default": "",
+      "default": "󰧞",
     },
     "persistent-workspaces": {
       "*": [1, 2, 3, 4, 5],
