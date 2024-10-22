@@ -723,13 +723,6 @@ require("mason-lspconfig").setup_handlers({
 		require("lspconfig").eslint.setup({
 			capabilities = capabilities,
 			filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
-			on_attach = function(client, bufnr)
-				-- Auto-fix ESLint issues on save
-				vim.api.nvim_create_autocmd("BufWritePre", {
-					buffer = bufnr,
-					command = "EslintFixAll",
-				})
-			end,
 		})
 	end,
 
@@ -775,6 +768,12 @@ require("mason-lspconfig").setup_handlers({
 -- Additional keymaps for built-in commands
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
+vim.api.nvim_set_keymap(
+	"n",
+	"<leader>t",
+	":TSToolsFixAll<CR>:EslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
+	opts
+)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "<leader>w", ":w<CR>", opts)
