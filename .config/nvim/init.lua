@@ -81,7 +81,8 @@ require("lazy").setup({
 
 	{
 		"pmizio/typescript-tools.nvim",
-		config = true,
+		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		opts = {},
 	},
 
 	-- LSP Installer
@@ -319,17 +320,12 @@ require("lazy").setup({
 	-- AI Code Completion
 	{
 		"monkoose/neocodeium",
-		config = true,
-		keys = {
-			{
-				"<leader>a",
-				function()
-					require("neocodeium").accept()
-				end,
-				mode = "i",
-				desc = "Accept Neocodeium Suggestion",
-			},
-		},
+		event = "VeryLazy",
+		config = function()
+			local neocodeium = require("neocodeium")
+			neocodeium.setup()
+			vim.keymap.set("i", "<leader>a", neocodeium.accept)
+		end,
 	},
 
 	-- Commenting
@@ -566,25 +562,26 @@ require("lazy").setup({
 
 	-- Kotlin Support
 	{ "udalov/kotlin-vim" },
-
-	-- Add conform.nvim
 	{
-		"stevearc/conform.nvim",
+		"nvimdev/guard.nvim",
+		dependencies = {
+			"nvimdev/guard-collection",
+		},
 		config = function()
-			require("conform").setup({
-				formatters_by_ft = {
-					json = { "prettier" },
-					typescript = { "eslint_d", "prettier" },
-					scss = { "prettier" },
-					css = { "prettier" },
-					lua = { "stylua" },
-					kotlin = { "ktlint" },
-					html = { "prettier" },
-				},
-				format_on_save = {
-					lsp_fallback = true,
-				},
-			})
+			local ft = require("guard.filetype")
+			ft("json"):fmt("prettier")
+			ft("typescript"):lint("eslint"):fmt("prettier")
+			ft("scss"):lint("eslint"):fmt("prettier")
+			ft("css"):lint("eslint"):fmt("prettier")
+			ft("lua"):fmt("stylua")
+			ft("kotlin"):fmt("ktlint")
+			ft("htmlangular"):lint("eslint"):fmt("prettier")
+			ft("html"):lint("eslint"):fmt("prettier")
+			vim.g.guard_config = {
+				fmt_on_save = true,
+				lsp_as_default_formatter = false,
+				save_on_fmt = true,
+			}
 		end,
 	},
 
@@ -679,11 +676,6 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- Function to get the node_modules path
 local lspconfig_util = require("lspconfig.util")
-
-local function get_node_modules(root_dir)
-	local root_node = lspconfig_util.find_node_modules_ancestor(root_dir)
-	return root_node and lspconfig_util.path.join(root_node, "node_modules") or ""
-end
 
 -- Setup handlers for Mason LSPconfig
 require("mason-lspconfig").setup_handlers({
