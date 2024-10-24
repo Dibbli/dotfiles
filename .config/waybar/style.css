@@ -63,7 +63,6 @@ button:hover {
 #clock,
 #cpu,
 #memory,
-#network,
 #pulseaudio,
 #tray,
 #keyboard-state {
@@ -72,6 +71,12 @@ button:hover {
   color: #ebdbb2;
 }
 
+#network {
+  padding-right: 10px;
+  padding-top: 5px;
+  background-color: #282828;
+  color: #ebdbb2;
+}
 .modules-left > widget:first-child > #workspaces {
   margin-left: 0;
 }
