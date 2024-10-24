@@ -363,7 +363,7 @@ require("lazy").setup({
 		end,
 		keys = {
 			{
-				"k",
+				"<leader>k",
 				function()
 					require("hover").hover()
 				end,
@@ -371,7 +371,7 @@ require("lazy").setup({
 				desc = "Hover Documentation",
 			},
 			{
-				"gk",
+				"<leader>gk",
 				function()
 					require("hover").hover_select()
 				end,
