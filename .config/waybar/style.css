@@ -73,7 +73,7 @@ button:hover {
 
 #network {
   padding-right: 10px;
-  padding-top: 5px;
+  padding-top: 3px;
   background-color: #282828;
   color: #ebdbb2;
 }
@@ -95,11 +95,6 @@ label:focus {
 
 #pulseaudio {
   background-color: #282828;
-}
-
-#pulseaudio.muted {
-  background-color: #689d6a;
-  color: #665c54;
 }
 
 #tray {
