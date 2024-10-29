@@ -448,8 +448,16 @@ require("lazy").setup({
 
 	-- Colorschemes
 	{
-		"morhetz/gruvbox",
+		"ellisonleao/gruvbox.nvim",
 		config = function()
+			require("gruvbox").setup({
+				italic = {
+					strings = false,
+					emphasis = false,
+					comments = true,
+					folds = false,
+				},
+			})
 			vim.cmd("colorscheme gruvbox")
 		end,
 		keys = {
