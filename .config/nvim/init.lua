@@ -97,6 +97,31 @@ require("lazy").setup({
 	{ "MunifTanjim/nui.nvim" },
 
 	{
+		"nvimdev/dashboard-nvim",
+		event = "VimEnter",
+		config = function()
+			require("dashboard").setup({
+				theme = "hyper",
+				config = {
+					header = {
+						"███╗   ██╗██╗   ██╗██╗███╗   ███╗",
+						"████╗  ██║██║   ██║██║████╗ ████║",
+						"██╔██╗ ██║██║   ██║██║██╔████╔██║",
+						"██║╚██╗██║╚██╗ ██╔╝██║██║╚██╔╝██║",
+						"██║ ╚████║ ╚████╔╝ ██║██║ ╚═╝ ██║",
+						"╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+						"",
+						"",
+					},
+					footer = {
+						"v" .. vim.version().major .. "." .. vim.version().minor .. "." .. vim.version().patch,
+					},
+				},
+			})
+		end,
+		dependencies = { { "nvim-tree/nvim-web-devicons" } },
+	},
+	{
 		"akinsho/bufferline.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		config = true,
