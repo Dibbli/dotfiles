@@ -801,7 +801,7 @@ require("mason-lspconfig").setup_handlers({
 	["angularls"] = function()
 		require("lspconfig").angularls.setup({
 			capabilities = capabilities,
-			filetypes = { "typescript", "html", "typescriptreact", "typescript.tsx" },
+			filetypes = { "typescript", "html", "htmlangular", "typescriptreact", "typescript.tsx" },
 			root_dir = lspconfig_util.root_pattern("package.json"),
 		})
 	end,
