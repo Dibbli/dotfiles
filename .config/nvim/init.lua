@@ -10,6 +10,7 @@ if not vim.uv.fs_stat(lazypath) then
 		lazypath,
 	})
 end
+vim.env.PATH = vim.env.PATH .. ':/home/dibbli/.volta/bin'
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
 -- Set leader key
@@ -619,6 +620,7 @@ require("lazy").setup({
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint"):fmt("prettier")
 			ft("html"):lint("eslint"):fmt("prettier")
+			ft("python"):lint("flake8"):fmt("black")
 			vim.g.guard_config = {
 				fmt_on_save = true,
 				lsp_as_default_formatter = false,
