@@ -816,6 +816,7 @@ vim.api.nvim_set_keymap(
 	":TSToolsFixAll<CR>:EslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
 	opts
 )
+map("n", "<leader>/", ":noh<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "<leader>w", ":w<CR>", opts)
