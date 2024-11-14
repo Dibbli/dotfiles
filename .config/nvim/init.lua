@@ -136,7 +136,6 @@ require("lazy").setup({
 	},
 
 	--Color picker
-
 	{
 		"nvzone/minty",
 		cmd = { "Shades", "Huefy" },
@@ -160,7 +159,25 @@ require("lazy").setup({
 		},
 		dependencies = { "nvzone/volt" },
 	},
+	{
+		"nvzone/menu",
+		lazy = true,
+		dependencies = { "nvzone/volt" },
+		keys = {
+			{
+				"<RightMouse>",
+				function()
+					vim.cmd.exec('"normal! \\<RightMouse>"')
 
+					local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
+					require("menu").open(options, { mouse = true })
+				end,
+				mode = "n", -- Normal mode
+				noremap = true,
+				silent = true,
+			},
+		},
+	},
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
