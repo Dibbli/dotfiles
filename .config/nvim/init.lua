@@ -134,6 +134,33 @@ require("lazy").setup({
 			{ "rktjmp/shipwright.nvim" },
 		},
 	},
+
+	--Color picker
+
+	{
+		"nvzone/minty",
+		cmd = { "Shades", "Huefy" },
+		keys = {
+			{
+				"<leader>o",
+				":Huefy<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Huefy",
+			},
+			{
+				"<leader>oo",
+				":Shades<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Shades",
+			},
+		},
+		dependencies = { "nvzone/volt" },
+	},
+
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
