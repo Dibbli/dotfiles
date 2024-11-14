@@ -24,6 +24,7 @@
   "lushwal.nvim": { "branch": "main", "commit": "e88592b6bfc81242ce309d00255254ad63935e0f" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "4d0e5b49363cac187326998b96aa6a2884e0e89b" },
   "mason.nvim": { "branch": "main", "commit": "e2f7f9044ec30067bc11800a9e266664b88cda22" },
+  "minty": { "branch": "main", "commit": "1b604ed0d741294cfb56c0ce3aa6161e9ae7dd8b" },
   "neo-tree.nvim": { "branch": "main", "commit": "a77af2e764c5ed4038d27d1c463fa49cd4794e07" },
   "neocodeium": { "branch": "main", "commit": "4da81528468b33585c411f31eb390dce573ccb14" },
   "neominimap.nvim": { "branch": "main", "commit": "65b1f1211086d16020f50f8d650eadf625e405b9" },
@@ -58,5 +59,6 @@
   "vim-js-pretty-template": { "branch": "master", "commit": "ce1254c3e3d50e19825d3a1e2cd10582ab7c7844" },
   "vim-sensible": { "branch": "master", "commit": "0ce2d843d6f588bb0c8c7eec6449171615dc56d9" },
   "vim-vsnip": { "branch": "master", "commit": "02a8e79295c9733434aab4e0e2b8c4b7cea9f3a9" },
+  "volt": { "branch": "main", "commit": "1df6698f7e5d19db578063412d12322e53376f5e" },
   "windline.nvim": { "branch": "master", "commit": "bef735787bef64697036774eca6418e7a786100b" }
 }
