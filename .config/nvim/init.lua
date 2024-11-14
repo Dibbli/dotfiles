@@ -329,6 +329,28 @@ require("lazy").setup({
 		config = true,
 	},
 	{
+		"sindrets/diffview.nvim",
+		config = true,
+		keys = {
+			{
+				"<leader>dg",
+				":DiffviewOpen<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Open diff view",
+			},
+			{
+				"<leader>qg",
+				":DiffviewClose<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Close diff view",
+			},
+		},
+	},
+	{
 		"f-person/git-blame.nvim",
 		event = "VeryLazy",
 		opts = {
