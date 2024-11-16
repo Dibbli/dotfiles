@@ -178,6 +178,21 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"nvzone/timerly",
+		dependencies = {
+			"nvzone/volt",
+			keys = {
+				{
+					"<leader>p",
+					":TimerlyToggle<CR>",
+					mode = "n",
+					noremap = true,
+					desc = "Substitute Operator",
+				},
+			},
+		},
+	},
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
