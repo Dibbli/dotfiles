@@ -10,7 +10,7 @@
     "network",
     "cpu",
     "memory",
-    "custom/keyboard-layout",
+    "hyprland/language",
     "keyboard-state",
     "clock",
     "tray",
@@ -38,6 +38,10 @@
       "(.*) - kitty": " [$1]",
     },
   },
+  "hyprland/language": {
+    "format-en": "EN",
+    "format-hu": "HU",
+  },
   "keyboard-state": {
     "numlock": true,
     "capslock": true,
@@ -64,12 +68,7 @@
   "memory": {
     "format": "{}% ",
   },
-  "custom/keyboard-layout": {
-    "exec": "~/Documents/scripts/misc/keyboard_layout.sh",
-    "interval": 1,
-    "tooltip": false,
-    "format": "{}",
-  },
+
   "temperature": {
     // "thermal-zone": 2,
     // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
