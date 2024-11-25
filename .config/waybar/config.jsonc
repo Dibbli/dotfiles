@@ -10,6 +10,7 @@
     "network",
     "cpu",
     "memory",
+    "custom/keyboard-layout",
     "keyboard-state",
     "clock",
     "tray",
@@ -62,6 +63,12 @@
   },
   "memory": {
     "format": "{}% ",
+  },
+  "custom/keyboard-layout": {
+    "exec": "~/Documents/scripts/misc/keyboard_layout.sh",
+    "interval": 1,
+    "tooltip": false,
+    "format": "{}",
   },
   "temperature": {
     // "thermal-zone": 2,
