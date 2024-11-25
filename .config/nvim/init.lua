@@ -32,6 +32,8 @@ vim.opt.foldmethod = "syntax"
 vim.opt.autoread = true
 vim.opt.termguicolors = true
 vim.opt.autoread = true
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
