@@ -71,6 +71,9 @@ button:hover {
   color: #ebdbb2;
 }
 
+#custom-keyboard-layout {
+  padding-left: 10px;
+}
 #network {
   padding-right: 10px;
   padding-top: 3px;
