@@ -33,6 +33,8 @@ vim.opt.foldmethod = "syntax"
 vim.opt.autoread = true
 vim.opt.termguicolors = true
 vim.opt.autoread = true
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
@@ -133,6 +135,65 @@ require("lazy").setup({
 		dependencies = {
 			{ "rktjmp/lush.nvim" },
 			{ "rktjmp/shipwright.nvim" },
+		},
+	},
+
+	--Color picker
+	{
+		"nvzone/minty",
+		cmd = { "Shades", "Huefy" },
+		keys = {
+			{
+				"<leader>o",
+				":Huefy<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Huefy",
+			},
+			{
+				"<leader>oo",
+				":Shades<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Shades",
+			},
+		},
+		dependencies = { "nvzone/volt" },
+	},
+	{
+		"nvzone/menu",
+		lazy = true,
+		dependencies = { "nvzone/volt" },
+		keys = {
+			{
+				"<RightMouse>",
+				function()
+					vim.cmd.exec('"normal! \\<RightMouse>"')
+
+					local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
+					require("menu").open(options, { mouse = true })
+				end,
+				mode = "n", -- Normal mode
+				noremap = true,
+				silent = true,
+			},
+		},
+	},
+	{
+		"nvzone/timerly",
+		dependencies = {
+			"nvzone/volt",
+			keys = {
+				{
+					"<leader>p",
+					":TimerlyToggle<CR>",
+					mode = "n",
+					noremap = true,
+					desc = "Substitute Operator",
+				},
+			},
 		},
 	},
 	-- Substitute
@@ -328,6 +389,28 @@ require("lazy").setup({
 	{
 		"lewis6991/gitsigns.nvim",
 		config = true,
+	},
+	{
+		"sindrets/diffview.nvim",
+		config = true,
+		keys = {
+			{
+				"<leader>dg",
+				":DiffviewOpen<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Open diff view",
+			},
+			{
+				"<leader>qg",
+				":DiffviewClose<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Close diff view",
+			},
+		},
 	},
 	{
 		"f-person/git-blame.nvim",
@@ -818,6 +901,7 @@ vim.api.nvim_set_keymap(
 	":TSToolsFixAll<CR>:EslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
 	opts
 )
+map("n", "<leader>/", ":noh<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "<leader>w", ":w<CR>", opts)

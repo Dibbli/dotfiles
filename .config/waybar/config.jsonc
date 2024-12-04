@@ -10,6 +10,7 @@
     "network",
     "cpu",
     "memory",
+    "hyprland/language",
     "keyboard-state",
     "clock",
     "tray",
@@ -37,6 +38,10 @@
       "(.*) - kitty": " [$1]",
     },
   },
+  "hyprland/language": {
+    "format-en": "EN",
+    "format-hu": "HU",
+  },
   "keyboard-state": {
     "numlock": true,
     "capslock": true,
@@ -63,6 +68,7 @@
   "memory": {
     "format": "{}% ",
   },
+
   "temperature": {
     // "thermal-zone": 2,
     // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
@@ -82,7 +88,7 @@
   },
   "pulseaudio": {
     // "scroll-step": 1, // %, can be a float
-    "format": "{volume}% {icon} {format_source}",
+    "format": "{volume}% {icon}  {format_source}",
     "format-bluetooth": "{volume}% {icon} {format_source}",
     "format-muted": "0% 󰝟 {format_source}",
     "format-source": "{volume}% ",

@@ -70,7 +70,9 @@ button:hover {
   background-color: #282828;
   color: #ebdbb2;
 }
-
+#language {
+  padding-left: 10px;
+}
 #network {
   padding-right: 10px;
   padding-top: 3px;
