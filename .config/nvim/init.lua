@@ -10,7 +10,7 @@ if not vim.uv.fs_stat(lazypath) then
 		lazypath,
 	})
 end
-vim.env.PATH = vim.env.PATH .. ':/home/dibbli/.volta/bin'
+vim.env.PATH = vim.env.PATH .. ":/home/dibbli/.volta/bin"
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
 -- Set leader key
@@ -781,9 +781,9 @@ vim.cmd("colorscheme gruvbox")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
+require("substitute").setup()
 -- Mason and LSP configurations
 require("mason").setup()
-
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"angularls",
