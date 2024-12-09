@@ -779,6 +779,7 @@ vim.cmd("colorscheme gruvbox")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
+require("substitute").setup()
 -- Mason and LSP configurations
 require("mason").setup()
 
