@@ -59,3 +59,5 @@ eval "$(starship init zsh)"
 
 # Source aliases (if they exist)
 [[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
