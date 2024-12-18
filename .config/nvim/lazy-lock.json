@@ -7,7 +7,7 @@
   "git-blame.nvim": { "branch": "master", "commit": "2883a7460f611c2705b23f12d58d398d5ce6ec00" },
   "gitsigns.nvim": { "branch": "main", "commit": "5f808b5e4fef30bd8aca1b803b4e555da07fc412" },
   "grapple.nvim": { "branch": "main", "commit": "b41ddfc1c39f87f3d1799b99c2f0f1daa524c5f7" },
-  "gruvbox.nvim": { "branch": "main", "commit": "68c3460a5d1d1a362318960035c9f3466d5011f5" },
+  "gruvbox-material": { "branch": "master", "commit": "b95c102f683d6402f84c8e492d3b0641c2d273e4" },
   "guard-collection": { "branch": "main", "commit": "5bfccbcebec042512a44fc1371927472254fa148" },
   "guard.nvim": { "branch": "main", "commit": "0a6d015d542a923feedfffaaeabaad2becb87ebb" },
   "guess-indent.nvim": { "branch": "main", "commit": "6cd61f7a600bb756e558627cd2e740302c58e32d" },

@@ -520,20 +520,19 @@ require("lazy").setup({
 
 	-- Colorschemes
 	{
-		"ellisonleao/gruvbox.nvim",
+		"sainnhe/gruvbox-material",
+		lazy = false,
+		priority = 1000,
 		config = function()
-			require("gruvbox").setup({
-				italic = {
-					strings = false,
-					emphasis = false,
-					comments = true,
-					folds = false,
-				},
-			})
-			vim.cmd("colorscheme gruvbox")
+			vim.cmd.colorscheme("gruvbox-material")
 		end,
 		keys = {
-			{ "<leader>gt", ":lua vim.cmd('colorscheme gruvbox')<CR>", mode = "n", desc = "Switch to Gruvbox" },
+			{
+				"<leader>gt",
+				":lua vim.cmd('colorscheme gruvbox-material')<CR>",
+				mode = "n",
+				desc = "Switch to Gruvbox",
+			},
 		},
 	},
 
@@ -739,7 +738,7 @@ require("lazy").setup({
 		},
 	},
 })
-vim.cmd("colorscheme gruvbox")
+vim.cmd("colorscheme gruvbox-material")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
