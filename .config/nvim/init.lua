@@ -1,5 +1,6 @@
 -- Install lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+-- lua_ls is lying, this is defined
 if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
@@ -160,25 +161,6 @@ require("lazy").setup({
 			},
 		},
 		dependencies = { "nvzone/volt" },
-	},
-	{
-		"nvzone/menu",
-		lazy = true,
-		dependencies = { "nvzone/volt" },
-		keys = {
-			{
-				"<RightMouse>",
-				function()
-					vim.cmd.exec('"normal! \\<RightMouse>"')
-
-					local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
-					require("menu").open(options, { mouse = true })
-				end,
-				mode = "n", -- Normal mode
-				noremap = true,
-				silent = true,
-			},
-		},
 	},
 	{
 		"nvzone/timerly",
@@ -713,7 +695,6 @@ require("nvim-web-devicons").setup()
 require("colorizer").setup()
 require("substitute").setup()
 -- Mason and LSP configurations
-require("blink-cmp").setup()
 require("mason").setup()
 
 require("mason-lspconfig").setup({
