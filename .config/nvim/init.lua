@@ -766,7 +766,7 @@ require("mason-lspconfig").setup({
 
 -- Function to get the node_modules path
 local lspconfig_util = require("lspconfig.util")
-
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 -- Setup handlers for Mason LSPconfig
 require("mason-lspconfig").setup_handlers({
 	-- Default handler for all servers
