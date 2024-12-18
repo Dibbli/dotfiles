@@ -457,41 +457,6 @@ require("lazy").setup({
 		},
 	},
 
-	-- Hover
-	{
-		"lewis6991/hover.nvim",
-		config = function()
-			require("hover").setup({
-				init = function()
-					require("hover.providers.lsp")
-				end,
-				preview_opts = {
-					border = nil,
-				},
-				preview_window = false,
-				title = true,
-			})
-		end,
-		keys = {
-			{
-				"<leader>k",
-				function()
-					require("hover").hover()
-				end,
-				mode = "n",
-				desc = "Hover Documentation",
-			},
-			{
-				"<leader>gk",
-				function()
-					require("hover").hover_select()
-				end,
-				mode = "n",
-				desc = "Hover Select",
-			},
-		},
-	},
-
 	-- Completion Plugins
 	{
 		"saghen/blink.cmp",
@@ -500,7 +465,7 @@ require("lazy").setup({
 		dependencies = "rafamadriz/friendly-snippets",
 		opts = {
 
-			keymap = { preset = "enter" },
+			keymap = { preset = "super-tab" },
 
 			appearance = {
 
@@ -518,6 +483,7 @@ require("lazy").setup({
 				},
 			},
 		},
+		signature = { enabled = true },
 		opts_extend = { "sources.default" },
 	},
 
