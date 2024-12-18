@@ -302,16 +302,18 @@ require("lazy").setup({
 	},
 
 	-- Telescope Fuzzy Finder
+	{ "junegunn/fzf", build = "./install --bin" },
 	{
-		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		"ibhagwan/fzf-lua",
+		-- optional for icon support
+		dependencies = { "nvim-tree/nvim-web-devicons", "junegunn/fzf" },
 		keys = {
 			{
 				"<leader>f",
 				function()
 					vim.cmd('normal! "zy')
 					local text = vim.fn.getreg("z")
-					require("telescope.builtin").live_grep({
+					require("fzf-lua").live_grep({
 						default_text = text,
 					})
 				end,
@@ -322,27 +324,28 @@ require("lazy").setup({
 			},
 			{
 				"<leader>g",
-				":Telescope find_files<CR>",
+				function()
+					require("fzf-lua").files()
+				end,
 				mode = "n",
 				noremap = true,
 				silent = true,
 				desc = "Find Files",
 			},
-			{ "<leader>f", ":Telescope live_grep<CR>", mode = "n", noremap = true, silent = true, desc = "Live Grep" },
+			{
+				"<leader>f",
+				function()
+					require("fzf-lua").live_grep()
+				end,
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Live Grep",
+			},
 		},
-	},
-	{
-		"nvim-telescope/telescope-ui-select.nvim",
 		config = function()
-			require("telescope").load_extension("ui-select")
-		end,
-	},
-
-	{
-		"nvim-telescope/telescope-fzf-native.nvim",
-		build = "make",
-		config = function()
-			require("telescope").load_extension("fzf")
+			-- calling `setup` is optional for customization
+			require("fzf-lua").setup({})
 		end,
 	},
 
