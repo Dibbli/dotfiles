@@ -491,67 +491,31 @@ require("lazy").setup({
 
 	-- Completion Plugins
 	{
-		"hrsh7th/nvim-cmp",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
-			"hrsh7th/cmp-vsnip",
-			"hrsh7th/vim-vsnip",
-			"onsails/lspkind.nvim",
+		"saghen/blink.cmp",
+		version = "v0.*",
+		lazy = false,
+		dependencies = "rafamadriz/friendly-snippets",
+		opts = {
+
+			keymap = { preset = "enter" },
+
+			appearance = {
+
+				use_nvim_cmp_as_default = true,
+
+				nerd_font_variant = "mono",
+			},
+
+			sources = {
+				default = {
+					"lsp",
+					"path",
+					"snippets",
+					"buffer",
+				},
+			},
 		},
-		config = function()
-			local cmp = require("cmp")
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						vim.fn["vsnip#anonymous"](args.body)
-					end,
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-e>"] = cmp.mapping.abort(),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-				}),
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = "vsnip" },
-				}, {
-					{ name = "path" },
-				}),
-			})
-
-			-- Set configuration for specific filetype
-			cmp.setup.filetype("gitcommit", {
-				sources = cmp.config.sources({
-					{ name = "cmp_git" },
-				}, {
-					{ name = "buffer" },
-				}),
-			})
-
-			-- Use buffer source for `/` and `?`
-			cmp.setup.cmdline({ "/", "?" }, {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = {
-					{ name = "buffer" },
-				},
-			})
-
-			-- Use cmdline & path source for ':'
-			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({
-					{ name = "path" },
-				}, {
-					{ name = "cmdline" },
-				}),
-				matching = { disallow_symbol_nonprefix_matching = false },
-			})
-		end,
+		opts_extend = { "sources.default" },
 	},
 
 	-- Colorschemes
@@ -781,6 +745,7 @@ require("nvim-web-devicons").setup()
 require("colorizer").setup()
 require("substitute").setup()
 -- Mason and LSP configurations
+require("blink-cmp").setup()
 require("mason").setup()
 
 require("mason-lspconfig").setup({
@@ -796,9 +761,6 @@ require("mason-lspconfig").setup({
 	},
 	automatic_installation = true,
 })
-
--- Capabilities for LSP servers
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- Function to get the node_modules path
 local lspconfig_util = require("lspconfig.util")
