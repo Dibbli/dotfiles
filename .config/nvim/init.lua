@@ -298,11 +298,7 @@ require("lazy").setup({
 			{
 				"<leader>f",
 				function()
-					vim.cmd('normal! "zy')
-					local text = vim.fn.getreg("z")
-					require("fzf-lua").live_grep({
-						default_text = text,
-					})
+					require("fzf-lua").grep_visual()
 				end,
 				mode = "v",
 				noremap = true,
@@ -628,8 +624,8 @@ require("lazy").setup({
 		},
 		config = function()
 			local ft = require("guard.filetype")
-			ft("json"):fmt("prettier")
-			ft("jsonc"):fmt("prettier")
+			ft("json"):lint("eslint"):fmt("prettier")
+			ft("jsonc"):lint("eslint"):fmt("prettier")
 			ft("typescript"):lint("eslint"):fmt("prettier")
 			ft("scss"):lint("eslint"):fmt("prettier")
 			ft("css"):lint("eslint"):fmt("prettier")
