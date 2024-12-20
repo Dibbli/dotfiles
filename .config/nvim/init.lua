@@ -1,5 +1,6 @@
 -- Install lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+-- lua_ls is lying, this is defined
 if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
@@ -86,6 +87,11 @@ require("lazy").setup({
 		"pmizio/typescript-tools.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 		opts = {},
+		config = function()
+			require("typescript-tools").setup({
+				root_dir = require("lspconfig").util.root_pattern("tsconfig.base.json"),
+			})
+		end,
 	},
 
 	-- LSP Installer
@@ -161,25 +167,6 @@ require("lazy").setup({
 			},
 		},
 		dependencies = { "nvzone/volt" },
-	},
-	{
-		"nvzone/menu",
-		lazy = true,
-		dependencies = { "nvzone/volt" },
-		keys = {
-			{
-				"<RightMouse>",
-				function()
-					vim.cmd.exec('"normal! \\<RightMouse>"')
-
-					local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
-					require("menu").open(options, { mouse = true })
-				end,
-				mode = "n", -- Normal mode
-				noremap = true,
-				silent = true,
-			},
-		},
 	},
 	{
 		"nvzone/timerly",
@@ -303,18 +290,16 @@ require("lazy").setup({
 	},
 
 	-- Telescope Fuzzy Finder
+	{ "junegunn/fzf", build = "./install --bin" },
 	{
-		"nvim-telescope/telescope.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		"ibhagwan/fzf-lua",
+		-- optional for icon support
+		dependencies = { "nvim-tree/nvim-web-devicons", "junegunn/fzf" },
 		keys = {
 			{
 				"<leader>f",
 				function()
-					vim.cmd('normal! "zy')
-					local text = vim.fn.getreg("z")
-					require("telescope.builtin").live_grep({
-						default_text = text,
-					})
+					require("fzf-lua").grep_visual()
 				end,
 				mode = "v",
 				noremap = true,
@@ -323,27 +308,28 @@ require("lazy").setup({
 			},
 			{
 				"<leader>g",
-				":Telescope find_files<CR>",
+				function()
+					require("fzf-lua").files()
+				end,
 				mode = "n",
 				noremap = true,
 				silent = true,
 				desc = "Find Files",
 			},
-			{ "<leader>f", ":Telescope live_grep<CR>", mode = "n", noremap = true, silent = true, desc = "Live Grep" },
+			{
+				"<leader>f",
+				function()
+					require("fzf-lua").live_grep()
+				end,
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Live Grep",
+			},
 		},
-	},
-	{
-		"nvim-telescope/telescope-ui-select.nvim",
 		config = function()
-			require("telescope").load_extension("ui-select")
-		end,
-	},
-
-	{
-		"nvim-telescope/telescope-fzf-native.nvim",
-		build = "make",
-		config = function()
-			require("telescope").load_extension("fzf")
+			-- calling `setup` is optional for customization
+			require("fzf-lua").setup({})
 		end,
 	},
 
@@ -455,122 +441,67 @@ require("lazy").setup({
 		},
 	},
 
-	-- Hover
-	{
-		"lewis6991/hover.nvim",
-		config = function()
-			require("hover").setup({
-				init = function()
-					require("hover.providers.lsp")
-				end,
-				preview_opts = {
-					border = nil,
-				},
-				preview_window = false,
-				title = true,
-			})
-		end,
-		keys = {
-			{
-				"<leader>k",
-				function()
-					require("hover").hover()
-				end,
-				mode = "n",
-				desc = "Hover Documentation",
-			},
-			{
-				"<leader>gk",
-				function()
-					require("hover").hover_select()
-				end,
-				mode = "n",
-				desc = "Hover Select",
-			},
-		},
-	},
-
 	-- Completion Plugins
 	{
-		"hrsh7th/nvim-cmp",
-		dependencies = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
-			"hrsh7th/cmp-vsnip",
-			"hrsh7th/vim-vsnip",
-			"onsails/lspkind.nvim",
+		"saghen/blink.cmp",
+		version = "v0.*",
+		lazy = false,
+		dependencies = "rafamadriz/friendly-snippets",
+		opts = {
+
+			keymap = { preset = "super-tab" },
+
+			appearance = {
+
+				use_nvim_cmp_as_default = true,
+
+				nerd_font_variant = "mono",
+			},
+
+			sources = {
+				default = {
+					"lsp",
+					"path",
+					"snippets",
+					"buffer",
+				},
+			},
+			completion = {
+				accept = {
+					auto_brackets = {
+						enabled = true,
+					},
+				},
+				menu = {
+					draw = {
+						treesitter = { "lsp" },
+					},
+				},
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+				},
+			},
 		},
-		config = function()
-			local cmp = require("cmp")
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						vim.fn["vsnip#anonymous"](args.body)
-					end,
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-e>"] = cmp.mapping.abort(),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-				}),
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = "vsnip" },
-				}, {
-					{ name = "path" },
-				}),
-			})
-
-			-- Set configuration for specific filetype
-			cmp.setup.filetype("gitcommit", {
-				sources = cmp.config.sources({
-					{ name = "cmp_git" },
-				}, {
-					{ name = "buffer" },
-				}),
-			})
-
-			-- Use buffer source for `/` and `?`
-			cmp.setup.cmdline({ "/", "?" }, {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = {
-					{ name = "buffer" },
-				},
-			})
-
-			-- Use cmdline & path source for ':'
-			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({
-					{ name = "path" },
-				}, {
-					{ name = "cmdline" },
-				}),
-				matching = { disallow_symbol_nonprefix_matching = false },
-			})
-		end,
+		signature = { enabled = true },
+		opts_extend = { "sources.default" },
 	},
 
 	-- Colorschemes
 	{
-		"ellisonleao/gruvbox.nvim",
+		"sainnhe/gruvbox-material",
+		lazy = false,
+		priority = 1000,
 		config = function()
-			require("gruvbox").setup({
-				italic = {
-					strings = false,
-					emphasis = false,
-					comments = true,
-					folds = false,
-				},
-			})
-			vim.cmd("colorscheme gruvbox")
+			vim.cmd.colorscheme("gruvbox-material")
 		end,
 		keys = {
-			{ "<leader>gt", ":lua vim.cmd('colorscheme gruvbox')<CR>", mode = "n", desc = "Switch to Gruvbox" },
+			{
+				"<leader>gt",
+				":lua vim.cmd('colorscheme gruvbox-material')<CR>",
+				mode = "n",
+				desc = "Switch to Gruvbox",
+			},
 		},
 	},
 
@@ -694,8 +625,8 @@ require("lazy").setup({
 		},
 		config = function()
 			local ft = require("guard.filetype")
-			ft("json"):fmt("prettier")
-			ft("jsonc"):fmt("prettier")
+			ft("json"):lint("eslint"):fmt("prettier")
+			ft("jsonc"):lint("eslint"):fmt("prettier")
 			ft("typescript"):lint("eslint"):fmt("prettier")
 			ft("scss"):lint("eslint"):fmt("prettier")
 			ft("css"):lint("eslint"):fmt("prettier")
@@ -777,7 +708,7 @@ require("lazy").setup({
 		},
 	},
 })
-vim.cmd("colorscheme gruvbox")
+vim.cmd("colorscheme gruvbox-material")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
@@ -798,12 +729,9 @@ require("mason-lspconfig").setup({
 	automatic_installation = true,
 })
 
--- Capabilities for LSP servers
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 -- Function to get the node_modules path
 local lspconfig_util = require("lspconfig.util")
-
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 -- Setup handlers for Mason LSPconfig
 require("mason-lspconfig").setup_handlers({
 	-- Default handler for all servers

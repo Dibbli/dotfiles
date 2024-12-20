@@ -53,8 +53,11 @@ export PATH=/home/dibbli/.volta/bin/npx:$PATH
 # Load pywal colors
 cat ~/.cache/wal/sequences
 source ~/.cache/wal/colors-tty.sh
-[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
+
+# Initialize Starship prompt
 eval "$(starship init zsh)"
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Source aliases (if they exist)
+[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
