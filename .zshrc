@@ -50,9 +50,6 @@ export PATH=$VOLTA_HOME/bin:$PATH
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 export PATH=/home/dibbli/.volta/bin/npx:$PATH
 
-# Load pywal colors
-cat ~/.cache/wal/sequences
-source ~/.cache/wal/colors-tty.sh
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

@@ -12,6 +12,6 @@ editor nvim
 
 
 # BEGIN_KITTY_THEME
-# Ashen
+# 1984 Dark
 include current-theme.conf
 # END_KITTY_THEME
