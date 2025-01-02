@@ -38,16 +38,6 @@ vim.opt.cursorlineopt = "number"
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
--- Terminal compatibility
-if vim.fn.empty(vim.env.TMUX) == 1 and vim.env.TERM_PROGRAM ~= "Apple_Terminal" then
-	if vim.fn.has("nvim") == 1 then
-		vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
-	end
-	if vim.fn.has("termguicolors") == 1 then
-		vim.opt.termguicolors = true
-	end
-end
-
 -- Plugin setup
 require("lazy").setup({
 
@@ -503,6 +493,19 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"ficcdaf/ashen.nvim",
+		lazy = false,
+		priority = 1000,
+		keys = {
+			{
+				"<leader>at",
+				":lua vim.cmd('colorscheme ashen')<CR>",
+				mode = "n",
+				desc = "Switch to Ashen",
+			},
+		},
+	},
 
 	{
 		"maxmx03/solarized.nvim",
@@ -706,7 +709,7 @@ require("lazy").setup({
 		},
 	},
 })
-vim.cmd("colorscheme gruvbox-material")
+vim.cmd("colorscheme ashen")
 -- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
