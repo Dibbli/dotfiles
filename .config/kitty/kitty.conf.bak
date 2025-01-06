@@ -12,6 +12,6 @@ editor nvim
 
 
 # BEGIN_KITTY_THEME
-# 1984 Dark
+# Ciapre
 include current-theme.conf
 # END_KITTY_THEME
