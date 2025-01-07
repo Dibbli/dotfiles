@@ -23,7 +23,7 @@ vim.opt.shiftwidth = 4
 vim.opt.scrolloff = 8
 vim.opt.background = "dark"
 vim.opt.listchars = { tab = "▏ " }
-vim.opt.showtabline = 2
+vim.opt.showtabline = 0
 vim.opt.laststatus = 2
 vim.opt.wildmenu = true
 vim.opt.wrap = false
@@ -119,11 +119,6 @@ require("lazy").setup({
 			})
 		end,
 		dependencies = { { "nvim-tree/nvim-web-devicons" } },
-	},
-	{
-		"akinsho/bufferline.nvim",
-		dependencies = "nvim-tree/nvim-web-devicons",
-		config = true,
 	},
 	{
 		"oncomouse/lushwal.nvim",

@@ -12,6 +12,5 @@ editor nvim
 
 
 # BEGIN_KITTY_THEME
-# Ciapre
+# Ashen
 include current-theme.conf
-# END_KITTY_THEME
