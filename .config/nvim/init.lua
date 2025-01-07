@@ -710,10 +710,14 @@ require("lazy").setup({
 	},
 })
 vim.cmd("colorscheme ashen")
--- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
+
+require("notify").setup({
+	background_colour = "#000000",
+})
 require("colorizer").setup()
 require("substitute").setup()
+
 -- Mason and LSP configurations
 require("mason").setup()
 
