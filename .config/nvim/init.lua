@@ -398,10 +398,6 @@ require("lazy").setup({
 		},
 	},
 
-	-- Minimap and Scrollbar
-	{
-		"Isrothy/neominimap.nvim",
-	},
 	{
 		"lewis6991/satellite.nvim",
 	},
@@ -695,7 +691,7 @@ require("lazy").setup({
 		"cbochs/grapple.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
-			scope = "git",
+			scope = "git_branch",
 			icons = true,
 			status = false,
 		},
@@ -707,10 +703,12 @@ require("lazy").setup({
 	},
 })
 vim.cmd("colorscheme ashen")
--- nvim-web-devicons setup
 require("nvim-web-devicons").setup()
 require("colorizer").setup()
 require("substitute").setup()
+require("notify").setup({
+	background_colour = "#000000",
+})
 -- Mason and LSP configurations
 require("mason").setup()
 require("mason-lspconfig").setup({
