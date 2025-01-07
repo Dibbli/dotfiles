@@ -36,6 +36,7 @@ vim.opt.termguicolors = true
 vim.opt.autoread = true
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
+vim.opt.laststatus = 3
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
