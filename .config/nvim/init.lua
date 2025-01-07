@@ -11,6 +11,7 @@ if not vim.uv.fs_stat(lazypath) then
 		lazypath,
 	})
 end
+vim.env.PATH = vim.env.PATH .. ":/home/dibbli/.volta/bin"
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
 -- Set leader key
@@ -22,7 +23,7 @@ vim.opt.shiftwidth = 4
 vim.opt.scrolloff = 8
 vim.opt.background = "dark"
 vim.opt.listchars = { tab = "▏ " }
-vim.opt.showtabline = 2
+vim.opt.showtabline = 0
 vim.opt.laststatus = 2
 vim.opt.wildmenu = true
 vim.opt.wrap = false
@@ -35,6 +36,7 @@ vim.opt.termguicolors = true
 vim.opt.autoread = true
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
+vim.opt.laststatus = 3
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
@@ -118,11 +120,6 @@ require("lazy").setup({
 			})
 		end,
 		dependencies = { { "nvim-tree/nvim-web-devicons" } },
-	},
-	{
-		"akinsho/bufferline.nvim",
-		dependencies = "nvim-tree/nvim-web-devicons",
-		config = true,
 	},
 	{
 		"oncomouse/lushwal.nvim",
@@ -402,10 +399,6 @@ require("lazy").setup({
 		},
 	},
 
-	-- Minimap and Scrollbar
-	{
-		"Isrothy/neominimap.nvim",
-	},
 	{
 		"lewis6991/satellite.nvim",
 	},
@@ -636,6 +629,7 @@ require("lazy").setup({
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint"):fmt("prettier")
 			ft("html"):lint("eslint"):fmt("prettier")
+			ft("python"):lint("flake8"):fmt("black")
 			vim.g.guard_config = {
 				fmt_on_save = true,
 				lsp_as_default_formatter = false,
@@ -698,7 +692,7 @@ require("lazy").setup({
 		"cbochs/grapple.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
-			scope = "git",
+			scope = "git_branch",
 			icons = true,
 			status = false,
 		},
@@ -720,7 +714,6 @@ require("substitute").setup()
 
 -- Mason and LSP configurations
 require("mason").setup()
-
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"angularls",
