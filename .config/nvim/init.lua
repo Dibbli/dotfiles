@@ -601,16 +601,6 @@ require("lazy").setup({
 	-- CSS Syntax
 	{ "hail2u/vim-css3-syntax" },
 
-	-- Tailwind CSS Colorizer for Completion Menu
-	{
-		"roobert/tailwindcss-colorizer-cmp.nvim",
-		config = function()
-			require("tailwindcss-colorizer-cmp").setup({
-				color_square_width = 2,
-			})
-		end,
-	},
-
 	-- Kotlin Support
 	{ "udalov/kotlin-vim" },
 	{
