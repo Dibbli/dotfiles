@@ -39,7 +39,7 @@ export LUA_CPATH="/usr/lib/lua/5.1/?.so;;"
 export MANPAGER='nvim +Man!'
 export EDITOR=nvim
 export TERMINAL=kitty
-export BROWSER=librewolf
+export BROWSER=zen-browser
 
 # Update PATH
 export PATH=~/.cache/yay/lingo/src/usr/share/lingo:$PATH
