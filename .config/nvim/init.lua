@@ -601,16 +601,6 @@ require("lazy").setup({
 	-- CSS Syntax
 	{ "hail2u/vim-css3-syntax" },
 
-	-- Tailwind CSS Colorizer for Completion Menu
-	{
-		"roobert/tailwindcss-colorizer-cmp.nvim",
-		config = function()
-			require("tailwindcss-colorizer-cmp").setup({
-				color_square_width = 2,
-			})
-		end,
-	},
-
 	-- Kotlin Support
 	{ "udalov/kotlin-vim" },
 	{
@@ -705,11 +695,13 @@ require("lazy").setup({
 })
 vim.cmd("colorscheme ashen")
 require("nvim-web-devicons").setup()
-require("colorizer").setup()
-require("substitute").setup()
+
 require("notify").setup({
 	background_colour = "#000000",
 })
+require("colorizer").setup()
+require("substitute").setup()
+
 -- Mason and LSP configurations
 require("mason").setup()
 require("mason-lspconfig").setup({
