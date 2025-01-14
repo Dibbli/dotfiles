@@ -441,11 +441,28 @@ require("lazy").setup({
 			},
 
 			sources = {
-				default = {
-					"lsp",
-					"path",
-					"snippets",
-					"buffer",
+				cmdline = function()
+					local type = vim.fn.getcmdtype()
+					if type == "/" or type == "?" then
+						return { "buffer" }
+					end
+					-- Commands
+					if type == ":" then
+						return { "cmdline" }
+					end
+					return {}
+				end,
+				providers = {
+					lsp = {
+						score_offset = 2,
+					},
+					path = {
+						score_offset = 1,
+					},
+					buffer = {
+						score_offset = 0,
+						max_items = 5,
+					},
 				},
 			},
 			completion = {
@@ -523,6 +540,12 @@ require("lazy").setup({
 	{
 		"nmac427/guess-indent.nvim",
 		config = true,
+	},
+
+	{
+		"rachartier/tiny-glimmer.nvim",
+		event = "TextYankPost",
+		opts = true,
 	},
 
 	-- Highlight Code Chunks
