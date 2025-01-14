@@ -483,7 +483,6 @@ require("lazy").setup({
 			},
 		},
 		signature = { enabled = true },
-		opts_extend = { "sources.default" },
 	},
 
 	-- Colorschemes
