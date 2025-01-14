@@ -1,0 +1,5 @@
+env = HYPRCURSOR_SIZE,24
+env = HYPRCURSOR_THEME,Qogir-dark
+env = QT_QPA_PLATFORMTHEME,qt6ct
+env = XDG_MENU_PREFIX,arch-
+env = CAPACITOR_ANDROID_STUDIO_PATH, /opt/android-studio/bin/studio.sh
