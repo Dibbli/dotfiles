@@ -541,12 +541,6 @@ require("lazy").setup({
 		config = true,
 	},
 
-	{
-		"rachartier/tiny-glimmer.nvim",
-		event = "TextYankPost",
-		opts = true,
-	},
-
 	-- Highlight Code Chunks
 	{
 		"shellRaining/hlchunk.nvim",
