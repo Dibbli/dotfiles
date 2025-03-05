@@ -1,8 +1,6 @@
 // -*- mode: jsonc -*-
 {
-  // "layer": "top", // Waybar at top layer
-  // "position": "bottom", // Waybar position (top|bottom|left|right)
-  "height": 30,
+  "height": 40,
   "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-right": [
@@ -15,27 +13,15 @@
     "clock",
     "tray",
   ],
-  // Modules configuration
   "hyprland/workspaces": {
-    "format": "{name}: {icon}",
+    "format": "{icon}",
     "format-icons": {
-      "active": "",
-      "default": "◯",
+      "active": "🞊",
+      "default": "○",
     },
     "persistent-workspaces": {
       "DP-1": [1, 2, 3, 4, 5],
       "DP-2": [6, 7, 8, 9, 10],
-    },
-  },
-  "hyprland/window": {
-    "format": "<i>{}</i>",
-    "max-length": 60,
-    "separate-outputs": true,
-    "offscreen-css": true,
-    "offscreen-css-text": "(inactive)",
-    "rewrite": {
-      "(.*) — Mozilla Firefox": " $1",
-      "(.*) - kitty": " [$1]",
     },
   },
   "hyprland/language": {
