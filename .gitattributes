@@ -1,0 +1,3 @@
+.config/hypr/ merge=ours
+.config/waybar/ merge=ours
+.config/dunst/ merge=ours
