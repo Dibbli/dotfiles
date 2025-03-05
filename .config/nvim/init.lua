@@ -56,14 +56,6 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		keys = {
 			{
-				"<leader>i",
-				":lua vim.lsp.buf.code_action()<CR>",
-				mode = "n",
-				noremap = true,
-				silent = true,
-				desc = "Code Action",
-			},
-			{
 				"<leader>l",
 				":lua vim.lsp.buf.definition()<CR>",
 				mode = "n",
@@ -169,6 +161,22 @@ require("lazy").setup({
 			},
 		},
 	},
+
+	-- Code actions
+	{
+		"aznhe21/actions-preview.nvim",
+		keys = {
+			{
+				"<leader>i",
+				":lua require('actions-preview').code_actions()<CR>",
+				mode = "n",
+				noremap = true,
+				silent = true,
+				desc = "Code Actions",
+			},
+		},
+	},
+
 	-- Substitute
 	{
 		"gbprod/substitute.nvim",
@@ -490,8 +498,7 @@ require("lazy").setup({
 	-- Colorschemes
 	{
 		"sainnhe/gruvbox-material",
-		lazy = false,
-		priority = 1000,
+		lazy = true,
 		config = function()
 			vim.cmd.colorscheme("gruvbox-material")
 		end,
@@ -500,6 +507,8 @@ require("lazy").setup({
 				"<leader>gt",
 				":lua vim.cmd('colorscheme gruvbox-material')<CR>",
 				mode = "n",
+				silent = true,
+				noremap = true,
 				desc = "Switch to Gruvbox",
 			},
 		},
@@ -513,6 +522,8 @@ require("lazy").setup({
 				"<leader>at",
 				":lua vim.cmd('colorscheme ashen')<CR>",
 				mode = "n",
+				silent = true,
+				noremap = true,
 				desc = "Switch to Ashen",
 			},
 		},
@@ -520,6 +531,7 @@ require("lazy").setup({
 
 	{
 		"maxmx03/solarized.nvim",
+		lazy = true,
 		config = function()
 			require("solarized").setup({
 				theme = "neovim",
@@ -530,7 +542,14 @@ require("lazy").setup({
 			})
 		end,
 		keys = {
-			{ "<leader>st", ":lua require('solarized').load('dark')<CR>", mode = "n", desc = "Switch to Solarized" },
+			{
+				"<leader>st",
+				":lua require('solarized').load('dark')<CR>",
+				silent = true,
+				noremap = true,
+				mode = "n",
+				desc = "Switch to Solarized",
+			},
 		},
 	},
 
