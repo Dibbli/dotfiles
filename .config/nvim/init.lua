@@ -442,14 +442,12 @@ require("lazy").setup({
 			keymap = { preset = "super-tab" },
 
 			appearance = {
-
 				use_nvim_cmp_as_default = true,
-
 				nerd_font_variant = "mono",
 			},
 
-			sources = {
-				cmdline = function()
+			cmdline = {
+				sources = function()
 					local type = vim.fn.getcmdtype()
 					if type == "/" or type == "?" then
 						return { "buffer" }
@@ -460,6 +458,9 @@ require("lazy").setup({
 					end
 					return {}
 				end,
+			},
+
+			sources = {
 				providers = {
 					lsp = {
 						score_offset = 2,
@@ -473,6 +474,7 @@ require("lazy").setup({
 					},
 				},
 			},
+
 			completion = {
 				accept = {
 					auto_brackets = {
