@@ -1,1 +1,2 @@
 export XCURSOR_SIZE=24
+export GTK_USE_PORTAL=1
