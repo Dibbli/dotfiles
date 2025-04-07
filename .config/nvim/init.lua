@@ -1,6 +1,9 @@
+-- ============================================================================
+-- Bootstrapping & Basic Setup
+-- ============================================================================
+
 -- Install lazy.nvim if not installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
--- lua_ls is lying, this is defined
 if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
@@ -13,10 +16,14 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.env.PATH = vim.env.PATH .. ":/home/dibbli/.volta/bin"
 vim.opt.rtp:prepend(lazypath)
+
+-- Clipboard & Leader Key
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
--- Set leader key
 vim.g.mapleader = " "
--- Vim options
+
+-- ============================================================================
+-- Vim Options & Environment Settings
+-- ============================================================================
 vim.opt.number = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -40,18 +47,23 @@ vim.opt.laststatus = 3
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
 
--- Plugin setup
+-- ============================================================================
+-- Plugin Setup via lazy.nvim
+-- ============================================================================
+
 require("lazy").setup({
 
-	-- Sensible Defaults
+	-- === Core / General Plugins ===
 	{ "tpope/vim-sensible" },
 
-	-- TypeScript and JavaScript Support
+	-- === Language Support: JavaScript, TypeScript, CSS & Kotlin ===
 	{ "leafgarland/typescript-vim" },
 	{ "Quramy/vim-js-pretty-template" },
 	{ "pangloss/vim-javascript" },
+	{ "hail2u/vim-css3-syntax" },
+	{ "udalov/kotlin-vim" },
 
-	-- LSP Configurations
+	-- === LSP & Mason Ecosystem ===
 	{
 		"neovim/nvim-lspconfig",
 		keys = {
@@ -65,7 +77,6 @@ require("lazy").setup({
 			},
 		},
 	},
-
 	{
 		"pmizio/typescript-tools.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -76,18 +87,11 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{ "williamboman/mason.nvim" },
+	{ "williamboman/mason-lspconfig.nvim" },
 
-	-- LSP Installer
-	{
-		"williamboman/mason.nvim",
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-	},
-
-	-- UI Components
+	-- === UI Components & Dashboard ===
 	{ "MunifTanjim/nui.nvim" },
-
 	{
 		"nvimdev/dashboard-nvim",
 		event = "VimEnter",
@@ -122,7 +126,7 @@ require("lazy").setup({
 		},
 	},
 
-	--Color picker
+	-- === Utility & Productivity Tools ===
 	{
 		"nvzone/minty",
 		cmd = { "Shades", "Huefy" },
@@ -162,7 +166,7 @@ require("lazy").setup({
 		},
 	},
 
-	-- Code actions
+	-- === Editing Enhancements ===
 	{
 		"aznhe21/actions-preview.nvim",
 		keys = {
@@ -176,8 +180,6 @@ require("lazy").setup({
 			},
 		},
 	},
-
-	-- Substitute
 	{
 		"gbprod/substitute.nvim",
 		keys = {
@@ -219,7 +221,6 @@ require("lazy").setup({
 			},
 		},
 	},
-	-- Find and Replace
 	{
 		"nvim-pack/nvim-spectre",
 		dependencies = { "nvim-lua/plenary.nvim" },
@@ -260,8 +261,15 @@ require("lazy").setup({
 			},
 		},
 	},
+	{
+		"tpope/vim-commentary",
+		keys = {
+			{ "<leader>c", ":Commentary<CR>", mode = "n", noremap = true, silent = true, desc = "Toggle Comment" },
+			{ "<leader>c", ":Commentary<CR>", mode = "v", noremap = true, silent = true, desc = "Toggle Comment" },
+		},
+	},
 
-	-- File Explorer
+	-- === File Explorer ===
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
@@ -283,11 +291,10 @@ require("lazy").setup({
 		},
 	},
 
-	-- Telescope Fuzzy Finder
+	-- === Fuzzy Finding & Navigation ===
 	{ "junegunn/fzf", build = "./install --bin" },
 	{
 		"ibhagwan/fzf-lua",
-		-- optional for icon support
 		dependencies = { "nvim-tree/nvim-web-devicons", "junegunn/fzf" },
 		keys = {
 			{
@@ -322,12 +329,11 @@ require("lazy").setup({
 			},
 		},
 		config = function()
-			-- calling `setup` is optional for customization
 			require("fzf-lua").setup({})
 		end,
 	},
 
-	-- Treesitter for Syntax Highlighting
+	-- === Syntax Highlighting & Treesitter ===
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -361,11 +367,33 @@ require("lazy").setup({
 		"windwp/nvim-ts-autotag",
 		config = true,
 	},
-
-	-- Icons
 	{ "nvim-tree/nvim-web-devicons" },
+	{
+		"shellRaining/hlchunk.nvim",
+		config = function()
+			require("hlchunk").setup({
+				chunk = {
+					enable = true,
+					use_treesitter = true,
+					chars = {
+						horizontal_line = "─",
+						vertical_line = "│",
+						left_top = "┌",
+						left_bottom = "└",
+						right_arrow = "─",
+					},
+				},
+				indent = {
+					enable = true,
+				},
+				blank = {
+					enable = true,
+				},
+			})
+		end,
+	},
 
-	-- Git Integration
+	-- === Git & Version Control Integration ===
 	{
 		"lewis6991/gitsigns.nvim",
 		config = true,
@@ -406,12 +434,11 @@ require("lazy").setup({
 			{ "<leader>gg", ":LazyGit<CR>", mode = "n", noremap = true, silent = true, desc = "Open LazyGit" },
 		},
 	},
-
 	{
 		"lewis6991/satellite.nvim",
 	},
 
-	-- AI Code Completion
+	-- === AI Code Completion ===
 	{
 		"monkoose/neocodeium",
 		event = "VeryLazy",
@@ -422,80 +449,47 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Commenting
-	{
-		"tpope/vim-commentary",
-		keys = {
-			{ "<leader>c", ":Commentary<CR>", mode = "n", noremap = true, silent = true, desc = "Toggle Comment" },
-			{ "<leader>c", ":Commentary<CR>", mode = "v", noremap = true, silent = true, desc = "Toggle Comment" },
-		},
-	},
-
-	-- Completion Plugins
+	-- === Completion Engine & Snippets ===
 	{
 		"saghen/blink.cmp",
 		version = "v0.*",
 		lazy = false,
 		dependencies = "rafamadriz/friendly-snippets",
 		opts = {
-
 			keymap = { preset = "super-tab" },
-
 			appearance = {
 				use_nvim_cmp_as_default = true,
 				nerd_font_variant = "mono",
 			},
-
 			cmdline = {
 				sources = function()
 					local type = vim.fn.getcmdtype()
 					if type == "/" or type == "?" then
 						return { "buffer" }
 					end
-					-- Commands
 					if type == ":" then
 						return { "cmdline" }
 					end
 					return {}
 				end,
 			},
-
 			sources = {
 				providers = {
-					lsp = {
-						score_offset = 2,
-					},
-					path = {
-						score_offset = 1,
-					},
-					buffer = {
-						score_offset = 0,
-						max_items = 5,
-					},
+					lsp = { score_offset = 2 },
+					path = { score_offset = 1 },
+					buffer = { score_offset = 0, max_items = 5 },
 				},
 			},
-
 			completion = {
-				accept = {
-					auto_brackets = {
-						enabled = true,
-					},
-				},
-				menu = {
-					draw = {
-						treesitter = { "lsp" },
-					},
-				},
-				documentation = {
-					auto_show = true,
-					auto_show_delay_ms = 200,
-				},
+				accept = { auto_brackets = { enabled = true } },
+				menu = { draw = { treesitter = { "lsp" } } },
+				documentation = { auto_show = true, auto_show_delay_ms = 200 },
 			},
 		},
 		signature = { enabled = true },
 	},
 
-	-- Colorschemes
+	-- === Colorschemes & Themes ===
 	{
 		"sainnhe/gruvbox-material",
 		lazy = true,
@@ -528,17 +522,13 @@ require("lazy").setup({
 			},
 		},
 	},
-
 	{
 		"maxmx03/solarized.nvim",
 		lazy = true,
 		config = function()
 			require("solarized").setup({
 				theme = "neovim",
-				config = {
-					theme = "dark",
-					italics = true,
-				},
+				config = { theme = "dark", italics = true },
 			})
 		end,
 		keys = {
@@ -553,53 +543,24 @@ require("lazy").setup({
 		},
 	},
 
-	-- Lush
+	-- === Additional Utility Plugins ===
 	{ "rktjmp/lush.nvim" },
-
-	-- Indentation Detection
 	{
 		"nmac427/guess-indent.nvim",
 		config = true,
 	},
-
 	{
 		"rachartier/tiny-glimmer.nvim",
 		event = "TextYankPost",
 		opts = true,
 	},
 
-	-- Highlight Code Chunks
-	{
-		"shellRaining/hlchunk.nvim",
-		config = function()
-			require("hlchunk").setup({
-				chunk = {
-					enable = true,
-					use_treesitter = true,
-					chars = {
-						horizontal_line = "─",
-						vertical_line = "│",
-						left_top = "┌",
-						left_bottom = "└",
-						right_arrow = "─",
-					},
-				},
-				indent = {
-					enable = true,
-				},
-				blank = {
-					enable = true,
-				},
-			})
-		end,
-	},
-
-	-- Debugging
+	-- === Debugging Tools ===
 	{
 		"mfussenegger/nvim-dap",
 	},
 
-	-- Terminal Management
+	-- === Terminal Management ===
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
@@ -624,33 +585,19 @@ require("lazy").setup({
 		},
 	},
 
-	-- Surround
+	-- === Surround & Color Enhancements ===
 	{
 		"kylechui/nvim-surround",
 		config = true,
 	},
-
-	-- Colorizer
 	{
 		"norcalli/nvim-colorizer.lua",
 	},
 
-	-- Auto-tagging
-	{
-		"windwp/nvim-ts-autotag",
-		config = true,
-	},
-
-	-- CSS Syntax
-	{ "hail2u/vim-css3-syntax" },
-
-	-- Kotlin Support
-	{ "udalov/kotlin-vim" },
+	-- === Linting & Formatting for Multiple Languages ===
 	{
 		"nvimdev/guard.nvim",
-		dependencies = {
-			"nvimdev/guard-collection",
-		},
+		dependencies = { "nvimdev/guard-collection" },
 		config = function()
 			local ft = require("guard.filetype")
 			ft("json"):lint("eslint"):fmt("prettier")
@@ -671,7 +618,7 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Noice.nvim for Enhanced UI
+	-- === Enhanced UI & Notifications ===
 	{
 		"folke/noice.nvim",
 		dependencies = {
@@ -688,25 +635,18 @@ require("lazy").setup({
 				messages = {
 					view = "mini",
 					opts = {
-						position = {
-							row = "100%",
-							col = "100%",
-						},
+						position = { row = "100%", col = "100%" },
 					},
 				},
 			})
 		end,
 	},
-	-- Status line
 	{
 		"windwp/windline.nvim",
 		config = function()
-			-- Load the default configuration for windline
 			require("wlsample.airline")
 		end,
 	},
-
-	-- Trouble.nvim for Diagnostics List
 	{
 		"folke/trouble.nvim",
 		opts = {},
@@ -720,7 +660,7 @@ require("lazy").setup({
 		},
 	},
 
-	-- Grapple for File Tagging
+	-- === File Tagging & Navigation ===
 	{
 		"cbochs/grapple.nvim",
 		dependencies = "nvim-tree/nvim-web-devicons",
@@ -736,6 +676,10 @@ require("lazy").setup({
 		},
 	},
 })
+
+-- ============================================================================
+-- Colors & Icon Setup, Notifications, & Other Configurations
+-- ============================================================================
 vim.cmd("colorscheme ashen")
 require("nvim-web-devicons").setup()
 
@@ -745,7 +689,9 @@ require("notify").setup({
 require("colorizer").setup()
 require("substitute").setup()
 
--- Mason and LSP configurations
+-- ============================================================================
+-- Mason & LSP Configurations
+-- ============================================================================
 require("mason").setup()
 require("mason-lspconfig").setup({
 	ensure_installed = {
@@ -761,10 +707,9 @@ require("mason-lspconfig").setup({
 	automatic_installation = true,
 })
 
--- Function to get the node_modules path
 local lspconfig_util = require("lspconfig.util")
 local capabilities = require("blink.cmp").get_lsp_capabilities()
--- Setup handlers for Mason LSPconfig
+
 require("mason-lspconfig").setup_handlers({
 	-- Default handler for all servers
 	function(server_name)
@@ -772,56 +717,42 @@ require("mason-lspconfig").setup_handlers({
 			capabilities = capabilities,
 		})
 	end,
-
-	-- JSON Language Server
 	["jsonls"] = function()
 		require("lspconfig").jsonls.setup({
 			capabilities = capabilities,
 			filetypes = { "json", "jsonc" },
 		})
 	end,
-
-	-- Python Language Server
 	["pyright"] = function()
 		require("lspconfig").pyright.setup({
 			capabilities = capabilities,
 			filetypes = { "python" },
 		})
 	end,
-
-	-- Kotlin Language Server
 	["kotlin_language_server"] = function()
 		require("lspconfig").kotlin_language_server.setup({
 			capabilities = capabilities,
 			filetypes = { "kotlin" },
 		})
 	end,
-
-	-- CSS Language Server
 	["cssls"] = function()
 		require("lspconfig").cssls.setup({
 			capabilities = capabilities,
 			filetypes = { "html", "htmlangular", "scss", "css" },
 		})
 	end,
-
-	-- ESLint Language Server
 	["eslint"] = function()
 		require("lspconfig").eslint.setup({
 			capabilities = capabilities,
 			filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
 		})
 	end,
-
-	-- Tailwind CSS Language Server
 	["tailwindcss"] = function()
 		require("lspconfig").tailwindcss.setup({
 			capabilities = capabilities,
 			filetypes = { "html", "htmlangular", "scss", "css" },
 		})
 	end,
-
-	-- Lua Language Server
 	["lua_ls"] = function()
 		require("lspconfig").lua_ls.setup({
 			capabilities = capabilities,
@@ -834,15 +765,11 @@ require("mason-lspconfig").setup_handlers({
 						library = vim.api.nvim_get_runtime_file("", true),
 						checkThirdParty = false,
 					},
-					telemetry = {
-						enable = false,
-					},
+					telemetry = { enable = false },
 				},
 			},
 		})
 	end,
-
-	-- Angular Language Server
 	["angularls"] = function()
 		require("lspconfig").angularls.setup({
 			capabilities = capabilities,
@@ -852,7 +779,9 @@ require("mason-lspconfig").setup_handlers({
 	end,
 })
 
--- Additional keymaps for built-in commands
+-- ============================================================================
+-- Additional Keymaps & Built-in Commands
+-- ============================================================================
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
 vim.api.nvim_set_keymap(
