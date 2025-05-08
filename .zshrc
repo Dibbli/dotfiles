@@ -34,6 +34,7 @@ export LINGO_20_HOME="~/.cache/yay/lingo/src/usr/share/lingo"
 export VOLTA_HOME="$HOME/.volta"
 export EM_CACHE=~/.emscripten_cache
 export ANDROID_HOME=$HOME/Android/Sdk
+export CAPACITOR_ANDROID_STUDIO_PATH="/opt/android-studio/bin/studio.sh"
 export LUA_PATH="/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua;;"
 export LUA_CPATH="/usr/lib/lua/5.1/?.so;;"
 export MANPAGER='nvim +Man!'
@@ -51,6 +52,7 @@ export PATH=$HOME/.local/share/nvim/mason/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 export PATH=/home/dibbli/.volta/bin/npx:$PATH
+export PATH="$PATH:/home/dibbli/.local/bin"
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

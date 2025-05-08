@@ -87,8 +87,12 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "williamboman/mason.nvim" },
-	{ "williamboman/mason-lspconfig.nvim" },
+	{ "williamboman/mason.nvim",
+		version = "v1.*",
+},
+	{ "williamboman/mason-lspconfig.nvim",
+version = "v1.32.0"
+},
 
 	-- === UI Components & Dashboard ===
 	{ "MunifTanjim/nui.nvim" },
