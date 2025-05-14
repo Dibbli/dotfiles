@@ -11,6 +11,7 @@ alias def="xdg-open"
 alias untar="tar -xvzf"
 alias glone="git clone"
 alias up='sudo systemctl start reflector.service; yay --answerclean None --answerdiff None --noconfirm -Syyu; flatpak update'
+alias updown='up; shutdown now'
 alias pacdiff=eos-pacdiff
 alias tt="tt -t 30 -theme one-dark"
 alias hackerman="docker run -it --rm svenstaro/genact -m botnet"
