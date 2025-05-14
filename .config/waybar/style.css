@@ -28,7 +28,7 @@ button:hover {
 }
 
 #workspaces button label {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 #workspaces button.persistent {
@@ -37,6 +37,10 @@ button:hover {
 
 #workspaces button.active {
   color: #ebdbb2;
+}
+
+#workspaces button.active label {
+  font-size: 18px;
 }
 
 #workspaces button:hover {
