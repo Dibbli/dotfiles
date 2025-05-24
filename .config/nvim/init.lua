@@ -87,12 +87,8 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "williamboman/mason.nvim",
-		version = "v1.*",
-},
-	{ "williamboman/mason-lspconfig.nvim",
-version = "v1.32.0"
-},
+	{ "williamboman/mason.nvim", version = "v1.*" },
+	{ "williamboman/mason-lspconfig.nvim", version = "v1.32.0" },
 
 	-- === UI Components & Dashboard ===
 	{ "MunifTanjim/nui.nvim" },
@@ -291,7 +287,7 @@ version = "v1.32.0"
 			})
 		end,
 		keys = {
-			{ "-", ":Neotree reveal position=left toggle<cr>", desc = "Toggle Neo-tree" },
+			{ "<leader>-", ":Neotree reveal position=left toggle<cr>", desc = "Toggle Neo-tree" },
 		},
 	},
 
@@ -571,7 +567,7 @@ version = "v1.32.0"
 		config = true,
 		keys = {
 			{
-				"=",
+				"<leader>=",
 				":ToggleTerm size=10 direction=horizontal <CR>",
 				mode = "n",
 				noremap = true,
