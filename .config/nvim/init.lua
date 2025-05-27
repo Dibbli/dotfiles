@@ -46,11 +46,10 @@ vim.opt.cursorlineopt = "number"
 vim.opt.laststatus = 3
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-	pattern = "*.component.html",
-	callback = function()
-		vim.bo.filetype = "htmlangular"
-	end,
+vim.filetype.add({
+	pattern = {
+		[".*%.component%.html"] = "htmlangular",
+	},
 })
 
 -- ============================================================================
