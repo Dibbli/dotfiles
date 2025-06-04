@@ -776,7 +776,7 @@ local map = vim.api.nvim_set_keymap
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>t",
-	":TSToolsFixAll<CR>:EslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
+	":TSToolsFixAll<CR>:LspEslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
 	opts
 )
 map("n", "<leader>/", ":noh<CR>", opts)
