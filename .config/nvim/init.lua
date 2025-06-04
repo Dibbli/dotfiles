@@ -705,7 +705,6 @@ local lspconfig_util = require("lspconfig.util")
 vim.lsp.config("angularls", {
 	capabilities = capabilities,
 	filetypes = { "typescript", "html", "htmlangular", "typescriptreact", "typescript.tsx" },
-	root_dir = lspconfig_util.root_pattern("package.json"),
 })
 
 vim.lsp.config("cssls", {
