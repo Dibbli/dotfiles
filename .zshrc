@@ -52,7 +52,7 @@ export PATH=$HOME/.local/share/nvim/mason/bin:$PATH
 export PATH=$VOLTA_HOME/bin:$PATH
 export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 export PATH=/home/dibbli/.volta/bin/npx:$PATH
-export PATH="$PATH:/home/dibbli/.local/bin"
+export PATH=/home/dibbli/.local/bin:$PATH
 
 # Initialize Starship prompt
 eval "$(starship init zsh)"

@@ -46,6 +46,11 @@ vim.opt.cursorlineopt = "number"
 vim.opt.laststatus = 3
 vim.g.vsnip_snippet_dir = "~/.config/nvim/snippets"
 vim.cmd("filetype plugin indent on")
+vim.filetype.add({
+	pattern = {
+		[".*%.component%.html"] = "htmlangular",
+	},
+})
 
 -- ============================================================================
 -- Plugin Setup via lazy.nvim
@@ -87,12 +92,8 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "williamboman/mason.nvim",
-		version = "v1.*",
-},
-	{ "williamboman/mason-lspconfig.nvim",
-version = "v1.32.0"
-},
+	{ "williamboman/mason.nvim" },
+	{ "williamboman/mason-lspconfig.nvim" },
 
 	-- === UI Components & Dashboard ===
 	{ "MunifTanjim/nui.nvim" },
@@ -291,7 +292,7 @@ version = "v1.32.0"
 			})
 		end,
 		keys = {
-			{ "-", ":Neotree reveal position=left toggle<cr>", desc = "Toggle Neo-tree" },
+			{ "<leader>-", ":Neotree reveal position=left toggle<cr>", desc = "Toggle Neo-tree" },
 		},
 	},
 
@@ -572,7 +573,7 @@ version = "v1.32.0"
 		config = true,
 		keys = {
 			{
-				"=",
+				"<leader>=",
 				":ToggleTerm size=10 direction=horizontal <CR>",
 				mode = "n",
 				noremap = true,
@@ -698,6 +699,61 @@ require("substitute").setup()
 -- Mason & LSP Configurations
 -- ============================================================================
 require("mason").setup()
+
+local capabilities = require("blink.cmp").get_lsp_capabilities()
+local lspconfig_util = require("lspconfig.util")
+
+vim.lsp.config("angularls", {
+	capabilities = capabilities,
+	filetypes = { "typescript", "html", "htmlangular", "typescriptreact", "typescript.tsx" },
+})
+
+vim.lsp.config("cssls", {
+	capabilities = capabilities,
+	filetypes = { "html", "htmlangular", "scss", "css" },
+})
+
+vim.lsp.config("tailwindcss", {
+	capabilities = capabilities,
+	filetypes = { "html", "htmlangular", "scss", "css" },
+})
+
+vim.lsp.config("jsonls", {
+	capabilities = capabilities,
+	filetypes = { "json", "jsonc" },
+})
+
+vim.lsp.config("eslint", {
+	capabilities = capabilities,
+	filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
+})
+
+vim.lsp.config("lua_ls", {
+	capabilities = capabilities,
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = { "vim" },
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+				checkThirdParty = false,
+			},
+			telemetry = { enable = false },
+		},
+	},
+})
+
+vim.lsp.config("kotlin_language_server", {
+	capabilities = capabilities,
+	filetypes = { "kotlin" },
+})
+
+vim.lsp.config("pyright", {
+	capabilities = capabilities,
+	filetypes = { "python" },
+})
+
 require("mason-lspconfig").setup({
 	ensure_installed = {
 		"angularls",
@@ -709,79 +765,7 @@ require("mason-lspconfig").setup({
 		"kotlin_language_server",
 		"pyright",
 	},
-	automatic_installation = true,
-})
-
-local lspconfig_util = require("lspconfig.util")
-local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-require("mason-lspconfig").setup_handlers({
-	-- Default handler for all servers
-	function(server_name)
-		require("lspconfig")[server_name].setup({
-			capabilities = capabilities,
-		})
-	end,
-	["jsonls"] = function()
-		require("lspconfig").jsonls.setup({
-			capabilities = capabilities,
-			filetypes = { "json", "jsonc" },
-		})
-	end,
-	["pyright"] = function()
-		require("lspconfig").pyright.setup({
-			capabilities = capabilities,
-			filetypes = { "python" },
-		})
-	end,
-	["kotlin_language_server"] = function()
-		require("lspconfig").kotlin_language_server.setup({
-			capabilities = capabilities,
-			filetypes = { "kotlin" },
-		})
-	end,
-	["cssls"] = function()
-		require("lspconfig").cssls.setup({
-			capabilities = capabilities,
-			filetypes = { "html", "htmlangular", "scss", "css" },
-		})
-	end,
-	["eslint"] = function()
-		require("lspconfig").eslint.setup({
-			capabilities = capabilities,
-			filetypes = { "typescript", "typescriptreact", "html", "htmlangular", "scss", "css" },
-		})
-	end,
-	["tailwindcss"] = function()
-		require("lspconfig").tailwindcss.setup({
-			capabilities = capabilities,
-			filetypes = { "html", "htmlangular", "scss", "css" },
-		})
-	end,
-	["lua_ls"] = function()
-		require("lspconfig").lua_ls.setup({
-			capabilities = capabilities,
-			settings = {
-				Lua = {
-					diagnostics = {
-						globals = { "vim" },
-					},
-					workspace = {
-						library = vim.api.nvim_get_runtime_file("", true),
-						checkThirdParty = false,
-					},
-					telemetry = { enable = false },
-				},
-			},
-		})
-	end,
-	["angularls"] = function()
-		require("lspconfig").angularls.setup({
-			capabilities = capabilities,
-			filetypes = { "typescript", "html", "htmlangular", "typescriptreact", "typescript.tsx" },
-			root_dir = lspconfig_util.root_pattern("package.json"),
-		})
-	end,
+	automatic_enable = true,
 })
 
 -- ============================================================================
@@ -792,7 +776,7 @@ local map = vim.api.nvim_set_keymap
 vim.api.nvim_set_keymap(
 	"n",
 	"<leader>t",
-	":TSToolsFixAll<CR>:EslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
+	":TSToolsFixAll<CR>:LspEslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
 	opts
 )
 map("n", "<leader>/", ":noh<CR>", opts)
