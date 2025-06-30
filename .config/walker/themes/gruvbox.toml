@@ -9,12 +9,13 @@ top = true
 [ui.window]
 h_align = "fill"
 v_align = "fill"
-color = "#ebdbb2"           # default text color
+color   = "#ebdbb2"
 
 [ui.window.box]
 h_align = "center"
-width = 450
-background = "#665c54"      # main window background
+v_align = "center"   
+width   = 800
+background = "#665c54"
 
 [ui.window.box.bar]
 orientation = "horizontal"
@@ -29,9 +30,6 @@ h_align = "center"
 h_expand = true
 pixel_size = 24
 theme = ""
-
-[ui.window.box.margins]
-top = 200
 
 [ui.window.box.ai_scroll]
 name = "aiScroll"
@@ -60,16 +58,11 @@ y_align = 0
 wrap = true
 
 [ui.window.box.scroll.list]
-marker_color = "#504945"
+marker_color = "#D79921"
 max_height = 300
 max_width = 400
 min_width = 400
 width = 400
-
-[ui.window.box.scroll.list.item]
-# background for selected/hovered entries
-selected_background = "#504945"
-hover_background    = "#504945"
 
 [ui.window.box.scroll.list.item.icon]
 pixel_size = 26
@@ -85,7 +78,6 @@ theme = ""
 pixel_size = 18
 h_align = "center"
 v_align = "center"
-color = "#ebdbb2"
 
 [ui.window.box.search.clear]
 name = "clear"
@@ -94,7 +86,6 @@ theme = ""
 pixel_size = 18
 h_align = "center"
 v_align = "center"
-color = "#ebdbb2"
 
 [ui.window.box.search.input]
 h_align = "fill"
@@ -103,12 +94,4 @@ icons = true
 
 [ui.window.box.search.spinner]
 hide = true
-
-[ui.window.box.scroll.list.item.activation_label]
-color = "#ebdbb2"
-
-[ui.window.box.search.placeholder]
-# if you want to change the placeholder opacity/color, you can add settings here
-
-# All other sections from the default can remain unchanged
 
