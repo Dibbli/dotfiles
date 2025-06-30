@@ -3,6 +3,7 @@
 @define-color foreground #ebdbb2;
 @define-color background #282828;
 @define-color selected     #504945;
+@define-color border #D79921;
 /* border gradient: from dark orange to light orange */
 
 #window,
@@ -39,6 +40,8 @@ slider,
   background-origin: padding-box, border-box;
   background-clip: padding-box, border-box;
   padding: 32px;
+  border: 1px solid @border;
+  border-radius: 10px;
 }
 
 #search {
