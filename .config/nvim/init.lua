@@ -457,13 +457,11 @@ require("lazy").setup({
 	-- === Completion Engine & Snippets ===
 	{
 		"saghen/blink.cmp",
-		version = "v0.*",
 		lazy = false,
 		dependencies = "rafamadriz/friendly-snippets",
 		opts = {
 			keymap = { preset = "super-tab" },
 			appearance = {
-				use_nvim_cmp_as_default = true,
 				nerd_font_variant = "mono",
 			},
 			cmdline = {
@@ -479,19 +477,22 @@ require("lazy").setup({
 				end,
 			},
 			sources = {
+				default = { "lsp", "path", "buffer" },
+				per_filetype = {
+					htmlangular = { inherit_defaults = false, "lsp" },
+				},
 				providers = {
-					lsp = { score_offset = 2 },
-					path = { score_offset = 1 },
-					buffer = { score_offset = 0, max_items = 5 },
+					lsp = { score_offset = 10 },
 				},
 			},
+
 			completion = {
+				ghost_text = { enabled = true },
 				accept = { auto_brackets = { enabled = true } },
 				menu = { draw = { treesitter = { "lsp" } } },
 				documentation = { auto_show = true, auto_show_delay_ms = 200 },
 			},
 		},
-		signature = { enabled = true },
 	},
 
 	-- === Colorschemes & Themes ===
