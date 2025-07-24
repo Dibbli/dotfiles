@@ -711,7 +711,7 @@ vim.lsp.config("angularls", {
 
 vim.lsp.config("cssls", {
 	capabilities = capabilities,
-	filetypes = { "html", "htmlangular", "scss", "css" },
+	filetypes = { "scss", "css" },
 })
 
 vim.lsp.config("tailwindcss", {
