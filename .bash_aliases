@@ -17,4 +17,4 @@ alias tt="tt -t 30 -theme one-dark"
 alias hackerman="docker run -it --rm svenstaro/genact -m botnet"
 alias todo="nvim ~/Documents/todo.txt"
 alias init='steam >/dev/null 2>&1 & disown; flatpak run dev.vencord.Vesktop >/dev/null 2>&1 & disown; tutanota-desktop >/dev/null 2>&1 & disown; todo'
-
+alias lossless='~/Documents/scripts/misc/setupLossless.sh'
