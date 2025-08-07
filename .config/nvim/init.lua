@@ -325,7 +325,7 @@ require("lazy").setup({
 			{
 				"<leader>f",
 				function()
-					require("fzf-lua").live_grep()
+					require("fzf-lua").live_grep_native()
 				end,
 				mode = "n",
 				noremap = true,
@@ -488,7 +488,7 @@ require("lazy").setup({
 			},
 
 			completion = {
-				ghost_text = { enabled = true },
+				ghost_text = { enabled = false },
 				accept = { auto_brackets = { enabled = true } },
 				menu = { draw = { treesitter = { "lsp" } } },
 				documentation = { auto_show = true, auto_show_delay_ms = 200 },
