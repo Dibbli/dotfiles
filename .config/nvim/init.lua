@@ -87,9 +87,7 @@ require("lazy").setup({
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 		opts = {},
 		config = function()
-			require("typescript-tools").setup({
-				root_dir = require("lspconfig").util.root_pattern("tsconfig.base.json"),
-			})
+			require("typescript-tools").setup({})
 		end,
 	},
 	{ "williamboman/mason.nvim" },
@@ -348,12 +346,16 @@ require("lazy").setup({
 					"lua",
 					"javascript",
 					"typescript",
+					"tsx",
 					"css",
 					"html",
 					"kotlin",
 					"json",
 					"jsonc",
+					"markdown",
+					"markdown_inline",
 					"angular",
+					"prisma",
 					"dockerfile",
 					"scss",
 					"xml",
@@ -615,6 +617,9 @@ require("lazy").setup({
 			ft("lua"):fmt("stylua")
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint"):fmt("prettier")
+			ft("javascript"):lint("eslint"):fmt("prettier")
+			ft("javascriptreact"):lint("eslint"):fmt("prettier")
+			ft("typescriptreact"):lint("eslint"):fmt("prettier")
 			ft("html"):lint("eslint"):fmt("prettier")
 			ft("python"):lint("flake8"):fmt("black")
 			vim.g.guard_config = {
@@ -716,7 +721,7 @@ vim.lsp.config("cssls", {
 
 vim.lsp.config("tailwindcss", {
 	capabilities = capabilities,
-	filetypes = { "html", "htmlangular", "scss", "css" },
+	filetypes = { "html", "htmlangular", "scss", "css", "javascriptreact", "typescriptreact" },
 })
 
 vim.lsp.config("jsonls", {
