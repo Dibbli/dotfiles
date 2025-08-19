@@ -83,12 +83,8 @@ require("lazy").setup({
 		},
 	},
 	{
-		"pmizio/typescript-tools.nvim",
-		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-		opts = {},
-		config = function()
-			require("typescript-tools").setup({})
-		end,
+		"yioneko/nvim-vtsls",
+		dependencies = { "neovim/nvim-lspconfig" },
 	},
 	{ "williamboman/mason.nvim" },
 	{ "williamboman/mason-lspconfig.nvim" },
@@ -622,11 +618,6 @@ require("lazy").setup({
 			ft("typescriptreact"):lint("eslint"):fmt("prettier")
 			ft("html"):lint("eslint"):fmt("prettier")
 			ft("python"):lint("flake8"):fmt("black")
-			vim.g.guard_config = {
-				fmt_on_save = true,
-				lsp_as_default_formatter = false,
-				save_on_fmt = true,
-			}
 		end,
 	},
 
@@ -709,9 +700,13 @@ require("mason").setup()
 local capabilities = require("blink.cmp").get_lsp_capabilities()
 local lspconfig_util = require("lspconfig.util")
 
+vim.lsp.config("vtsls", {
+	capabilities = capabilities,
+})
+
 vim.lsp.config("angularls", {
 	capabilities = capabilities,
-	filetypes = { "typescript", "html", "htmlangular", "typescriptreact", "typescript.tsx" },
+	filetypes = { "html", "htmlangular" },
 })
 
 vim.lsp.config("cssls", {
@@ -762,6 +757,7 @@ vim.lsp.config("pyright", {
 
 require("mason-lspconfig").setup({
 	ensure_installed = {
+		"vtsls",
 		"angularls",
 		"cssls",
 		"tailwindcss",
@@ -779,12 +775,29 @@ require("mason-lspconfig").setup({
 -- ============================================================================
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
-vim.api.nvim_set_keymap(
-	"n",
-	"<leader>t",
-	":TSToolsFixAll<CR>:LspEslintFixAll<CR>:TSToolsAddMissingImports<CR>:TSToolsOrganizeImports<CR>",
-	opts
-)
+-- Helper to apply vtsls code actions by kind
+local function ts_action(kind)
+	return function()
+		vim.lsp.buf.code_action({
+			apply = true,
+			context = { only = { kind }, diagnostics = {} },
+		})
+	end
+end
+
+vim.keymap.set("n", "<leader>t", function()
+	ts_action("source.addMissingImports.ts")()
+	ts_action("source.removeUnused.ts")()
+	ts_action("source.fixAll.ts")()
+
+	local clients = vim.lsp.get_clients({ bufnr = 0 })
+	for _, client in ipairs(clients) do
+		if client.name == "eslint" then
+			vim.cmd("LspEslintFixAll")
+			break
+		end
+	end
+end, { noremap = true, silent = true, desc = "TS Do All (imports, unused, fix, eslint)" })
 map("n", "<leader>/", ":noh<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
