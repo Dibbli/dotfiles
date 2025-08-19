@@ -775,20 +775,11 @@ require("mason-lspconfig").setup({
 -- ============================================================================
 local opts = { noremap = true, silent = true }
 local map = vim.api.nvim_set_keymap
--- Helper to apply vtsls code actions by kind
-local function ts_action(kind)
-	return function()
-		vim.lsp.buf.code_action({
-			apply = true,
-			context = { only = { kind }, diagnostics = {} },
-		})
-	end
-end
-
 vim.keymap.set("n", "<leader>t", function()
-	ts_action("source.addMissingImports.ts")()
-	ts_action("source.removeUnused.ts")()
-	ts_action("source.fixAll.ts")()
+	vim.cmd("VtsExec add_missing_imports")
+	vim.cmd("VtsExec remove_unused_imports")
+	vim.cmd("VtsExec organize_imports")
+	vim.cmd("VtsExec fix_all")
 
 	local clients = vim.lsp.get_clients({ bufnr = 0 })
 	for _, client in ipairs(clients) do
@@ -797,6 +788,7 @@ vim.keymap.set("n", "<leader>t", function()
 			break
 		end
 	end
+	vim.cmd("Guard fmt")
 end, { noremap = true, silent = true, desc = "TS Do All (imports, unused, fix, eslint)" })
 map("n", "<leader>/", ":noh<CR>", opts)
 map("n", "<leader>z", ":u<CR>", opts)
