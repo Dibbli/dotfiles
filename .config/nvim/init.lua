@@ -452,6 +452,21 @@ require("lazy").setup({
 		end,
 	},
 
+	{
+		"greggh/claude-code.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- Required for git operations
+		},
+
+		keys = {
+			{ "<leader>0", "<cmd>ClaudeCode<CR>", mode = "n", noremap = true, silent = true, desc = "Claude Code" },
+		},
+
+		config = function()
+			require("claude-code").setup()
+		end,
+	},
+
 	-- === Completion Engine & Snippets ===
 	{
 		"saghen/blink.cmp",
