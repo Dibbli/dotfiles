@@ -283,6 +283,13 @@ require("lazy").setup({
 					enable = false,
 					leave_dirs_open = false,
 				},
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						hide_dotfiles = true,
+						hide_gitignored = true,
+					},
+				},
 			})
 		end,
 		keys = {
