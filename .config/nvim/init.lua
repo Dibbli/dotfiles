@@ -595,7 +595,7 @@ require("lazy").setup({
 		keys = {
 			{
 				"<leader>=",
-				":ToggleTerm size=10 direction=horizontal <CR>",
+				":ToggleTerm size=15 direction=horizontal <CR>",
 				mode = "n",
 				noremap = true,
 				silent = true,
