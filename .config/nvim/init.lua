@@ -344,32 +344,31 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = {
-					"lua",
-					"javascript",
-					"typescript",
-					"tsx",
-					"css",
-					"html",
-					"kotlin",
-					"json",
-					"jsonc",
-					"markdown",
-					"markdown_inline",
-					"angular",
-					"prisma",
-					"dockerfile",
-					"scss",
-					"xml",
-				},
-				sync_install = false,
-				ignore_install = {},
-				auto_install = true,
-				highlight = {
-					enable = true,
-				},
-				modules = {},
+			require("nvim-treesitter").setup({
+				install_dir = vim.fn.stdpath("data") .. "/site",
+			})
+			require("nvim-treesitter").install({
+				"lua",
+				"javascript",
+				"typescript",
+				"tsx",
+				"css",
+				"html",
+				"kotlin",
+				"json",
+				"jsonc",
+				"markdown",
+				"markdown_inline",
+				"angular",
+				"prisma",
+				"dockerfile",
+				"scss",
+				"xml",
+			})
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function()
+					pcall(vim.treesitter.start)
+				end,
 			})
 		end,
 	},
