@@ -1,0 +1,41 @@
+/* Hide navigation bar until Ctrl+L */
+#main-window:not([customizing]) #navigator-toolbox:not(:focus-within) {
+  margin-top: -45px;
+}
+
+#navigator-toolbox {
+  transition: margin-top 0.1s ease-in-out !important;
+}
+
+
+/* Hide horizontal tab bar (using vertical tabs) */
+#TabsToolbar {
+  visibility: collapse !important;
+}
+
+/* Add padding to top of vertical tabs sidebar */
+#tabbrowser-tabs {
+  padding-top: 10px !important;
+}
+
+/* Move new tab button to top */
+/* When there is overflow (need to scroll to see all tabs) */
+#vertical-tabs #vertical-tabs-newtab-button {
+  order: -1;
+}
+
+/* When there is no pinned tabs, place the newtab button at top */
+#vertical-tabs #tabbrowser-arrowscrollbox-periphery {
+  order: -1;
+}
+
+/* When there is pinned tabs and no overflow, place the newtab button on top of pinned tabs */
+#vertical-tabs:has(#tabbrowser-tabs[haspinnedtabs]:not([overflow])) #tabbrowser-arrowscrollbox-periphery {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+}
+
+#vertical-tabs:has(#tabbrowser-tabs[haspinnedtabs]:not([overflow])) #vertical-pinned-tabs-container {
+  margin-top: calc(var(--tab-min-height) + 8px) !important;
+}
