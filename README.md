@@ -1,4 +1,4 @@
-# My fucked up, evil dotfiles. 👺
+# My evil dotfiles. 👺
 
 ### Eldritch, mindbending software:
 | Tool | Description | Config |
