@@ -344,26 +344,27 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter").setup({
-				install_dir = vim.fn.stdpath("data") .. "/site",
-			})
-			require("nvim-treesitter").install({
-				"lua",
-				"javascript",
-				"typescript",
-				"tsx",
-				"css",
-				"html",
-				"kotlin",
-				"json",
-				"jsonc",
-				"markdown",
-				"markdown_inline",
-				"angular",
-				"prisma",
-				"dockerfile",
-				"scss",
-				"xml",
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"lua",
+					"javascript",
+					"typescript",
+					"tsx",
+					"css",
+					"html",
+					"kotlin",
+					"json",
+					"jsonc",
+					"markdown",
+					"markdown_inline",
+					"angular",
+					"prisma",
+					"dockerfile",
+					"scss",
+					"xml",
+				},
+				highlight = { enable = true },
+				indent = { enable = true },
 			})
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function()
@@ -579,6 +580,77 @@ require("lazy").setup({
 		"rachartier/tiny-glimmer.nvim",
 		event = "TextYankPost",
 		opts = true,
+	},
+
+	-- === Testing ===
+	{
+		"nvim-neotest/neotest",
+		dependencies = {
+			"nvim-neotest/nvim-nio",
+			"nvim-lua/plenary.nvim",
+			"antoinemadec/FixCursorHold.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"thenbe/neotest-playwright",
+		},
+		config = function()
+			require("neotest").setup({
+				running = {
+					concurrent = false,
+				},
+				adapters = {
+					require("neotest-playwright").adapter({
+						options = {
+							persist_project_selection = true,
+							enable_dynamic_test_discovery = true,
+						},
+					}),
+				},
+			})
+		end,
+		keys = {
+			{
+				"<leader>tr",
+				function()
+					require("neotest").run.run()
+				end,
+				desc = "Run nearest test",
+			},
+			{
+				"<leader>tf",
+				function()
+					require("neotest").run.run(vim.fn.expand("%"))
+				end,
+				desc = "Run current file",
+			},
+			{
+				"<leader>ts",
+				function()
+					require("neotest").summary.toggle()
+				end,
+				desc = "Toggle test summary",
+			},
+			{
+				"<leader>to",
+				function()
+					require("neotest").output.open({ enter = true })
+				end,
+				desc = "Show test output",
+			},
+			{
+				"<leader>tp",
+				function()
+					require("neotest").output_panel.toggle()
+				end,
+				desc = "Toggle output panel",
+			},
+			{
+				"<leader>td",
+				function()
+					require("neotest").run.run({ strategy = "dap" })
+				end,
+				desc = "Debug nearest test",
+			},
+		},
 	},
 
 	-- === Debugging Tools ===
