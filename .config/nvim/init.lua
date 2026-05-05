@@ -478,24 +478,12 @@ require("lazy").setup({
 	{
 		"saghen/blink.cmp",
 		lazy = false,
-		build = "cargo build --release",
-		dependencies = "rafamadriz/friendly-snippets",
+		dependencies = { "rafamadriz/friendly-snippets", "saghen/blink.lib" },
 		opts = {
 			keymap = { preset = "super-tab" },
+			fuzzy = { implementation = "lua" },
 			appearance = {
 				nerd_font_variant = "mono",
-			},
-			cmdline = {
-				sources = function()
-					local type = vim.fn.getcmdtype()
-					if type == "/" or type == "?" then
-						return { "buffer" }
-					end
-					if type == ":" then
-						return { "cmdline" }
-					end
-					return {}
-				end,
 			},
 			sources = {
 				default = { "lsp", "path", "buffer" },
@@ -511,7 +499,11 @@ require("lazy").setup({
 				ghost_text = { enabled = false },
 				accept = { auto_brackets = { enabled = true } },
 				menu = { draw = { treesitter = { "lsp" } } },
-				documentation = { auto_show = true, auto_show_delay_ms = 200 },
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+					treesitter_highlighting = false,
+				},
 			},
 		},
 	},
@@ -799,7 +791,7 @@ vim.lsp.config("vtsls", {
 
 vim.lsp.config("angularls", {
 	capabilities = capabilities,
-	filetypes = { "html", "htmlangular" },
+	filetypes = { "typescript", "html", "htmlangular" },
 })
 
 vim.lsp.config("cssls", {
@@ -888,3 +880,21 @@ map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
+
+-- Colemak movement: h=left, n=down, e=up, i=right
+map("n", "n", "j", opts)
+map("n", "e", "k", opts)
+map("n", "i", "l", opts)
+map("n", "j", "e", opts)
+map("n", "k", "n", opts)
+map("n", "l", "i", opts)
+map("n", "K", "N", opts)
+map("n", "J", "E", opts)
+map("n", "L", "I", opts)
+-- Visual mode
+map("v", "n", "j", opts)
+map("v", "e", "k", opts)
+map("v", "i", "l", opts)
+map("v", "j", "e", opts)
+map("v", "k", "n", opts)
+map("v", "l", "i", opts)
