@@ -1,0 +1,1 @@
+/home/dibbli/IdeaProjects/home/screengif/hyprland/screengif.sh
