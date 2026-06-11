@@ -4,6 +4,7 @@
   "spacing": 4,
   "modules-left": ["hyprland/workspaces"],
   "modules-right": [
+    "custom/screengif",
     "pulseaudio",
     "network",
     "cpu",
@@ -16,13 +17,20 @@
   "hyprland/workspaces": {
     "format": "{icon}",
     "format-icons": {
-      "active": "🞊",
+      "active": "◉",
       "default": "○",
     },
     "persistent-workspaces": {
       "DP-1": [1, 2, 3, 4, 5],
       "DP-2": [6, 7, 8, 9, 10],
     },
+  },
+  "custom/screengif": {
+    "exec": "/home/dibbli/.config/hypr/scripts/screengif-status.sh",
+    "return-type": "json",
+    "signal": 8,
+    "interval": "once",
+    "tooltip": true,
   },
   "hyprland/language": {
     "format-en": "EN",
