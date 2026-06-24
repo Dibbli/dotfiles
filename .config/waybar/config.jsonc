@@ -12,6 +12,7 @@
     "hyprland/language",
     "keyboard-state",
     "clock",
+    "custom/weather",
     "tray",
   ],
   "hyprland/workspaces": {
@@ -49,6 +50,11 @@
   "tray": {
     // "icon-size": 21,
     "spacing": 10,
+  },
+  "custom/weather": {
+    "exec": "/home/dibbli/.config/waybar/scripts/weather.py",
+    "return-type": "json",
+    "on-click": "/home/dibbli/.config/waybar/scripts/weather-toggle.py",
   },
   "clock": {
     "timezone": "Europe/Budapest",
