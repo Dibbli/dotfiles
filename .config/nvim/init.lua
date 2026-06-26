@@ -20,6 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Clipboard & Leader Key
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
 vim.g.mapleader = " "
+vim.g.sql_type_default = "sqloracle" -- Oracle/PL-SQL dialect for built-in sql syntax
 
 -- ============================================================================
 -- Vim Options & Environment Settings
@@ -684,6 +685,19 @@ require("lazy").setup({
 		"norcalli/nvim-colorizer.lua",
 	},
 
+	-- === Oracle / PL-SQL database client ===
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+		},
+		cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+		init = function()
+			vim.g.db_ui_use_nerd_fonts = 1
+		end,
+	},
+
 	-- === Linting & Formatting for Multiple Languages ===
 	{
 		"nvimdev/guard.nvim",
@@ -703,6 +717,8 @@ require("lazy").setup({
 			ft("typescriptreact"):lint("eslint_d"):fmt("prettierd")
 			ft("html"):lint("eslint_d"):fmt("prettierd")
 			ft("python"):lint("flake8"):fmt("black")
+			ft("sql"):lint("sqlfluff"):fmt("sqlfluff")
+			ft("plsql"):lint("sqlfluff"):fmt("sqlfluff")
 		end,
 	},
 
