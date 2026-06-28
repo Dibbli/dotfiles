@@ -122,3 +122,9 @@ button:hover {
   padding: 0 10px;
   font-weight: bold;
 }
+
+#custom-weather {
+  padding: 0 10px;
+  background-color: #282828;
+  color: #fabd2f;
+}

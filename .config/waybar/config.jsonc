@@ -9,6 +9,7 @@
     "network",
     "cpu",
     "memory",
+    "battery",
     "hyprland/language",
     "keyboard-state",
     "clock",
@@ -22,8 +23,8 @@
       "default": "○",
     },
     "persistent-workspaces": {
-      "DP-1": [1, 2, 3, 4, 5],
-      "DP-2": [6, 7, 8, 9, 10],
+      "eDP-1": [1, 2, 3, 4, 5],
+      "HDMI-A-1": [6, 7, 8, 9, 10],
     },
   },
   "custom/screengif": {
@@ -67,6 +68,15 @@
   },
   "memory": {
     "format": "{}% ",
+  },
+  "battery": {
+    "bat": "BAT0",
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{capacity}% {icon}",
+    "format-charging": "{capacity}% ⬆",
+    "format-plugged": "{capacity}% ⚡",
+    "format-icons": ["▁","▂","▃","▄","▅","▆","▇","█"],
+    "tooltip-format": "{timeTo} | {power}W",
   },
 
   "temperature": {
