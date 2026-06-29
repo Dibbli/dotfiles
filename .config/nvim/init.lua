@@ -20,6 +20,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Clipboard & Leader Key
 vim.opt.clipboard = { "unnamed", "unnamedplus" }
 vim.g.mapleader = " "
+vim.g.sql_type_default = "sqloracle" -- Oracle/PL-SQL dialect for built-in sql syntax
 
 -- ============================================================================
 -- Vim Options & Environment Settings
@@ -342,33 +343,33 @@ require("lazy").setup({
 	-- === Syntax Highlighting & Treesitter ===
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		lazy = false,
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = {
-					"lua",
-					"javascript",
-					"typescript",
-					"tsx",
-					"css",
-					"html",
-					"kotlin",
-					"json",
-					"jsonc",
-					"markdown",
-					"markdown_inline",
-					"angular",
-					"prisma",
-					"dockerfile",
-					"scss",
-					"xml",
-				},
-				highlight = { enable = true },
-				indent = { enable = true },
+			require("nvim-treesitter").install({
+				"lua",
+				"javascript",
+				"typescript",
+				"tsx",
+				"css",
+				"html",
+				"kotlin",
+				"json",
+				"markdown",
+				"markdown_inline",
+				"angular",
+				"prisma",
+				"dockerfile",
+				"scss",
+				"xml",
 			})
 			vim.api.nvim_create_autocmd("FileType", {
 				callback = function()
-					pcall(vim.treesitter.start)
+					if pcall(vim.treesitter.start) then
+						-- experimental treesitter-based indentation (main branch)
+						vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+					end
 				end,
 			})
 		end,
@@ -478,24 +479,12 @@ require("lazy").setup({
 	{
 		"saghen/blink.cmp",
 		lazy = false,
-		build = "cargo build --release",
-		dependencies = "rafamadriz/friendly-snippets",
+		dependencies = { "rafamadriz/friendly-snippets", "saghen/blink.lib" },
 		opts = {
 			keymap = { preset = "super-tab" },
+			fuzzy = { implementation = "lua" },
 			appearance = {
 				nerd_font_variant = "mono",
-			},
-			cmdline = {
-				sources = function()
-					local type = vim.fn.getcmdtype()
-					if type == "/" or type == "?" then
-						return { "buffer" }
-					end
-					if type == ":" then
-						return { "cmdline" }
-					end
-					return {}
-				end,
 			},
 			sources = {
 				default = { "lsp", "path", "buffer" },
@@ -511,7 +500,11 @@ require("lazy").setup({
 				ghost_text = { enabled = false },
 				accept = { auto_brackets = { enabled = true } },
 				menu = { draw = { treesitter = { "lsp" } } },
-				documentation = { auto_show = true, auto_show_delay_ms = 200 },
+				documentation = {
+					auto_show = true,
+					auto_show_delay_ms = 200,
+					treesitter_highlighting = false,
+				},
 			},
 		},
 	},
@@ -692,6 +685,19 @@ require("lazy").setup({
 		"norcalli/nvim-colorizer.lua",
 	},
 
+	-- === Oracle / PL-SQL database client ===
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+		},
+		cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+		init = function()
+			vim.g.db_ui_use_nerd_fonts = 1
+		end,
+	},
+
 	-- === Linting & Formatting for Multiple Languages ===
 	{
 		"nvimdev/guard.nvim",
@@ -711,6 +717,8 @@ require("lazy").setup({
 			ft("typescriptreact"):lint("eslint_d"):fmt("prettierd")
 			ft("html"):lint("eslint_d"):fmt("prettierd")
 			ft("python"):lint("flake8"):fmt("black")
+			ft("sql"):lint("sqlfluff"):fmt("sqlfluff")
+			ft("plsql"):lint("sqlfluff"):fmt("sqlfluff")
 		end,
 	},
 
@@ -799,7 +807,7 @@ vim.lsp.config("vtsls", {
 
 vim.lsp.config("angularls", {
 	capabilities = capabilities,
-	filetypes = { "html", "htmlangular" },
+	filetypes = { "typescript", "html", "htmlangular" },
 })
 
 vim.lsp.config("cssls", {
@@ -888,3 +896,4 @@ map("n", "<leader>z", ":u<CR>", opts)
 map("n", "<leader>y", ":red<CR>", opts)
 map("n", "<leader>w", ":w<CR>", opts)
 map("n", "<leader>ww", ":wall<CR>", opts)
+
