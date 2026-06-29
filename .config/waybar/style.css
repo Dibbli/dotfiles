@@ -66,6 +66,11 @@ button:hover {
   background-color: #282828;
   color: #ebdbb2;
 }
+#custom-weather {
+  padding: 0 10px;
+  background-color: #282828;
+  color: #fabd2f;
+}
 #language {
   padding-left: 10px;
 }
@@ -109,4 +114,11 @@ button:hover {
 
 #keyboard-state > label.locked {
   background-color: #3c3836;
+}
+
+#custom-screengif.recording {
+  background-color: #fb4934;
+  color: #282828;
+  padding: 0 10px;
+  font-weight: bold;
 }
