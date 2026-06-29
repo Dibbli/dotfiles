@@ -1,8 +1,8 @@
-# Shared Claude memory — new machine setup
+# Shared Claude memory + skills, new machine setup
 
-This repo carries the **public shared memories** (`.claude/memory-shared/`) and the
-**provisioner** (`.claude/hooks/provision_shared_memories.py`). To bring a fresh machine
-up to speed:
+This repo carries the **public shared memories** (`.claude/memory-shared/`), the
+**public skills** (`.claude/skills/`), and the **provisioner** (`.claude/hooks/provision_shared_memories.py`).
+To bring a fresh machine up to speed:
 
 ## 1. Clone dotfiles to the expected path
 The provisioner expects this repo at `~/Documents/dotfiles`. If you keep it elsewhere,
@@ -28,6 +28,18 @@ already have memory dirs, run once:
 ```bash
 python3 ~/Documents/dotfiles/.claude/hooks/provision_shared_memories.py --all
 ```
+
+## 4. Wire skills into ~/.claude/skills/ (one-time)
+Skills live in this repo under `.claude/skills/`. The Claude Code loader follows symlinks,
+so link each skill dir into `~/.claude/skills/`:
+```bash
+mkdir -p ~/.claude/skills
+for s in ~/Documents/dotfiles/.claude/skills/*/; do
+  ln -sfn "$s" ~/.claude/skills/"$(basename "$s")"
+done
+```
+Each public skill (bugfix, fix, handoff, intake, mr, mrfix) becomes a symlink to the repo;
+edits in the repo take effect immediately in every session on every machine.
 
 ## Private memories (NOT in this repo)
 The private set lives at `~/.claude/memory-shared-private/` and is deliberately never
