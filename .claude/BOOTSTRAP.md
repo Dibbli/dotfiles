@@ -1,26 +1,37 @@
-# Shared Claude memory + skills, new machine setup
+# Shared Claude memory + assets — new machine setup
 
-This repo carries the **public shared memories** (`.claude/memory-shared/`), the
-**public skills** (`.claude/skills/`), and the **provisioner** (`.claude/hooks/provision_shared_memories.py`).
+This repo carries two kinds of shared Claude config and the provisioners that install them:
+- **Per-project memories** (`.claude/memory-shared/`) via `provision_shared_memories.py` — symlinked into each `~/.claude/projects/<proj>/memory/`.
+- **System-wide assets** — skills (`.claude/skills/`), agents (`.claude/agents/`), workflows (`.claude/workflows/`) — via `provision_global_assets.py`, symlinked into `~/.claude/{skills,agents,workflows}/`.
+
 To bring a fresh machine up to speed:
 
 ## 1. Clone dotfiles to the expected path
-The provisioner expects this repo at `~/Documents/dotfiles`. If you keep it elsewhere,
-edit the `PUBLIC` path near the top of `provision_shared_memories.py`.
+Both provisioners expect this repo at `~/Documents/dotfiles`. If you keep it elsewhere,
+edit the path constants near the top of each script.
 
-## 2. Register the SessionStart hook
+## 2. Register the SessionStart hooks
 Add this to `~/.claude/settings.json` (merge into an existing `hooks` block if present):
 
 ```json
 "hooks": {
   "SessionStart": [
-    { "hooks": [ { "type": "command",
-      "command": "python3 \"$HOME/Documents/dotfiles/.claude/hooks/provision_shared_memories.py\"",
-      "timeout": 30, "statusMessage": "Provisioning shared memories" } ] }
+    { "hooks": [
+      { "type": "command",
+        "command": "python3 \"$HOME/Documents/dotfiles/.claude/hooks/provision_shared_memories.py\"",
+        "timeout": 30, "statusMessage": "Provisioning shared memories" },
+      { "type": "command",
+        "command": "python3 \"$HOME/Documents/dotfiles/.claude/hooks/provision_global_assets.py\"",
+        "timeout": 30, "statusMessage": "Provisioning skills, agents, workflows" }
+    ] }
   ]
 }
 ```
-Then open `/hooks` once (or restart) so the config reloads.
+Then open `/hooks` once (or restart) so the config reloads. The assets provisioner is
+cwd-independent and idempotent, so it can also be run once by hand:
+```bash
+python3 ~/Documents/dotfiles/.claude/hooks/provision_global_assets.py
+```
 
 ## 3. Backfill existing projects (optional)
 New projects get provisioned automatically on first session. To wire up projects that
@@ -28,18 +39,6 @@ already have memory dirs, run once:
 ```bash
 python3 ~/Documents/dotfiles/.claude/hooks/provision_shared_memories.py --all
 ```
-
-## 4. Wire skills into ~/.claude/skills/ (one-time)
-Skills live in this repo under `.claude/skills/`. The Claude Code loader follows symlinks,
-so link each skill dir into `~/.claude/skills/`:
-```bash
-mkdir -p ~/.claude/skills
-for s in ~/Documents/dotfiles/.claude/skills/*/; do
-  ln -sfn "$s" ~/.claude/skills/"$(basename "$s")"
-done
-```
-Each public skill (bugfix, fix, handoff, intake, mr, mrfix) becomes a symlink to the repo;
-edits in the repo take effect immediately in every session on every machine.
 
 ## Private memories (NOT in this repo)
 The private set lives at `~/.claude/memory-shared-private/` and is deliberately never
@@ -49,6 +48,7 @@ employer-owned machine, leave it off — the provisioner only deduplicates priva
 memories where a copy already exists, so absence is safe.
 
 ## What is machine-local and regenerated
-The per-project symlinks under `~/.claude/projects/*/memory/` are not synced; the
-provisioner recreates them from the canonical dirs on each machine. Only the canonical
-dirs + this script + the hook entry need to be present.
+The symlinks under `~/.claude/projects/*/memory/` and the asset symlinks under
+`~/.claude/{skills,agents,workflows}/` are not synced; the provisioners recreate them
+from the canonical dirs on each machine. Only the canonical dirs + the two scripts +
+the hook entries need to be present.
