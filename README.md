@@ -18,6 +18,7 @@ My personal configuration for a Wayland desktop on Arch Linux. A tiling, keyboar
 | [Starship](https://starship.rs/) | Cross-shell prompt | Stock |
 | [Lazygit](https://github.com/jesseduffield/lazygit) | Terminal git UI | Stock |
 | [uwsm](https://github.com/Vladimir-csp/uwsm) | systemd-managed session | [`.config/uwsm`](.config/uwsm) |
+| [Claude Code](https://claude.com/claude-code) | AI coding config: shared memories, skills, agents | [`.claude`](.claude) · [setup](.claude/BOOTSTRAP.md) |
 
 ## Highlights
 
@@ -25,6 +26,7 @@ My personal configuration for a Wayland desktop on Arch Linux. A tiling, keyboar
 - **Gruvbox**: theming wired into GTK, Qt, Waybar, Kitty, and Neovim.
 - **Neovim**: Lua config with a pinned `lazy-lock.json` for reproducible plugin versions.
 - **Zsh**: vi-mode editing with `jk` to exit insert mode, smart completion, and a set of [aliases](.bash_aliases).
+- **Claude Code**: shared cross-project memories plus the `/mr` and `/fix` review skills (multi-agent, blame-gated diff review) and their specialist agents, provisioned by symlink ([setup](.claude/BOOTSTRAP.md)).
 
 ## Installation
 

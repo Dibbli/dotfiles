@@ -10,6 +10,9 @@ Private memories are only DEDUPED: a project's existing real-file copy is replac
 with a symlink to canonical, but private memories are not spread to projects that
 never had them (avoids leaking job-search/MR notes into unrelated projects).
 
+Memories are per-project (~/.claude/projects/<proj>/memory). System-wide assets
+(skills, agents, workflows) are NOT handled here — see provision_global_assets.py.
+
 Modes:
   (no args)        hook mode: read SessionStart JSON on stdin, provision the cwd's project
   --dir <memdir>   provision one memory dir
