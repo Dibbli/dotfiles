@@ -30,7 +30,6 @@ autoload -Uz compinit
 compinit
 
 # Export variables
-export LINGO_20_HOME="~/.cache/yay/lingo/src/usr/share/lingo"
 export VOLTA_HOME="$HOME/.volta"
 export EM_CACHE=~/.emscripten_cache
 export ANDROID_HOME=$HOME/Android/Sdk
@@ -40,12 +39,13 @@ export LUA_CPATH="/usr/lib/lua/5.1/?.so;;"
 export MANPAGER='nvim +Man!'
 export EDITOR=nvim
 export TERMINAL=kitty
-export BROWSER=zen-browser
+export BROWSER=librewolf
 export GPG_TTY=$(tty)
+export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 
 
 # Update PATH
-export PATH=~/.cache/yay/lingo/src/usr/share/lingo:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=/usr/lib/emscripten:$PATH
 export PATH=$HOME/.local/share/nvim/mason/bin:$PATH
@@ -61,3 +61,7 @@ eval "$(starship init zsh)"
 [[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+export PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1
+
+# Machine-local, untracked
+[[ -f ~/.zsh_local ]] && source ~/.zsh_local
