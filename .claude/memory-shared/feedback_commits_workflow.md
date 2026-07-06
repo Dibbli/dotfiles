@@ -8,6 +8,7 @@ metadata:
 
 This rule is NOT satisfied by any of the following — they are traps I have fallen for:
 - A plan (even an approved one) that lists a "commit" step. Plan commit steps are **review checkpoints**, not license to commit.
+- **Writing a plan/spec/doc file that contains `git commit -m "<message I wrote>"` steps.** An executor (a subagent, or me in inline mode) would then RUN them → I committed by proxy. In any plan, make the step `git add …` + "hand off to the user"; a bare suggested *subject* line is the most I write, never a full `git commit` command or a co-author trailer. The user flagged this as "illegal" when a written plan carried authored commit messages.
 - The user saying "sure", "lets go", "proceed", "do it". That approves the **work**, never the commit wording.
 - Me having just asked "should I commit X first?" and the user agreeing. Agreement = yes do the work; **I still hand the commit over.**
 - Finishing a clean logical chunk that "obviously" wants a commit.
