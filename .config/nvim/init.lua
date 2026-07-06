@@ -99,6 +99,9 @@ require("lazy").setup({
 			require("dashboard").setup({
 				theme = "hyper",
 				config = {
+					shortcut = {
+						{ desc = "  " .. os.date("%H:%M"), group = "DashboardShortCut" },
+					},
 					header = {
 						"███╗   ██╗██╗   ██╗██╗███╗   ███╗",
 						"████╗  ██║██║   ██║██║████╗ ████║",
