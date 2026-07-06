@@ -99,6 +99,9 @@ require("lazy").setup({
 			require("dashboard").setup({
 				theme = "hyper",
 				config = {
+					shortcut = {
+						{ desc = "  " .. os.date("%H:%M"), group = "DashboardShortCut" },
+					},
 					header = {
 						"███╗   ██╗██╗   ██╗██╗███╗   ███╗",
 						"████╗  ██║██║   ██║██║████╗ ████║",
@@ -113,6 +116,42 @@ require("lazy").setup({
 						"v" .. vim.version().major .. "." .. vim.version().minor .. "." .. vim.version().patch,
 					},
 				},
+			})
+
+			local uv = vim.uv or vim.loop
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "dashboard",
+				callback = function(ev)
+					local buf = ev.buf
+					local timer = uv.new_timer()
+					local function tick()
+						if not vim.api.nvim_buf_is_valid(buf) then
+							timer:stop()
+							timer:close()
+							return
+						end
+						for i, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+							local s, e = line:find("%d%d:%d%d")
+							if s then
+								vim.bo[buf].modifiable = true
+								vim.api.nvim_buf_set_text(buf, i - 1, s - 1, i - 1, e, { os.date("%H:%M") })
+								vim.bo[buf].modifiable = false
+								break
+							end
+						end
+					end
+					-- fire on the minute boundary, then every 60s
+					timer:start((60 - tonumber(os.date("%S"))) * 1000, 60000, vim.schedule_wrap(tick))
+					vim.api.nvim_create_autocmd("BufWipeout", {
+						buffer = buf,
+						callback = function()
+							if not timer:is_closing() then
+								timer:stop()
+								timer:close()
+							end
+						end,
+					})
+				end,
 			})
 		end,
 		dependencies = { { "nvim-tree/nvim-web-devicons" } },

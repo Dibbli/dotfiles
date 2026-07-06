@@ -14,3 +14,5 @@ When a change causes a regression, do NOT reflexively propose "revert it". Diagn
 - Pull the relevant library semantics via context7 and let the docs guide the fix.
 - A revert is a last resort, not the reflex. The right fix is usually forward, not backward.
 - If the user asks for research, actually call the tool — a response that skips the tool call will be rejected.
+
+Sibling of [[feedback_investigate_before_patching]] (add logging, confirm with real output before the next guess).
