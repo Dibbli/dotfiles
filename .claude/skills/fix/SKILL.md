@@ -41,7 +41,7 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
    - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `CLAUDE.md` and any `.claude/rules/*`.
 
 4. **Invoke the review** with the Workflow tool:
-   `Workflow({ scriptPath: "$HOME/.claude/workflows/review-diff.js", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, hasTestFramework, touchesTypes } })`
+   `Workflow({ name: "review-diff", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, hasTestFramework, touchesTypes } })`
    It returns `{ findings, commentFindings }`. `findings` are already blame-gated, scored, and kept; each carries `score` and `ease`. `commentFindings` are comment-analyzer notes, unscored.
 
 5. **Output a fix plan** (do not edit code):

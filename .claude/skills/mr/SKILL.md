@@ -35,7 +35,7 @@ The review (specialist fan-out, blame gate, scoring, keep filter) runs in the `r
 3. **Flags**: `hasTestFramework`, `touchesTypes`, `deep` (true on `/mr opus`), `changedPaths`, `rulePaths` (paths only, not contents).
 
 4. **Invoke the review** with the Workflow tool:
-   `Workflow({ scriptPath: "$HOME/.claude/workflows/review-diff.js", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "mr", deep, hasTestFramework, touchesTypes } })`
+   `Workflow({ name: "review-diff", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "mr", deep, hasTestFramework, touchesTypes } })`
    Returns `{ findings, commentFindings }`. In `mr` mode `findings` are the score-≥61 survivors. `commentFindings` are raw comment-analyzer notes; you select at most 2 load-bearing ones (below).
 
 5. **Output** paste-ready GitLab MR comment blocks **written to a Markdown file in `~/Downloads`** (do not dump them in chat). Filename: `~/Downloads/mr-review-<branch>.md`, where `<branch>` is `git rev-parse --abbrev-ref HEAD` with `/`→`-`; if detached, `mr-review.md`. Body, in this fixed order:
