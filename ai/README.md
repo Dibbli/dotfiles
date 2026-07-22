@@ -6,7 +6,7 @@ This directory is the canonical source for personal configuration shared by Clau
 ai/
   shared/   memories and portable support code
   claude/   Claude Code agents, skills, workflows, and hook adapter
-  codex/    Codex hook adapter and future Codex-only assets
+  codex/    Codex hook adapter, themes, and future Codex-only assets
 ```
 
 ## Memory behavior
@@ -30,6 +30,14 @@ Codex command for `~/.codex/hooks.json`:
 ```json
 "command": "python3 '/home/dibbli/Documents/dotfiles/ai/codex/hooks/session_start.py'"
 ```
+
+Codex Ashen theme:
+
+```sh
+ln -s ~/Documents/dotfiles/ai/codex/themes/ashen.tmTheme ~/.codex/themes/ashen.tmTheme
+```
+
+Then set `theme = "ashen"` under `[tui]` in `~/.codex/config.toml`.
 
 Backfill Claude projects and repair managed asset links:
 
