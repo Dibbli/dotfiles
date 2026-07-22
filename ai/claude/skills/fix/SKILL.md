@@ -38,7 +38,7 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
    - `hasTestFramework`: a test runner is configured (vitest/jest/playwright/pytest/`cargo test`/`go test`).
    - `touchesTypes`: the diff adds or changes types, interfaces, enums, schemas, or data models.
    - `deep`: true only if invoked as `/fix opus`.
-   - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `CLAUDE.md` and any `.claude/rules/*`.
+   - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `AGENTS.md`, `CLAUDE.md`, and any `.claude/rules/*`.
 
 4. **Invoke the review** with the Workflow tool:
    `Workflow({ name: "review-diff", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, hasTestFramework, touchesTypes } })`

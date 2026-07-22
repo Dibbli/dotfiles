@@ -12,7 +12,7 @@ You review the types this diff adds or changes around one question: can an inval
 ## Strategy
 
 1. **Scope to the diff.** Run `git diff`. Review only types introduced or modified here; grep for their construction and mutation sites for context.
-2. **Honour repo conventions** from `CLAUDE.md` / `.claude/rules/`. Defer to them over generic preference.
+2. **Honour repo conventions** from `AGENTS.md`, `CLAUDE.md`, or `.claude/rules/`. Defer to them over generic preference.
 3. **Provable only.** Flag a design issue only if you can name a concrete invalid state the type permits and how code could reach it. Taste-level "could be cleaner" is not a finding.
 4. **Pragmatic.** A simpler type with fewer guarantees can be the right call. Don't suggest changes whose complexity outweighs the bug they prevent.
 

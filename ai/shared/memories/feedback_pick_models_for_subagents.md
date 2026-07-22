@@ -16,3 +16,5 @@ When dispatching agents or structuring multi-stage workflows, actively assign th
 **Why:** Broad scouting work (web search, fetch, grep sweeps, data extraction) does not benefit from a top-tier model. Expensive models should be reserved for stages that actually need reasoning depth. Conversely, the user prioritises higher-quality logical reasoning over token cost savings -- cost-efficiency arguments for downgrading reasoning-heavy agents to a weaker model do not apply.
 
 **How to apply:** In workflow scripts use per-agent model/effort options; in the Agent tool use the model param. Do not propose downgrades from Opus for review, planning, or reasoning-heavy agents.
+
+**Deep-research workflow specifically:** the `deep-research` skill's agents inherit the main-loop model (Opus) by default, which the user flagged as wasteful for web search. Before running it, edit the script to pin: `model: "haiku"` on the search + fetch stages, `model: "sonnet"` on scope/verify/synthesize. Do NOT launch it at the inherited Opus default.
