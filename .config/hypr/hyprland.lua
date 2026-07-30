@@ -77,16 +77,17 @@ hl.config({
 
   opengl = { nvidia_anti_flicker = false },
   render = { new_render_scheduling = true },
+  animations = { enabled = true },
 })
 
 -- Animations
 hl.curve("myBezier", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
-hl.animation({ leaf = "windows",     enabled = true, speed = 7,  curve = "myBezier" })
-hl.animation({ leaf = "windowsOut",  enabled = true, speed = 7,  curve = "default", style = "popin 80%" })
-hl.animation({ leaf = "border",      enabled = true, speed = 10, curve = "default" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 8,  curve = "default" })
-hl.animation({ leaf = "fade",        enabled = true, speed = 7,  curve = "default" })
-hl.animation({ leaf = "workspaces",  enabled = true, speed = 6,  curve = "default" })
+hl.animation({ leaf = "windows",     enabled = true, speed = 7,  bezier = "myBezier" })
+hl.animation({ leaf = "windowsOut",  enabled = true, speed = 7,  bezier = "default", style = "popin 80%" })
+hl.animation({ leaf = "border",      enabled = true, speed = 10, bezier = "default" })
+hl.animation({ leaf = "borderangle", enabled = true, speed = 8,  bezier = "default" })
+hl.animation({ leaf = "fade",        enabled = true, speed = 7,  bezier = "default" })
+hl.animation({ leaf = "workspaces",  enabled = true, speed = 6,  bezier = "default" })
 
 -- Per-device
 hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
@@ -97,7 +98,7 @@ hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
 -- Fix some dragging issues with XWayland
 hl.window_rule({
   name = "fix-xwayland-drags",
-  match = { class = "^$", title = "^$", xwayland = true, floating = true, fullscreen = false, pinned = false },
+  match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },
   no_focus = true,
 })
 -- Center the ssh/FIDO askpass prompt instead of tiling it
