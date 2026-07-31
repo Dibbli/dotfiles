@@ -33,6 +33,7 @@ const baseRef = a.baseRef || (diffRange ? diffRange.split(/\.\.\.?/)[0] : 'HEAD'
 const changed = (a.changedPaths || []).join('\n')
 const rules = (a.rulePaths || []).join('\n')
 const mode = a.mode === 'fix' ? 'fix' : 'mr'
+const blameEnabled = a.blame !== false
 const specialistModel = a.deep ? 'opus' : 'sonnet'
 const diffCmd = `git -C ${repoPath} diff ${diffRange}`.trim()
 // Frozen snapshot beats a live `git diff`: a working tree edited mid-run is a moving target.
@@ -155,7 +156,7 @@ for (const r of raw.filter(Boolean)) {
   for (const f of r.findings) allFindings.push({ ...f, source: r.key, isComment })
 }
 const nComment = allFindings.filter(f => f.isComment).length
-log(`${allFindings.length - nComment} specialist findings + ${nComment} comment notes; blame-gating all`)
+log(`${allFindings.length - nComment} specialist findings + ${nComment} comment notes; ${blameEnabled ? 'blame-gating all' : 'blame gate OFF (noblame)'}`)
 
 const PASS_A = [
   'Return an integer 0-100. Bands:',
@@ -186,6 +187,7 @@ const processed = await pipeline(
   allFindings,
   // Blame gate: drop anything this branch did not introduce. Throwing drops the item.
   async (f) => {
+    if (!blameEnabled) return f
     const v = await agent(
       [BLAME, '', '## Finding', fjson(f), '', READONLY].join('\n'),
       { label: `blame:${f.path}:${f.line}`, phase: 'Blame', agentType: 'Explore', model: 'sonnet', schema: BLAME_SCHEMA }

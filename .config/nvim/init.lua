@@ -89,6 +89,37 @@ require("lazy").setup({
 	},
 	{ "williamboman/mason.nvim" },
 	{ "williamboman/mason-lspconfig.nvim" },
+	{
+		"lopi-py/luau-lsp.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		ft = "luau",
+		config = function()
+			require("luau-lsp").setup({
+				platform = { type = "roblox" },
+				sourcemap = {
+					enabled = true,
+					autogenerate = true,
+					rojo_project_file = "lobby.project.json",
+				},
+				types = { roblox_security_level = "PluginSecurity" },
+			})
+			-- The plugin only calls vim.lsp.enable after an async type-def
+			-- download its own FileType hook triggers, so the buffer that
+			-- triggered loading is never attached. Re-fire FileType once the
+			-- server command lands.
+			local function attach_open_buffers()
+				if not (vim.lsp.config["luau-lsp"] or {}).cmd then
+					return vim.defer_fn(attach_open_buffers, 300)
+				end
+				for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+					if vim.bo[buf].filetype == "luau" and #vim.lsp.get_clients({ bufnr = buf }) == 0 then
+						vim.api.nvim_exec_autocmds("FileType", { buffer = buf, modeline = false })
+					end
+				end
+			end
+			vim.defer_fn(attach_open_buffers, 300)
+		end,
+	},
 
 	-- === UI Components & Dashboard ===
 	{ "MunifTanjim/nui.nvim" },
@@ -349,6 +380,7 @@ require("lazy").setup({
 		config = function()
 			require("nvim-treesitter").install({
 				"lua",
+				"luau",
 				"javascript",
 				"typescript",
 				"tsx",
@@ -710,6 +742,7 @@ require("lazy").setup({
 			ft("scss"):lint("eslint_d"):fmt("prettierd")
 			ft("css"):lint("eslint_d"):fmt("prettierd")
 			ft("lua"):fmt("stylua")
+			ft("luau"):fmt("stylua"):lint("selene")
 			ft("kotlin"):fmt("ktlint")
 			ft("htmlangular"):lint("eslint_d"):fmt("prettierd")
 			ft("javascript"):lint("eslint_d"):fmt("prettierd")
@@ -854,6 +887,10 @@ vim.lsp.config("kotlin_language_server", {
 vim.lsp.config("pyright", {
 	capabilities = capabilities,
 	filetypes = { "python" },
+})
+
+vim.lsp.config("luau-lsp", {
+	capabilities = capabilities,
 })
 
 require("mason-lspconfig").setup({
