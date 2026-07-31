@@ -35,7 +35,8 @@
     "tooltip": true,
   },
   "hyprland/language": {
-    "format-en": "EN",
+    "format-en-colemak": "CO",
+    "format-en": "QW",
     "format-hu": "HU",
   },
   "keyboard-state": {
@@ -73,7 +74,7 @@
     "bat": "BAT0",
     "states": { "warning": 30, "critical": 15 },
     "format": "{capacity}% {icon}",
-    "format-charging": "{capacity}% ⬆",
+    "format-charging": "{capacity}% ",
     "format-plugged": "{capacity}% ⚡",
     "format-icons": ["▁","▂","▃","▄","▅","▆","▇","█"],
     "tooltip-format": "{timeTo} | {power}W",

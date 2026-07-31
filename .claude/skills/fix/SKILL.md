@@ -1,5 +1,5 @@
 ---
-description: Review uncommitted changes or current branch vs base with static gates and a multi-agent blame-gated review, output as a concrete fix plan grouped by file. Use when reviewing your own code, checking a diff or branch, or finding bugs and cleanups before committing. Read-only, produces a plan and does not edit. Usage /fix [opus]
+description: Review uncommitted changes or current branch vs base with static gates and a multi-agent blame-gated review, output as a concrete fix plan grouped by file. Use when reviewing your own code, checking a diff or branch, or finding bugs and cleanups before committing. Read-only, produces a plan and does not edit. Usage /fix [opus] [noblame]
 disable-model-invocation: true
 allowed-tools:
   - Bash(git *)
@@ -38,10 +38,11 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
    - `hasTestFramework`: a test runner is configured (vitest/jest/playwright/pytest/`cargo test`/`go test`).
    - `touchesTypes`: the diff adds or changes types, interfaces, enums, schemas, or data models.
    - `deep`: true only if invoked as `/fix opus`.
+   - `blame`: false only if invoked with `noblame` (e.g. `/fix noblame` or `/fix opus noblame`); otherwise omit. Off means every finding is reported without checking whether this branch introduced it, so pre-existing issues in touched files show up too.
    - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `CLAUDE.md` and any `.claude/rules/*`.
 
 4. **Invoke the review** with the Workflow tool:
-   `Workflow({ scriptPath: "$HOME/.claude/workflows/review-diff.js", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, hasTestFramework, touchesTypes } })`
+   `Workflow({ scriptPath: "$HOME/.claude/workflows/review-diff.js", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, blame, hasTestFramework, touchesTypes } })`
    It returns `{ findings, commentFindings }`. `findings` are already blame-gated, scored, and kept; each carries `score` and `ease`. `commentFindings` are comment-analyzer notes, unscored.
 
 5. **Output a fix plan** (do not edit code):
