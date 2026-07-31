@@ -39,10 +39,10 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
    - `touchesTypes`: the diff adds or changes types, interfaces, enums, schemas, or data models.
    - `deep`: true only if invoked as `/fix opus`.
    - `blame`: false only if invoked with `noblame` (e.g. `/fix noblame` or `/fix opus noblame`); otherwise omit. Off means every finding is reported without checking whether this branch introduced it, so pre-existing issues in touched files show up too.
-   - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `CLAUDE.md` and any `.claude/rules/*`.
+   - `changedPaths`: the file paths in the diff. `rulePaths`: paths (not contents) of `AGENTS.md`, `CLAUDE.md`, and any `.claude/rules/*`.
 
 4. **Invoke the review** with the Workflow tool:
-   `Workflow({ scriptPath: "$HOME/.claude/workflows/review-diff.js", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, blame, hasTestFramework, touchesTypes } })`
+   `Workflow({ name: "review-diff", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, blame, hasTestFramework, touchesTypes } })`
    It returns `{ findings, commentFindings }`. `findings` are already blame-gated, scored, and kept; each carries `score` and `ease`. `commentFindings` are comment-analyzer notes, unscored.
 
 5. **Output a fix plan** (do not edit code):

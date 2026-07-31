@@ -4,7 +4,6 @@
 
 hl.monitor({ output = "DP-1", mode = "2560x1440@170", position = "0x-200", scale = "auto", vrr = 1 })
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
-hl.monitor({ output = "HEADLESS-2", mode = "1920x1200@60", position = "auto", scale = 1 })
 
 for i = 1, 5 do
     hl.workspace_rule({ workspace = tostring(i), monitor = "DP-1", default = (i == 1) })
@@ -19,7 +18,6 @@ end
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("uwsm app -- kitty")
-    hl.exec_cmd("hyprctl output create headless") -- virtual output for Moonlight streaming
     hl.exec_cmd("uwsm app -- waybar")
     hl.exec_cmd("uwsm app -- hyprpaper")
     hl.exec_cmd("uwsm app -- /usr/lib/polkit-kde-authentication-agent-1")

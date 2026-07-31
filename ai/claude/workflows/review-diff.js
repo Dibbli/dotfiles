@@ -163,7 +163,7 @@ const PASS_A = [
   '  0-20   false positive: misreads the code, or a linter/typechecker/compiler already catches it.',
   '  21-40  speculative: cannot verify from the diff alone.',
   '  41-60  real but small: verified, narrow blast radius or edge case.',
-  '  61-80  real and routine: hits in normal use, or backed by CLAUDE.md.',
+  '  61-80  real and routine: hits in normal use, or backed by repo guidance.',
   '  81-100 real and load-bearing: correctness bug, security, swallowed error,',
   '         or explicit convention violation.',
   '',

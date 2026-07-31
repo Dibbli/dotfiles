@@ -13,7 +13,7 @@ You judge whether the diff's behaviour is covered, not whether line coverage hit
 
 1. **Scope to the diff.** Run `git diff`. Map each new or changed branch to a test that exercises it; grep the test dirs for existing coverage before claiming a gap.
 2. **Only when a framework exists.** If the repo has no test setup, output the clean-diff line and stop.
-3. **Honour repo conventions** from `CLAUDE.md` / `.claude/rules/` (test layout, helpers, what's expected). Defer to them.
+3. **Honour repo conventions** from `AGENTS.md`, `CLAUDE.md`, or `.claude/rules/` (test layout, helpers, what's expected). Defer to them.
 4. **Verify test-framework APIs with context7** before suggesting a matcher, mock, or fixture you're unsure of.
 5. **Provable only.** Flag a gap only if you can name the exact changed branch or behaviour that no test covers and the regression it would let through. If existing or integration tests likely cover it, don't flag.
 

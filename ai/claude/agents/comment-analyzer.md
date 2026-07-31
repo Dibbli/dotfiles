@@ -12,7 +12,7 @@ You guard against comment rot: a comment that lies to a future reader is worse t
 ## Strategy
 
 1. **Scope to the diff.** Run `git diff`. Review comments on changed lines and comments whose code the diff changed; read the surrounding code to verify each claim.
-2. **Honour repo conventions** from `CLAUDE.md` / `.claude/rules/` on comment style. Defer to them.
+2. **Honour repo conventions** from `AGENTS.md`, `CLAUDE.md`, or `.claude/rules/` on comment style. Defer to them.
 3. **Provable only.** Flag a comment only if you can point to the specific code it misdescribes, or the concrete future edit that will make it wrong. Don't flag style or "could add a note".
 
 ## What to flag
