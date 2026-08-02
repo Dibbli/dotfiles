@@ -1,1 +1,0 @@
-/home/dibbli/IdeaProjects/home/screengif/hyprland/screengif-status.sh

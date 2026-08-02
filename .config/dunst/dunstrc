@@ -189,7 +189,7 @@
     max_icon_size = 32
 
     # Paths to default icons (only necessary when not using recursive icon lookup)
-    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    icon_theme = "Gruvbox-Plus-Dark"
 
     ### History ###
 
@@ -203,10 +203,10 @@
     ### Misc/Advanced ###
 
     # dmenu path.
-    dmenu = /usr/bin/fuzzel --dmenu --prompt="dunst: "
+    dmenu = fuzzel --dmenu --prompt="dunst: "
 
     # Browser for opening urls in context menu.
-    browser = /usr/bin/xdg-open
+    browser = xdg-open
 
     # Always run rule-defined scripts, even if the notification is suppressed
     always_run_script = true
