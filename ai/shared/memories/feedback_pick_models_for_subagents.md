@@ -17,8 +17,10 @@ When dispatching agents or structuring multi-stage workflows, actively assign th
 
 **How to apply:** In workflow scripts use per-agent model/effort options; in the Agent tool use the model param. Do not propose downgrades from Opus for review, planning, or reasoning-heavy agents.
 
-**Implementer subagents write code → Sonnet minimum, not Haiku.** When executing subagent-driven-development, the user corrected Haiku implementers to Sonnet even for fully-spec'd mechanical edits (copy-paste from a plan). Haiku is only for pure summarisation/format conversion, NOT for any agent that edits source files. Reviewers stay on Opus/Sonnet per the judgement rule above.
+**Implementer subagents that write code → Sonnet minimum, not Haiku.** This holds even for fully-spec'd mechanical edits that are pure transcription from a plan. Haiku is only for summarisation and format conversion, never for an agent that edits source files.
 
-**Security / anti-cheat implementation → Opus, even when fully spec'd.** On the crouch/sprint plan the user bumped the anti-cheat (SpeedGuard) implementer from Sonnet to Opus. Escalate the implementer tier (not just the reviewer) for security-, anti-cheat-, money-, or exploit-critical code. Default heuristic for this user's Roblox project: trivial config/JSON/pure-math = Haiku ok; real implementation = Sonnet; security/anti-cheat-critical = Opus.
+**Reviews and scoped re-reviews default to Sonnet.** Escalate to Opus only when the diff is big, architectural, or safety-critical (live DB, money, auth, data loss). Never Haiku: a re-review verdicts each finding ADDRESSED/NOT ADDRESSED and fact-checks it against source, which is judgement, and it is the fix loop's only brake. Diff size is not a reason to go below Sonnet.
 
-**Deep-research workflow specifically:** the `deep-research` skill's agents inherit the main-loop model (Opus) by default, which the user flagged as wasteful for web search. Before running it, edit the script to pin: `model: "haiku"` on the search + fetch stages, `model: "sonnet"` on scope/verify/synthesize. Do NOT launch it at the inherited Opus default.
+**Security-critical implementation → Opus, even when fully spec'd.** Escalate the implementer tier, not just the reviewer, for security, anti-cheat, money, or exploit-critical code. Heuristic for the Roblox project: trivial config/JSON/pure-math = Haiku ok; real implementation = Sonnet; security/anti-cheat-critical = Opus.
+
+**Deep-research workflow:** its agents inherit the main-loop model (Opus) by default, which is wasteful for web search. Before running it, edit the script to pin `model: "haiku"` on the search and fetch stages and `model: "sonnet"` on scope/verify/synthesize. Do not launch it at the inherited default.

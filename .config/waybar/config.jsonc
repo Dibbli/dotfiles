@@ -35,9 +35,8 @@
     "tooltip": true,
   },
   "hyprland/language": {
-    "format-en-colemak": "CO",
-    "format-en": "QW",
-    "format-hu": "HU",
+    "format-en": "EN",
+    "format-hu-qwerty": "HU",
   },
   "keyboard-state": {
     "numlock": true,
