@@ -28,6 +28,20 @@ You guard against comment rot: a comment that lies to a future reader is worse t
 
 ### Nit
 - Comment restates the code.
+- Comment prose breaks Simplified Technical English (see below).
+
+## Comment prose style
+
+Comment prose must follow **ASD-STE100 Simplified Technical English**, at ELI18 level:
+
+- One idea per sentence. Short sentences. Active voice. Present tense where possible.
+- One meaning per word. Plain word wins: `use` not `utilise`, `start` not `initiate`, `so` not `consequently`, `about` not `regarding`.
+- No noun cluster longer than three words. Break it with a preposition.
+- No filler: no preamble, no restatement of the code, no bridge sentence.
+
+The same rules apply to **Hungarian** comments. STE has no Hungarian wordlist, so apply the principles, not the wordlist: short sentences, active voice, plain everyday word over the formal or foreign one, no long compound noun chains, no filler. Do not ask for a translation to English, and do not flag a comment only because it is Hungarian.
+
+Code and technical identifiers stay verbatim. This section governs prose only. Never trade away a fact for brevity: keep exact values, paths, error text, and any warning about data loss.
 
 ## Output
 

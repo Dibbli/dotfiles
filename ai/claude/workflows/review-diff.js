@@ -4,8 +4,8 @@ export const meta = {
   whenToUse: 'Invoked by the /fix and /mr skills. args: {repoPath, diffRange, baseRef, changedPaths, rulePaths, mode:"fix"|"mr", deep, hasTestFramework, touchesTypes}. Every finding passes a blame gate (introduced-by-this-branch vs pre-existing on baseRef) before scoring. Returns {findings, commentFindings}.',
   phases: [
     { title: 'Review', detail: 'parallel specialist reviewers over the diff' },
-    { title: 'Blame', detail: 'drop findings not introduced by this branch' },
-    { title: 'Score', detail: 'per-finding reality + ease scoring (haiku)' },
+    { title: 'Blame', detail: 'drop findings not introduced by this branch (haiku, 5 per agent)' },
+    { title: 'Score', detail: 'reality + ease scoring (haiku, 5 per agent)' },
   ],
 }
 
@@ -83,13 +83,23 @@ const FINDINGS_SCHEMA = {
   },
   required: ['findings'],
 }
-const SCORE_SCHEMA = { type: 'object', properties: { score: { type: 'integer' } }, required: ['score'] }
-const EASE_SCHEMA = { type: 'object', properties: { ease: { type: 'integer' } }, required: ['ease'] }
-const BLAME_SCHEMA = {
+const batchSchema = (name, props) => ({
   type: 'object',
-  properties: { introducedByBranch: { type: 'boolean' }, reason: { type: 'string' } },
-  required: ['introducedByBranch'],
-}
+  properties: {
+    [name]: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { index: { type: 'integer' }, ...props },
+        required: ['index', ...Object.keys(props)],
+      },
+    },
+  },
+  required: [name],
+})
+const SCORE_SCHEMA = batchSchema('scores', { score: { type: 'integer' } })
+const EASE_SCHEMA = batchSchema('eases', { ease: { type: 'integer' } })
+const BLAME_SCHEMA = batchSchema('verdicts', { introducedByBranch: { type: 'boolean' }, reason: { type: 'string' } })
 
 const BLAME = [
   'Decide whether a code-review finding is in scope for a single-ticket branch review.',
@@ -107,7 +117,9 @@ const BLAME = [
   'missing test for behavior this branch did not alter. Compare the base file to the diff before',
   'deciding. When the base already had the problem, it is out of scope.',
   '',
-  'Return {introducedByBranch: boolean, reason: <one short sentence>}.',
+  'You are judging a batch of findings, each with an `index`. Judge every one independently.',
+  'Return {verdicts: [{index, introducedByBranch, reason: <one short sentence>}, ...]} with one',
+  'entry per finding given, same indexes. No prose.',
 ].join('\n')
 
 const SPECIALISTS = [
@@ -168,46 +180,64 @@ const PASS_A = [
   '         or explicit convention violation.',
   '',
   'Scope is already filtered upstream; do not down-score for "pre-existing".',
-  'Pick a specific number inside the band. No prose.',
+  'Pick a specific number inside the band. Score every finding in the batch independently.',
+  'Return {scores: [{index, score}, ...]} with one entry per finding given, same indexes. No prose.',
 ].join('\n')
 
 const PASS_B = [
-  'How invasive is the proposed fix? Return a single integer 1-4.',
+  'How invasive is each proposed fix? Rate every one with an integer 1-4.',
   '  1  trivial, 1-2 line change, no ripple.',
   '  2  easy, under ~10 lines in one file, no API change.',
   '  3  medium, multiple files or a small API/shape change.',
   '  4  hard, broad refactor, public API change, or migration needed.',
   '',
-  'No prose.',
+  'Return {eases: [{index, ease}, ...]} with one entry per fix given, same indexes. No prose.',
 ].join('\n')
 
 const fjson = f => JSON.stringify({ path: f.path, line: f.line, issue: f.issue, fix: f.fix })
+const BATCH = 5
+const chunks = arr => Array.from({ length: Math.ceil(arr.length / BATCH) }, (_, i) => arr.slice(i * BATCH, i * BATCH + BATCH))
+const byIndex = (rows, key) => new Map((rows || []).map(r => [r.index, r[key]]))
+const listOf = (items, render) => items.map((f, i) => `### index ${i}\n${render(f)}`).join('\n\n')
 
+// Findings are batched BATCH-per-agent: one blame agent and two score agents per chunk, not per finding.
 const processed = await pipeline(
-  allFindings,
-  // Blame gate: drop anything this branch did not introduce. Throwing drops the item.
-  async (f) => {
-    if (!blameEnabled) return f
+  chunks(allFindings),
+  // Blame gate: drop anything this branch did not introduce.
+  async (batch) => {
+    if (!blameEnabled) return batch
     const v = await agent(
-      [BLAME, '', '## Finding', fjson(f), '', READONLY].join('\n'),
-      { label: `blame:${f.path}:${f.line}`, phase: 'Blame', agentType: 'Explore', model: 'sonnet', schema: BLAME_SCHEMA }
+      [BLAME, '', '## Findings', listOf(batch, fjson), '', READONLY].join('\n'),
+      { label: `blame:${batch[0].path}+${batch.length}`, phase: 'Blame', agentType: 'Explore', model: 'haiku', schema: BLAME_SCHEMA }
     )
-    if (!v || !v.introducedByBranch) throw new Error('pre-existing')
-    return f
+    // A dead agent means no verdicts: keep the batch rather than silently dropping real findings.
+    if (!v) return batch
+    const verdict = byIndex(v.verdicts, 'introducedByBranch')
+    return batch.filter((_, i) => verdict.get(i) !== false)
   },
   // Score survivors. Comment findings carry through unscored (the caller judges/limits them).
-  async (f) => {
-    if (f.isComment) return { ...f, score: null, ease: f.ease || 1 }
-    const fctx = [READONLY, '', context, '', '## Finding', fjson(f)].join('\n')
+  async (batch) => {
+    const comments = batch.filter(f => f.isComment).map(f => ({ ...f, score: null, ease: f.ease || 1 }))
+    const rest = batch.filter(f => !f.isComment)
+    if (!rest.length) return comments
+    const label = `${rest[0].path}+${rest.length}`
     const [sa, sb] = await parallel([
-      () => agent([PASS_A, '', fctx].join('\n'), { label: `scoreA:${f.path}:${f.line}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: SCORE_SCHEMA }),
-      () => agent([PASS_B, '', READONLY, '', '## Proposed fix', f.fix].join('\n'), { label: `scoreB:${f.path}:${f.line}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: EASE_SCHEMA }),
+      () => agent([PASS_A, '', READONLY, '', context, '', '## Findings', listOf(rest, fjson)].join('\n'),
+        { label: `scoreA:${label}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: SCORE_SCHEMA }),
+      () => agent([PASS_B, '', READONLY, '', '## Proposed fixes', listOf(rest, f => f.fix)].join('\n'),
+        { label: `scoreB:${label}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: EASE_SCHEMA }),
     ])
-    return { ...f, score: sa ? sa.score : 0, ease: sb ? sb.ease : (f.ease || 3) }
+    const scores = byIndex(sa && sa.scores, 'score')
+    const eases = byIndex(sb && sb.eases, 'ease')
+    return comments.concat(rest.map((f, i) => ({
+      ...f,
+      score: scores.has(i) ? scores.get(i) : 0,
+      ease: eases.has(i) ? eases.get(i) : (f.ease || 3),
+    })))
   }
 )
 
-const survivors = processed.filter(Boolean)
+const survivors = processed.filter(Boolean).flat()
 const commentFindings = survivors.filter(f => f.isComment)
 const scored = survivors.filter(f => !f.isComment)
 
