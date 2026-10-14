@@ -47,6 +47,32 @@ class ProvisionAssetsTest(unittest.TestCase):
             self.assertEqual(0, provision_assets.provision())
             self.assertEqual("unmanaged.toml", unmanaged.read_text())
 
+    def test_every_file_of_a_skill_is_linked(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory, "root")
+            home = pathlib.Path(directory, "home")
+            files = ("SKILL.md", "render.sh", "kit/chrome.css")
+            for rel in files + ("__pycache__/x.pyc",):
+                path = root / "claude/skills/demo" / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(rel)
+            stale = home / ".claude/skills/demo/render.sh"
+            stale.parent.mkdir(parents=True)
+            stale.write_text("old real copy")
+
+            old_root, old_home = provision_assets.ROOT, provision_assets.HOME
+            provision_assets.ROOT, provision_assets.HOME = str(root), str(home)
+            self.addCleanup(setattr, provision_assets, "ROOT", old_root)
+            self.addCleanup(setattr, provision_assets, "HOME", old_home)
+
+            self.assertEqual(3, provision_assets.provision())
+            for rel in files:
+                linked = home / ".claude/skills/demo" / rel
+                self.assertTrue(linked.is_symlink(), rel)
+                self.assertEqual(rel, linked.read_text())
+            self.assertFalse((home / ".claude/skills/demo/__pycache__").exists())
+            self.assertEqual(0, provision_assets.provision())
+
     def test_codex_skill_symlink_is_replaced_with_a_real_file(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory, "root")

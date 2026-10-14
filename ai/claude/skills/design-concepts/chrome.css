@@ -1,0 +1,12 @@
+/* Mockup chrome shared by every project: never UI. Zero specificity (:where), so a project
+   stylesheet that already styles these wins. Body class "clean" hides the marks, for a finalize
+   reference render. */
+:where(.note) { position: absolute; z-index: 900; font: 500 14px "Lilex Nerd Font Mono", monospace; color: #ffe05a;
+	background: rgba(0, 0, 0, 0.8); border: 1px dashed rgba(255, 224, 90, 0.7); padding: 4px 9px; border-radius: 4px; white-space: nowrap; }
+:where(.concept) { position: absolute; left: 20px; bottom: 20px; z-index: 900; font: 500 16px "Lilex Nerd Font Mono", monospace;
+	color: rgba(255, 224, 90, 0.95); background: rgba(0, 0, 0, 0.78); padding: 8px 12px; border-radius: 4px; }
+:where(.ghost) { opacity: 0.4; } /* a state that is not live in this frame */
+/* A keep-out zone the UI must not cover (platform chrome, chat, thumbsticks, notches). */
+:where(.ko) { position: absolute; z-index: 800; border: 1.5px dashed rgba(255, 90, 70, 0.75); background: rgba(255, 60, 40, 0.06);
+	font: 500 11px "Lilex Nerd Font Mono", monospace; color: rgba(255, 138, 122, 0.8); padding: 3px 5px; text-transform: uppercase; pointer-events: none; }
+body.clean .note, body.clean .concept, body.clean .ko { display: none !important; }
