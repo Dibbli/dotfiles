@@ -29,12 +29,12 @@ Keep each section to the facts an agent cannot find on its own.
   missing.
 
 ## Research
-- Libraries to check with context7 (each concept must be buildable on them).
+- Libraries to check in the docs MCP (each concept must be buildable on them).
 - Reference topics for web research (genres, games, apps, moods).
 
 ## Output and hand-off
 - Set folder pattern, e.g. `docs/design/concepts/<YYYY-MM-DD>-<topic>/`; file naming.
-- Only if not the default `~/Documents/concepts/<topic>/`: where the owner looks at a set, and when it is cleared.
+- Only if not the default `~/Documents/concepts/<set folder basename>/` (one per run, so parallel designers never share it): where the owner looks at a set, and when it is cleared.
 - Ballot kit for animated takes, if the project has one.
 
 ## Rules

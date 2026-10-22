@@ -2,7 +2,7 @@
 name: type-design-analyzer
 description: Use this agent for STATIC review of the types, interfaces, and data models a diff introduces or changes — encapsulation, invariant expression, and enforcement. Read-only.
 model: opus
-tools: Read, Grep, Glob, Bash, mcp__context7__resolve-library-id, mcp__context7__query-docs
+tools: Read, Grep, Glob, Bash, mcp__docs__search_docs, mcp__docs__list_libraries
 permissionMode: plan
 color: pink
 ---

@@ -2,7 +2,7 @@
 name: pr-test-analyzer
 description: Use this agent for STATIC review of a diff's test coverage — untested branches, missing edge/negative/error cases, and tests coupled to implementation. Only where a test framework already exists. Read-only.
 model: sonnet
-tools: Read, Grep, Glob, Bash, mcp__context7__resolve-library-id, mcp__context7__query-docs
+tools: Read, Grep, Glob, Bash, mcp__docs__search_docs, mcp__docs__list_libraries
 permissionMode: plan
 color: cyan
 ---
@@ -14,7 +14,7 @@ You judge whether the diff's behaviour is covered, not whether line coverage hit
 1. **Scope to the diff.** Run `git diff`. Map each new or changed branch to a test that exercises it; grep the test dirs for existing coverage before claiming a gap.
 2. **Only when a framework exists.** If the repo has no test setup, output the clean-diff line and stop.
 3. **Honour repo conventions** from `AGENTS.md`, `CLAUDE.md`, or `.claude/rules/` (test layout, helpers, what's expected). Defer to them.
-4. **Verify test-framework APIs with context7** before suggesting a matcher, mock, or fixture you're unsure of.
+4. **Verify test-framework APIs in the docs MCP** (`mcp__docs__search_docs`, project version) before suggesting a matcher, mock, or fixture you're unsure of.
 5. **Provable only.** Flag a gap only if you can name the exact changed branch or behaviour that no test covers and the regression it would let through. If existing or integration tests likely cover it, don't flag.
 
 ## What to flag

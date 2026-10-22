@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Usage: render.sh [-v VIEW]... [-q QUERY] <page.html[?query]>...
 #   VIEW   WxH[@scale][:suffix][?query], e.g. 1920x1080 or 844x390@2:mobile?view=phone
-#          (default 1920x1080). Each view writes <name>[-suffix].png.
+#          (default 1920x1080). Each view writes <name>[-suffix].webp.
 #   QUERY  extra query string for every view, e.g. "art=file://$PWD/art/"
-# Pages live in <set>/src/; PNGs land in <set>/. A page's own query (strip.html?c=2) adds
-# "-c2" to the name. Fails, with no PNG left behind, on a missing page, an empty shot or a JS error.
+# Pages live in <set>/src/; shots land in <set>/ as WebP q85 (a fifth of the PNG, so pushes stay small). A page's own query (strip.html?c=2) adds
+# "-c2" to the name. Fails, with no shot left behind, on a missing page, an empty shot or a JS error.
 # Headless with no session bus and a throwaway profile: chromium on the user's bus once broke the
 # desktop document portal.
 set -euo pipefail
@@ -34,10 +34,10 @@ for page in "$@"; do
 		scale=${v#*@}; [[ $scale == "$v" ]] && scale=1
 		size=${v%%@*}
 		qs=$(printf '%s&%s&%s' "$pq" "$vq" "$query" | sed 's/&&*/\&/g; s/^&//; s/&$//')
-		png="$out/$name$suffix.png" log="$out/$name$suffix.log"
-		[[ $seen == *" $png "* ]] && { echo "render.sh: two views write $png; give one a :suffix" >&2; exit 1; }
-		seen+="$png "
-		rm -f "$png"
+		png="$out/$name$suffix.png" img="$out/$name$suffix.webp" log="$out/$name$suffix.log"
+		[[ $seen == *" $img "* ]] && { echo "render.sh: two views write $img; give one a :suffix" >&2; exit 1; }
+		seen+="$img "
+		rm -f "$png" "$img"
 		profile=$(mktemp -d)
 		DBUS_SESSION_BUS_ADDRESS=disabled: chromium "${flags[@]}" --user-data-dir="$profile" \
 			--window-size="${size/x/,}" --force-device-scale-factor="$scale" \
@@ -51,6 +51,8 @@ for page in "$@"; do
 			exit 1
 		fi
 		rm -f "$log"
-		echo "$png"
+		magick "$png" -quality 85 "$img"
+		rm -f "$png"
+		echo "$img"
 	done
 done
