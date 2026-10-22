@@ -1,6 +1,6 @@
 ---
 name: feedback_dropped_packets
-description: When to apply the lone-period recovery signal — user sends "." to mean "connection dropped, resume"
+description: When to apply the lone-period recovery signal: user sends "." to mean "connection dropped, resume"
 metadata:
   type: feedback
 ---

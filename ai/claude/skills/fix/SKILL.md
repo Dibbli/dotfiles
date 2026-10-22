@@ -2,6 +2,7 @@
 description: Review uncommitted changes or current branch vs base with static gates and a multi-agent blame-gated review, output as a concrete fix plan grouped by file. Use when reviewing your own code, checking a diff or branch, or finding bugs and cleanups before committing. Read-only, produces a plan and does not edit. Usage /fix [opus] [noblame]
 disable-model-invocation: true
 allowed-tools:
+  - Workflow
   - Bash(git *)
   - Bash(pnpm *)
   - Bash(npm *)

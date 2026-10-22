@@ -9,4 +9,6 @@ When a feature has an established sibling in the app, a new instance must match 
 
 **Why:** Consistency across the app is a hard requirement (see [[feedback_production_tier_no_excuses]]); "fewer lines" never justifies a worse or divergent user experience.
 
-**How to apply:** Before simplifying anything user-facing, find the sibling feature and diff against it. Over-engineering reviews ([[ponytail]]-style) apply to internal plumbing, not to trimming visible functionality the rest of the app already provides.
+**How to apply:** Before simplifying anything user-facing, find the sibling feature and diff against it. Over-engineering reviews (the ponytail plugin) apply to internal plumbing, not to trimming visible functionality the rest of the app already provides.
+
+Before calling UI work done, screenshot it next to its sibling at mobile and desktop widths.

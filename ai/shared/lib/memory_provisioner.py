@@ -75,6 +75,14 @@ def _copy(target, destination):
     return True
 
 
+def _index_line(memory_dir, filename):
+    name, description = _frontmatter(os.path.join(memory_dir, filename))
+    line = "- [%s](%s)" % (name, filename)
+    if description:
+        line += " — " + description
+    return line
+
+
 def _reconcile_index(memory_dir):
     files = sorted(
         name for name in os.listdir(memory_dir)
@@ -91,18 +99,16 @@ def _reconcile_index(memory_dir):
         if match:
             filename = match.group(1)
             if filename in files:
+                # Provisioned links follow their source's description; local lines stay hand-written.
+                if os.path.islink(os.path.join(memory_dir, filename)):
+                    line = _index_line(memory_dir, filename)
                 kept.append(line)
                 covered.add(filename)
         elif line.strip():
             kept.append(line)
     for filename in files:
-        if filename in covered:
-            continue
-        name, description = _frontmatter(os.path.join(memory_dir, filename))
-        line = "- [%s](%s)" % (name, filename)
-        if description:
-            line += " — " + description
-        kept.append(line)
+        if filename not in covered:
+            kept.append(_index_line(memory_dir, filename))
     with io.open(index_path, "w", encoding="utf-8") as handle:
         handle.write("\n".join(kept) + "\n")
 
@@ -111,12 +117,16 @@ def provision_memory_dir(destination, public_dir, private_dir, private_eligibili
     os.makedirs(destination, exist_ok=True)
     public = canon_map(public_dir)
     public_root = os.path.abspath(public_dir)
+    private_root = os.path.abspath(private_dir)
     for path in glob.glob(os.path.join(destination, "*.md")):
         if not os.path.islink(path):
             continue
         target = os.readlink(path)
         target = os.path.abspath(os.path.join(os.path.dirname(path), target))
-        if os.path.dirname(target) == public_root and os.path.basename(path) not in public:
+        source_dir = os.path.dirname(target)
+        if (source_dir == public_root and os.path.basename(path) not in public) or (
+            source_dir == private_root and not os.path.exists(target)
+        ):
             os.unlink(path)
     for name in SUPERSEDED:
         path = os.path.join(destination, name)

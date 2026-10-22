@@ -32,11 +32,13 @@ class ProvisionAssetsTest(unittest.TestCase):
                 path.write_text(path.name)
 
             old_root, old_home = provision_assets.ROOT, provision_assets.HOME
+            (root / "shared").mkdir(parents=True, exist_ok=True)
+            (root / "shared/AGENTS.md").write_text("rules")
             provision_assets.ROOT, provision_assets.HOME = str(root), str(home)
             self.addCleanup(setattr, provision_assets, "ROOT", old_root)
             self.addCleanup(setattr, provision_assets, "HOME", old_home)
 
-            self.assertEqual(2, provision_assets.provision())
+            self.assertEqual(4, provision_assets.provision())
             codex_skill = home / ".codex/skills/fix/SKILL.md"
             codex_agent = home / ".codex/agents/code-reviewer.toml"
             # Codex ignores symlinks, so its assets must be real files with the source content.
@@ -61,11 +63,13 @@ class ProvisionAssetsTest(unittest.TestCase):
             stale.write_text("old real copy")
 
             old_root, old_home = provision_assets.ROOT, provision_assets.HOME
+            (root / "shared").mkdir(parents=True, exist_ok=True)
+            (root / "shared/AGENTS.md").write_text("rules")
             provision_assets.ROOT, provision_assets.HOME = str(root), str(home)
             self.addCleanup(setattr, provision_assets, "ROOT", old_root)
             self.addCleanup(setattr, provision_assets, "HOME", old_home)
 
-            self.assertEqual(3, provision_assets.provision())
+            self.assertEqual(5, provision_assets.provision())
             for rel in files:
                 linked = home / ".claude/skills/demo" / rel
                 self.assertTrue(linked.is_symlink(), rel)
@@ -85,11 +89,13 @@ class ProvisionAssetsTest(unittest.TestCase):
             stale.symlink_to(skill)  # the old, invisible-to-Codex deploy
 
             old_root, old_home = provision_assets.ROOT, provision_assets.HOME
+            (root / "shared").mkdir(parents=True, exist_ok=True)
+            (root / "shared/AGENTS.md").write_text("rules")
             provision_assets.ROOT, provision_assets.HOME = str(root), str(home)
             self.addCleanup(setattr, provision_assets, "ROOT", old_root)
             self.addCleanup(setattr, provision_assets, "HOME", old_home)
 
-            self.assertEqual(1, provision_assets.provision())
+            self.assertEqual(3, provision_assets.provision())
             self.assertFalse(stale.is_symlink())
             self.assertEqual("real content", stale.read_text())
 

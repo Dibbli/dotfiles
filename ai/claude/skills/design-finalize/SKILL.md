@@ -25,16 +25,17 @@ Note the reference framing: view, size, camera, scale, state.
 | Role | Model | Does |
 |---|---|---|
 | Lead | Opus | Reads the reference, the concept notes and `.claude/design-profile.md`; writes `plan.md`; picks the builder model per round and logs it; runs the loop; stops only on step 8's conditions |
-| Builder | Opus. Sonnet only for an edit list the lead wrote where every line is file, key or line, old value, new value, with nothing left to choose | Applies the plan, then each round's fixes |
+| Builder | Opus, as `subagent_type: "design-builder"` (compacts at 150K, keeps state in `plan.md` and `log.md`). Sonnet (same agent type, `model: "sonnet"`) only for an edit list the lead wrote where every line is file, key or line, old value, new value, with nothing left to choose | Applies the plan, then each round's fixes |
 | Critic | Opus, a new Agent call each round, never resumed, never the builder or the lead | Runs `critic.md` |
-| Gatherers | Haiku lookups; Sonnet digests, context7 and web research | Facts only |
+| Gatherers | Haiku lookups; Sonnet digests, docs MCP and web research | Facts only |
 
 - This session not on Opus: it only orchestrates. The lead is an Agent with `model: "opus"`, its
   prompt the owner's request word for word, `~/.claude/skills/design-finalize/SKILL.md` and the
   profile path.
 - Every Agent call names `model`. Never `subagent_type: "fork"` for any role (a fork ignores
   `model` and carries the caller's context). A Workflow script passes `model` on every `agent()`,
-  `"opus"` for lead, builder with choices, and critic.
+  `"opus"` for lead, builder with choices, and critic. The builder always uses the `design-builder`
+  agent type (`agentType` in a Workflow script); lead and critic stay `general-purpose`.
 - A lead running as a subagent cannot ask the owner: it returns its questions; the orchestrator
   passes them to AskUserQuestion word for word and returns the answers unchanged with SendMessage
   (load it with ToolSearch). The lead spawns its own builder, critic and gatherers when it has the
@@ -63,8 +64,8 @@ concept's set folder, else a new one where the profile keeps sets.
 4. **Render** the built thing itself in the reference framing, by the profile's Finalize method.
    Never a re-rendered mockup, a description or an older shot. A human step: ask for the
    screenshot path with AskUserQuestion and end the turn; no critic round runs without it.
-5. **Side by side:** `~/.claude/skills/design-finalize/sbs.sh <reference.png> <render.png>
-   <set>/finalize/sbs-<N>.png "BUILD r<N>"`. It refuses other framing or the reference itself.
+5. **Side by side:** `~/.claude/skills/design-finalize/sbs.sh <reference> <render>
+   <set>/finalize/sbs-<N>.webp "BUILD r<N>"`. It refuses other framing or the reference itself.
 6. **Critic:** a new Opus Agent call (never SendMessage to an earlier critic) gets `~/.claude/skills/design-finalize/critic.md` unchanged,
    with only its slots filled (image paths, subject and scope from `plan.md`, last round's fixes).
 7. **Fix** the 3 fixes and any regressions. Log the round in `<set>/finalize/log.md`: builder
@@ -72,8 +73,10 @@ concept's set folder, else a new one where the profile keeps sets.
 8. **Stop** only on: verdict MATCH; the round cap (profile, default 6); the same fix (same region
    and property, same target value) named 2 rounds running, where the lead re-plans that part and
    runs one more round, and if it is named again goes to the owner gate with it listed as unreached.
-9. **Owner gate.** `mkdir -p ~/Documents/concepts/<topic>/` (or the profile's hand-off folder) and
-   copy the last `sbs-<N>.png` there; delete that folder in the turn the owner accepts. AskUserQuestion
+   At the cap, measured gaps left (a few px, a colour value) are fixes, not owner questions: fix
+   them in one pass, then go to the owner gate.
+9. **Owner gate.** `mkdir -p ~/Documents/concepts/<set folder basename>-finalize/` (its own folder, never shared with a parallel run; or the profile's hand-off folder, kept per set) and
+   copy the last `sbs-<N>.webp` there; delete that folder in the turn the owner accepts. AskUserQuestion
    with that path, the critic's verdict and remaining list, no option marked recommended, and
    never "it matches" unless the critic said MATCH. The owner accepts, or names what is off (the
    lead turns that into the next round's fixes). Not done before the owner accepts.
@@ -81,8 +84,9 @@ concept's set folder, else a new one where the profile keeps sets.
 ## Rules
 
 - 3 fixes per round, biggest first, so rounds converge instead of thrash.
-- The build matches the reference; it never redesigns it. A difference the build cannot reach
-  (engine limit) goes to the owner with the closest option, never silently dropped.
+- The build matches the reference; it never redesigns it. A taste veer goes back to the builder,
+  never to the owner. A difference the build cannot reach (engine limit) goes to the owner with
+  the closest option, never silently dropped. Ask the owner only taste calls, never pixel deltas.
 - Same framing every round.
 - A fix is measurable: "bevel 2 px to 6 px, rim #d9452b", never "make it feel more premium".
 - Never `git commit` or `git push`; the owner commits. No em-dashes in any file or message.

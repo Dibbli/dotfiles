@@ -2,6 +2,7 @@
 description: Review uncommitted changes or current branch vs base with static gates and a multi-agent blame-gated review, output as paste-ready Hungarian GitLab MR comments written to a file. Use when preparing MR review comments, reviewing a branch for merge, or commenting on a diff. Read-only. Usage /mr [en] [opus]
 disable-model-invocation: true
 allowed-tools:
+  - Workflow
   - Bash(git *)
   - Bash(pnpm *)
   - Bash(npm *)
@@ -42,21 +43,8 @@ The review (specialist fan-out, blame gate, scoring, keep filter) runs in the `r
 
    **Real findings first** (the workflow's `findings`), sorted critical to warn, one block per finding separated by `---` on its own line. If none survived, write `Nincs jelzés.` (`No findings.` in en).
 
-   **Comment-only findings second**: from `commentFindings`, keep at most **2**, only clearly load-bearing (a comment that will actively mislead a future reader, or a missing comment whose WHY is genuinely non-obvious). Drop everything stylistic or "could be clearer". Under a single header `Komment-észrevételek:` (`Comment-only notes:` in en), same block format, separated by `---`. Skip the whole section, including the header, if empty.
+   **Comment-only findings second**: from `commentFindings`, keep at most **2**, only clearly load-bearing (a comment that will actively mislead a future reader, or a missing comment whose WHY is genuinely non-obvious). Drop everything stylistic or "could be clearer". Same block format, after the real findings, no section header. Skip if empty.
 
-   Each block:
-   - First line: `path/to/file.ext:line`. Anchor on the single offending line; ranges (`path:line-line`) only for genuinely multi-line patterns.
-   - Blank line.
-   - One sentence (two if necessary) in casual developer voice. State the observation, not full reasoning.
-     - **Default**: Hungarian, with proper accents (`működne`, `lásd`, `kéne`), all lowercase including the sentence start — proper nouns and identifiers keep their case (`BadRequestError`, `useEffect`, `Float`). Rhetorical questions ("itt működne X?", "inkább Y?") and short imperatives ("ezt page object-be kéne rakni", "rakjuk át elé") are the register.
-     - **en mode**: English, same casual lowercase register.
-   - **State the consequence, not the rule.** Not `"konvenció miatt"` but the concrete failure mode: `"try elé, különben az auth error sima form errorba megy."` The `"különben X"` / `"hogy ne Y"` tail is the typical shape. No `"kell"`/`"kellene"` filler unless the sentence needs it.
-   - **Never cite `.claude/rules/*`, `AGENTS.md`, `CLAUDE.md`, or rule names in a comment body** — it screams AI. State the corrective action or its consequence, not the source. At most `"konvenció miatt"` / `"máshol is így van"`, and prefer the concrete failure mode.
-   - English loanwords stay English inside Hungarian: "auth error" / "form error", not "auth hiba".
-   - **Quote keywords with double quotes**: `"as" cast`, not `as cast`.
-   - **Cite real in-repo examples** when recommending a pattern, smallest meaningful range: `(példa: <path:line>)`. If no in-repo example exists, point at a sibling repo in the workspace with `(példa még itt nincs, <repo>-ban itt: <path:line-line>)` — don't imply a missing reference is local.
-   - Reference related sites inline: `lásd other-file.ts:269-272` (en: `see other-file.ts:269-272`).
-
-   **Hard nos**: no em-dashes anywhere (use period, comma, parens, or "lásd"); no code blocks or "suggested change" snippets unless asked; no section headers beyond the single comment-bucket header; no bullet lists inside a comment; do not repeat the file path in the body; no padding words. **No AI flourishes**: no "sziget" metaphor for interactive components, no "shape cast" (say "as cast"), no "határon"/"a határponton" for fetch/API boundaries, no "némán"/"nyom nélkül", no "ág" for code branches (say "domainbe kerüljön"). Skip nit-tier findings unless nothing higher survives.
+   Write every block in the style of `style.md` next to this file (read it before writing). Skip nit-tier findings unless nothing higher survives.
 
    After writing the file, end with one English line: `Wrote <path>. <n> findings, <c> comment notes. Static gates: <pass/fail per tool>.` If nothing survived, still write the file containing `Nincs jelzés.` (`No findings.` in en) and report the path the same way.

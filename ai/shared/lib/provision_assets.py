@@ -23,7 +23,9 @@ def skill_files(kind):
 
 
 def provision():
-    linked = 0
+    rules = os.path.join(ROOT, "shared", "AGENTS.md")
+    linked = link_file(rules, os.path.join(HOME, ".claude", "CLAUDE.md"))
+    linked += copy_file(rules, os.path.join(HOME, ".codex", "AGENTS.md"))
     for kind in ("agents", "workflows"):
         for source in glob.glob(os.path.join(ROOT, "claude", kind, "*")):
             if os.path.isfile(source):
@@ -44,4 +46,6 @@ def provision():
 
 
 if __name__ == "__main__":
-    print("provisioned %d AI asset link(s)" % provision())
+    linked = provision()
+    if linked:
+        print("provisioned %d AI asset link(s)" % linked)

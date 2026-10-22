@@ -10,9 +10,9 @@ When the user wants a deep or fine-tooth-comb review, dispatch **many** parallel
 **Why:** Broad-scope agents skim and return a shallow summary. Narrow scope combined with an explicit per-file checklist forces depth. The user's intent is "more agents, not fewer, so they don't stop early after getting the gist."
 
 **How to apply:**
-- One agent per 2-4 related files; cover the whole changeset across the fleet.
-- Give each a required-checks list (justify every function/type/comment, hunt reinvented-wheel + DRY + dead code) and a finding floor ("aim for >=N findings per file unless genuinely clean").
-- Instruct agents to verify library claims via context7, cite sources, and report `file:line + severity + what's there + exact fix`.
+- One agent per 2-4 related files; cover the whole changeset across the fleet. Review agents run on Sonnet, with one Opus judge to consolidate.
+- Give each a required-checks list (justify every function/type/comment, hunt reinvented-wheel + DRY + dead code).
+- Instruct agents to verify library claims via the docs MCP (`mcp__docs__search_docs`), cite sources, and report `file:line + severity + what's there + exact fix`.
 - Run agents with `run_in_background: true`; consolidate only after all return, triaging out pre-existing/out-of-scope items rather than dumping every finding raw.
 
-Pairs with feedback_planning_tasks_discuss_first: present the triaged plan and let the user choose what to action.
+Present the triaged findings and let the owner choose what to action.

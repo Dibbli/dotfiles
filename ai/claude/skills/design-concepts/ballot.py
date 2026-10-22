@@ -1,11 +1,19 @@
 """Usage: python3 ballot.py <out.html> <title> <take>...
 
-A take is an image (png, jpg, webp, gif), a sound (ogg, mp3, wav) or a self-contained HTML page
-(animated take; it may load nothing relative), optionally "path=Label".
-Animated takes all play at once on load, on one clock per row, so a row's takes stay in sync. The
-header has Pause all / Resume all; each row has Pause row / Resume row and Restart row. A take must
-draw from time, not a frame counter: the requestAnimationFrame timestamp, performance.now(),
-Date.now(), CSS animations or video; the ballot holds and sets that clock.
+A take is an image (png, jpg, webp, gif), a sound (ogg, mp3, wav), a looping video (mp4, webm; see
+video.mjs) or a self-contained HTML page (animated take; it may load nothing relative), optionally
+"path=Label". A <take>.txt beside a take is its caption.
+Videos and HTML takes load paused at 0 s, on one clock per row, so a row's takes stay in sync. The
+header has Pause all / Resume all; each row has Pause row / Resume row and Restart row; each animated
+take has its own Pause / Play (it leaves the row clock until a row or all button). Row and all
+buttons play videos muted. A video with sound plays it only from its own Play (or a click on it),
+one take at a time: playing another take of the row hands the sound over at the same moment of the
+loop, so takes that share a picture compare as an A/B switch. HTML takes play no sound (an opaque
+sandboxed frame gets no autoplay permission): a take with sound is a video. An HTML take must draw
+from time, not a frame counter: the requestAnimationFrame timestamp, performance.now(), Date.now(),
+CSS animations; the ballot holds and sets that clock.
+An HTML take may post {ballotTake: {w, h, note}} to its parent: its frame then keeps that aspect,
+never grows past w CSS px, and shows note as a caption. Otherwise it is a 16:9 frame.
 Takes group by their parent folder (one group per item or pairing). Writes ONE self-contained
 ballot: per take Favourite (one per group), Keep (any number) and a note; Export gives Markdown the
 owner pastes back. Votes persist per viewer in localStorage, keyed by the takes, so a new round
@@ -16,11 +24,14 @@ import hashlib
 import html
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 MEDIA = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp",
-         ".gif": "image/gif", ".ogg": "audio/ogg", ".mp3": "audio/mpeg", ".wav": "audio/wav"}
+         ".gif": "image/gif", ".ogg": "audio/ogg", ".mp3": "audio/mpeg", ".wav": "audio/wav",
+         ".mp4": "video/mp4", ".webm": "video/webm"}
 # Injected first into every animated take: its clock is the row's clock, sent by the ballot page.
 CLOCK = """<script>(() => {
 const realNow = performance.now.bind(performance), realRaf = requestAnimationFrame.bind(window), epoch = Date.now();
@@ -68,8 +79,19 @@ def with_clock(doc: str) -> str:
     return CLOCK + doc
 
 
+def has_audio(p: Path) -> bool:
+    # Without ffprobe a video counts as sounded: it then plays alone, which is never wrong, only less handy.
+    if not shutil.which("ffprobe"):
+        return True
+    probe = ["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", str(p)]
+    return bool(subprocess.run(probe, capture_output=True, text=True).stdout.strip())
+
+
 RELATIVE = re.compile(r"""(?:src|href)\s*=\s*["'`](?!data:|https?:|#|about:|blob:)|url\(\s*["']?(?!data:|https?:|#|blob:)""")
 
+if len(sys.argv) < 4:
+    print("usage: python3 ballot.py <out.html> <title> <take>...", file=sys.stderr)
+    sys.exit(2)
 out, title, args = sys.argv[1], sys.argv[2], sys.argv[3:]
 groups: dict[str, list[dict]] = {}
 seen = set()
@@ -83,8 +105,10 @@ for arg in args:
     take = {"id": tid, "label": label or p.stem}
     ext = p.suffix.lower()
     if ext in MEDIA:
-        kind = "audio" if MEDIA[ext].startswith("audio") else "img"
+        kind = MEDIA[ext].split("/")[0].replace("image", "img")
         take[kind] = f"data:{MEDIA[ext]};base64," + base64.b64encode(p.read_bytes()).decode()
+        if kind == "video":
+            take["sound"] = has_audio(p)
     elif ext == ".html":
         doc = p.read_text(encoding="utf-8")
         if RELATIVE.search(doc):
@@ -92,6 +116,8 @@ for arg in args:
         take["doc"] = with_clock(doc)
     else:
         sys.exit(f"{p}: unsupported take type")
+    if p.with_suffix(".txt").exists():
+        take["note"] = p.with_suffix(".txt").read_text(encoding="utf-8").strip()
     groups.setdefault(p.parent.name, []).append(take)
 
 page = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>%(title)s</title>
@@ -126,6 +152,8 @@ h1 { flex: 1 1 240px; margin: 0; font-size: 17px; font-weight: 650; overflow-wra
 .meter { width: 140px; height: 6px; border-radius: 3px; background: var(--input); overflow: hidden; }
 .meter i { display: block; height: 100%%; width: 0; background: var(--grad); transition: width .2s; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.volume { display: flex; align-items: center; gap: 8px; font: 13px var(--mono); color: var(--muted); }
+.volume input { width: 110px; accent-color: var(--ember); }
 .keys { display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 0 24px 10px; font-size: 12px; color: var(--muted); }
 
 .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; padding: 20px 24px 64px; }
@@ -171,10 +199,15 @@ h2 { margin: 0; font-size: 16px; font-weight: 600; }
 .chip-keep { color: var(--base); background: var(--teal); border-color: var(--teal); }
 .take:not(.is-fav) .chip-fav, .take:not(.is-keep) .chip-keep { display: none; }
 .thead .enlarge { padding: 2px 10px; font-size: 12px; }
-.media { flex: 1; display: grid; place-items: center; background: var(--base); }
+.media { position: relative; flex: 1; display: grid; place-items: center; background: var(--base); }
 .media img { display: block; max-width: 100%%; max-height: 70vh; cursor: zoom-in; }
 .media audio { width: calc(100%% - 24px); margin: 16px 12px; }
 .media iframe { display: block; width: 100%%; aspect-ratio: 16 / 9; border: 0; background: #000; }
+.media video { display: block; width: 100%%; max-height: 70vh; background: #000; cursor: pointer; }
+.playmark { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; display: grid; place-items: center; padding-left: 5px;
+	font-size: 26px; color: #fff; background: rgb(0 0 0 / .55); border: 2px solid rgb(255 255 255 / .8); border-radius: 50%%; pointer-events: none; transition: opacity .15s; }
+.take.live .playmark { opacity: 0; }
+.desc { margin: 0; padding: 8px 12px 0; font-size: 13px; color: var(--muted); }
 .vote { display: flex; gap: 8px; padding: 10px 12px 0; }
 textarea { font: inherit; color: var(--text); background: var(--input); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; }
 textarea::placeholder { color: var(--muted); }
@@ -209,10 +242,11 @@ textarea::placeholder { color: var(--muted); }
 </style></head><body>
 <header class="top"><div class="bar"><h1>%(title)s</h1>
 	<div class="progress"><div class="meter"><i id="meter"></i></div><span id="count"></span></div>
+	<label class="volume">Volume <input id="volume" type="range" min="0" max="1" step="0.05"><span id="volval"></span></label>
 	<div class="actions"><button id="next">Next open row</button><button id="all" hidden></button><button id="toexport" class="primary">Export</button></div></div>
 	<div class="keys"><span><kbd>J</kbd> <kbd>K</kbd> next / previous row</span><span><kbd>N</kbd> next open row</span>
 	<span><kbd>1</kbd>-<kbd>9</kbd> favourite take</span><span><kbd>Shift</kbd>+<kbd>1</kbd>-<kbd>9</kbd> keep</span>
-	<span><kbd>P</kbd> pause row, <kbd>Shift</kbd>+<kbd>P</kbd> all</span><span><kbd>E</kbd> export</span><span>Click an image to view it large</span></div>
+	<span><kbd>P</kbd> pause row, <kbd>Shift</kbd>+<kbd>P</kbd> all</span><span><kbd>E</kbd> export</span><span>Click an image to view it large, a video to play it with its sound</span></div>
 </header>
 <div class="layout"><nav><p>Rows</p><ol id="nav"></ol></nav>
 <main><div id="ballot"></div>
@@ -224,9 +258,26 @@ textarea::placeholder { color: var(--muted); }
 <script>
 const TITLE = %(title_js)s, GROUPS = %(groups)s, KEY = "ballot:" + %(digest)s;
 const START = performance.now(); // every row starts on the same clock
-let votes = {};
+let votes = {}, voice = null; // voice: the video take whose sound is on
 try { votes = JSON.parse(localStorage.getItem(KEY)) || {}; } catch {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(votes)); } catch {} };
+// Master volume for every take, kept per viewer across ballots; starts at half so a loud take never blasts.
+const VOLUME_KEY = "ballot:volume", slider = document.getElementById("volume");
+let volume = 0.5;
+try { const stored = parseFloat(localStorage.getItem(VOLUME_KEY)); if (stored >= 0 && stored <= 1) volume = stored; } catch {}
+const applyVolume = () => {
+	slider.value = volume;
+	document.getElementById("volval").textContent = Math.round(volume * 100) + "%%";
+	for (const m of document.querySelectorAll("video, audio")) m.volume = volume;
+};
+slider.addEventListener("input", () => {
+	volume = parseFloat(slider.value);
+	try { localStorage.setItem(VOLUME_KEY, String(volume)); } catch {}
+	applyVolume();
+});
+// Play does not bubble: catch it on the way down so takes made after load get the volume too.
+document.addEventListener("play", (e) => { e.target.volume = volume; }, true);
+applyVolume();
 const v = (id) => (votes[id] ??= { fav: false, keep: false, note: "" });
 const $ = (s, el = document) => el.querySelector(s);
 const make = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
@@ -247,7 +298,7 @@ Object.entries(GROUPS).forEach(([group, takes], gi) => {
 	$("#nav").append(li);
 	const row = { group, sec, box, li, cards: [] };
 	takes.forEach((t, ti) => row.cards.push(card(row, t, ti)));
-	if (takes.some((t) => t.doc)) row.clock = rowClock(row);
+	if (takes.some((t) => t.doc || t.video)) row.clock = rowClock(row);
 	rows.push(row);
 	paint(row);
 });
@@ -256,20 +307,24 @@ function card(row, t, ti) {
 	const el = make("article", "take");
 	el.innerHTML = `<div class="thead">${ti < 9 ? `<kbd title="Press ${ti + 1} to favourite, Shift+${ti + 1} to keep">${ti + 1}</kbd>` : ""}<b></b>
 		<span class="chip chip-fav">\\u2605 Favourite</span><span class="chip chip-keep">\\u2713 Keep</span></div>
-		<div class="media">${t.img ? `<img alt="">` : t.audio ? `<audio controls preload="none"></audio>` : `<iframe sandbox="allow-scripts"></iframe>`}</div>
+		<div class="media">${t.img ? `<img alt="">` : t.audio ? `<audio controls preload="none"></audio>`
+			: t.video ? `<video playsinline loop preload="auto"></video><span class="playmark">\u25B6</span>` : `<iframe sandbox="allow-scripts"></iframe>`}</div>
+		<p class="desc" hidden></p>
 		<div class="vote"><button class="fav"></button><button class="keep"></button></div>
 		<textarea class="note" rows="1" placeholder="Notes"></textarea>`;
 	$("b", el).textContent = t.label;
 	if (/reject/i.test(t.label)) $(".chip", el).before(make("span", "chip chip-rej", "Rejected"));
 	const c = { el, t, fav: $(".fav", el), keep: $(".keep", el) };
-	if (t.img || t.doc) {
+	if (!t.audio) {
 		const big = make("button", "enlarge", "Enlarge");
 		big.onclick = () => (t.img ? zoomOpen(row, ti) : (big.textContent = el.classList.toggle("wide") ? "Shrink" : "Enlarge"));
 		$(".thead", el).append(big);
 	}
 	if (t.img) { const img = $("img", el); img.src = t.img; img.onclick = () => zoomOpen(row, ti); }
 	else if (t.audio) $("audio", el).src = t.audio;
+	else if (t.video) $("video", el).src = blobUrl(t.video);
 	else $("iframe", el).srcdoc = t.doc;
+	if (t.note) Object.assign($(".desc", el), { textContent: t.note, hidden: false });
 	const note = $(".note", el);
 	note.value = v(t.id).note;
 	note.oninput = () => { v(t.id).note = note.value; save(); exportRefresh(); };
@@ -278,6 +333,12 @@ function card(row, t, ti) {
 	el.addEventListener("focusin", () => setCur((want = rows.indexOf(row))));
 	row.box.append(el);
 	return c;
+}
+// A data: URI media src is fragile past a few MB in some browsers; a blob URL is not.
+function blobUrl(data) {
+	const comma = data.indexOf(","), bin = atob(data.slice(comma + 1)), bytes = new Uint8Array(bin.length);
+	for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+	return URL.createObjectURL(new Blob([bytes], { type: data.slice(5, data.indexOf(";")) }));
 }
 // Favourite is one per row; pressing it again clears it.
 function favourite(row, c) {
@@ -337,35 +398,79 @@ function nextOpen() {
 addEventListener("scroll", track, { passive: true });
 
 // One clock per row: every animated take in the row gets the same time and state at once. A take
-// holds still until it says it is ready and is sent the row clock.
+// holds still until it says it is ready and is sent the row clock. A take's own Pause / Play takes it
+// off the row clock (to hear one sound take at a time); any row or all button puts every take back on.
 function rowClock(row) {
-	let playing = true, at = 0, base = START;
-	const time = () => (playing ? at + performance.now() - base : at);
-	const post = (f) => f.contentWindow?.postMessage({ ballot: 1, at: time(), playing }, "*");
-	const send = () => row.box.querySelectorAll("iframe").forEach(post);
-	const toggle = make("button", "", "Pause row"), restart = make("button", "", "Restart row"), clock = make("span", "clock");
-	const set = (on) => {
-		at = time();
-		base = performance.now();
-		playing = on;
-		toggle.textContent = on ? "Pause row" : "Resume row";
-		send();
-		allButton();
+	const tick = (k) => (k.playing ? k.at + performance.now() - k.base : k.at);
+	const hold = (k, on) => Object.assign(k, { at: tick(k), base: performance.now(), playing: on });
+	const master = { playing: false, at: 0, base: START };
+	const takes = row.cards.filter((c) => c.t.doc || c.t.video).map((c) => ({ row, el: c.el, f: $("iframe", c.el), v: $("video", c.el), sound: !!c.t.sound, own: null, btn: make("button", "enlarge", "Play") }));
+	const clockOf = (k) => k.own || master;
+	// A sounded video's own Play means "with its sound", so its button follows that, not the row clock.
+	const mine = (k) => (k.sound ? voice === k && !!k.own?.playing : clockOf(k).playing);
+	const post = (k) => {
+		const s = clockOf(k), at = tick(s);
+		if (k.v) {
+			const v = k.v, d = v.duration, want = (at / 1000) %% d;
+			v.muted = !(k.sound && mine(k));
+			if (d && (!s.playing || Math.abs(v.currentTime - want) > 0.1)) v.currentTime = want;
+			s.playing ? v.play().catch(() => {}) : v.pause();
+		} else k.f.contentWindow?.postMessage({ ballot: 1, at, playing: s.playing }, "*");
+		k.btn.textContent = mine(k) ? "Pause" : "Play";
+		k.el.classList.toggle("live", mine(k));
 	};
-	toggle.onclick = () => set(!playing);
-	restart.onclick = () => { at = 0; base = performance.now(); send(); };
-	(function show() { clock.textContent = (time() / 1000).toFixed(1) + " s"; requestAnimationFrame(show); })();
+	const any = () => takes.some((k) => clockOf(k).playing);
+	const toggle = make("button", "", "Resume row"), restart = make("button", "", "Restart row"), clock = make("span", "clock");
+	const sync = () => { toggle.textContent = any() ? "Pause row" : "Resume row"; takes.forEach(post); allButton(); };
+	const rejoin = () => takes.forEach((k) => (k.own = null));
+	const set = (on) => { hold(master, on); rejoin(); sync(); };
+	// ponytail: each video loops natively, so a row's videos drift apart by the loop gaps over many loops; Restart row resyncs.
+	for (const k of takes) {
+		k.hush = () => { k.own = hold(k.own, false); sync(); };
+		k.btn.onclick = () => {
+			const on = !mine(k), p = voice;
+			let from = k.own || master;
+			if (k.sound && on) {
+				voice = k;
+				if (p && p !== k && p.own) { if (p.row === row) from = { ...p.own }; p.hush(); }
+				document.querySelectorAll("audio").forEach((a) => a.pause());
+			}
+			k.own = hold({ ...from }, on);
+			sync();
+		};
+		if (k.v) {
+			k.v.onclick = () => k.btn.click();
+			k.v.addEventListener("loadedmetadata", () => { k.v.style.maxWidth = k.v.videoWidth + "px"; post(k); });
+		}
+		$(".thead", k.el).append(k.btn);
+	}
+	toggle.onclick = () => set(!any());
+	restart.onclick = () => { Object.assign(master, { at: 0, base: performance.now() }); rejoin(); sync(); };
+	(function show() { clock.textContent = (tick(master) / 1000).toFixed(1) + " s"; requestAnimationFrame(show); })();
 	$(".tools", row.sec).append(toggle, restart, clock);
-	return { set, toggle: () => set(!playing), playing: () => playing, greet: (src) => row.box.querySelectorAll("iframe").forEach((f) => f.contentWindow === src && post(f)) };
+	return { set, toggle: () => set(!any()), playing: any, greet: (src) => takes.forEach((k) => k.f?.contentWindow === src && post(k)) };
 }
 const clocks = rows.map((r) => r.clock).filter(Boolean), all = $("#all");
 addEventListener("message", (e) => { if (e.data?.ballotReady === 1) clocks.forEach((c) => c.greet(e.source)); });
+// A take that knows its size says so, so it shows at its own aspect and never past 1:1.
+addEventListener("message", (e) => {
+	const m = e.data?.ballotTake, f = m && [...document.querySelectorAll(".media iframe")].find((x) => x.contentWindow === e.source);
+	if (!f) return;
+	if (m.w > 0 && m.h > 0) Object.assign(f.style, { aspectRatio: `${m.w} / ${m.h}`, maxWidth: `${m.w}px` });
+	const d = $(".desc", f.closest(".take"));
+	d.textContent = m.note || "";
+	d.hidden = !m.note;
+});
 const allButton = () => (all.textContent = clocks.some((c) => c.playing()) ? "Pause all" : "Resume all");
 all.onclick = () => { const on = !clocks.some((c) => c.playing()); clocks.forEach((c) => c.set(on)); };
 all.hidden = !clocks.length;
 allButton();
 // One sound at a time: starting a take stops the others.
-document.addEventListener("play", (e) => document.querySelectorAll("audio").forEach((a) => a !== e.target && a.pause()), true);
+document.addEventListener("play", (e) => {
+	if (e.target.tagName !== "AUDIO") return;
+	document.querySelectorAll("audio").forEach((a) => a !== e.target && a.pause());
+	if (voice?.own?.playing) voice.hush();
+}, true);
 
 const zoom = $("#zoom"), zimg = $("#zimg"), zview = $(".zview");
 let zset = [], zi = 0;

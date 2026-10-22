@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root {
+    --bg: #121212; --card: #191919; --panel: #212121; --input: #2a2a2a;
+    --text: #d5d5d5; --muted: #a7a7a7; --dim: #949494; --line: #535353;
+    --ember: #DF6464; --ember-lg: #B14242; --orange: #E49A44; --teal: #4A8B8B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 14px/1.5 'Lilex', 'Lilex Nerd Font Mono', 'JetBrains Mono', monospace;
+    padding: 24px;
+  }
+  header { margin-bottom: 20px; }
+  h1 { color: var(--ember-lg); font-size: 26px; letter-spacing: 1px; }
+  h1 span { background: linear-gradient(45deg, #B14242, #DF6464);
+            -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { color: var(--muted); margin-top: 4px; }
+  #progress { color: var(--orange); margin-top: 6px; font-weight: bold; }
+
+  section { margin-top: 28px; }
+  h2 { color: var(--ember); font-size: 16px; text-transform: uppercase;
+       letter-spacing: 2px; border-bottom: 1px solid var(--line);
+       padding-bottom: 6px; margin-bottom: 14px; }
+
+  .legend, .live { background: var(--card); border: 1px solid var(--line);
+                   border-radius: 6px; padding: 14px 18px; }
+  .legend ul { list-style: none; }
+  .legend li { padding: 3px 0; color: var(--muted); }
+  .legend b { color: var(--teal); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+          overflow: hidden; display: flex; flex-direction: column; }
+  .card.done { border-color: var(--teal); opacity: 0.55; }
+  .card.has-fail { border-color: var(--ember); }
+  .card h3 { background: var(--panel); padding: 8px 12px; font-size: 15px;
+             color: var(--text); display: flex; justify-content: space-between; align-items: center; }
+  .badge { color: var(--orange); font-size: 12px; font-weight: normal; }
+  .card a.shot { display: block; background: #000; }
+  .card img { display: block; width: 100%; height: auto; }
+  .checks { padding: 10px 14px 14px; }
+  .cls { color: var(--teal); }
+  .star { color: var(--ember); }
+
+  .item { padding: 4px 0; }
+  .item .row { display: flex; gap: 8px; align-items: flex-start; }
+  .item .txt { color: var(--muted); padding-top: 3px; }
+  .item.ok .txt { color: var(--dim); text-decoration: line-through; }
+  .item.fail .txt { color: var(--ember); }
+  .tgl { flex: none; background: var(--input); color: var(--dim); border: 1px solid var(--line);
+         border-radius: 4px; font: inherit; font-size: 11px; padding: 2px 7px; cursor: pointer; }
+  .tgl:hover { color: var(--text); }
+  .item.ok .tgl.ok { background: var(--teal); color: var(--bg); border-color: var(--teal); }
+  .item.fail .tgl.fail { background: var(--ember); color: var(--bg); border-color: var(--ember); }
+  .item .note { display: none; width: 100%; margin-top: 6px; background: var(--input); color: var(--text);
+                border: 1px solid var(--line); border-radius: 4px; font: inherit; font-size: 12px;
+                padding: 6px 8px; resize: vertical; }
+  .item.fail .note { display: block; }
+
+  .live ol { margin-left: 20px; }
+  .live li { padding: 5px 0; }
+  .live .where { color: var(--teal); }
+  footer { margin-top: 30px; color: var(--dim); font-size: 12px; }
+
+  #exportBtn { position: fixed; top: 20px; right: 24px; background: var(--card); color: var(--text);
+               border: 1px solid var(--ember); border-radius: 6px; padding: 8px 14px; font: inherit;
+               font-size: 13px; cursor: pointer; z-index: 10; }
+  #exportBtn:hover { background: var(--ember); color: var(--bg); }
+  .modal-back { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 20;
+                align-items: center; justify-content: center; }
+  .modal-back.open { display: flex; }
+  .modal { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+           width: min(700px, 90vw); max-height: 80vh; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .modal h2 { color: var(--ember); font-size: 15px; border: none; padding: 0; margin: 0; }
+  .modal textarea { flex: 1; min-height: 300px; background: var(--input); color: var(--text);
+                     border: 1px solid var(--line); border-radius: 4px; font: 12px/1.4 inherit; padding: 10px; }
+  .modal .row { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal button { background: var(--panel); color: var(--text); border: 1px solid var(--line);
+                  border-radius: 4px; padding: 6px 12px; font: inherit; font-size: 12px; cursor: pointer; }
+  .modal button:hover { color: var(--ember); border-color: var(--ember); }
+</style>
+</head>
+<body>
+<header>
+  <h1><span>{{TITLE}}</span></h1>
+  <div class="sub">{{SUBTITLE}}</div>
+  <div id="progress"></div>
+</header>
+
+<button type="button" id="exportBtn">Export feedback</button>
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h2>{{EXPORT_FILENAME}}</h2>
+    <textarea id="modalText" readonly></textarea>
+    <div class="row">
+      <button type="button" id="modalDownload">Download .md</button>
+      <button type="button" id="modalClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<section>
+  <h2>{{LEGEND_TITLE}}</h2>
+  <div class="legend"><ul>
+{{LEGEND_ITEMS}}
+  </ul></div>
+</section>
+
+<section>
+  <h2>{{CARDS_TITLE}}</h2>
+  <div class="grid">
+
+    <!-- card markup, one per screenshot; item ids must be unique (c-<app>-<tag>):
+    <div class="card" data-app="APP-PAGE"><h3>FORM_NAME <span class="badge">APP - PAGE</span></h3>
+      <a class="shot" href="SHOT.png" target="_blank"><img src="SHOT.png" loading="lazy" alt="FORM_NAME"></a>
+      <div class="checks">
+        <div class="item" id="c-APPpPAGE-TAG">
+          <div class="row">
+            <button type="button" class="tgl ok" data-v="ok">OK</button>
+            <button type="button" class="tgl fail" data-v="fail">NOT</button>
+            <span class="txt"><span class="cls">TAG</span> the reported issue, original wording</span>
+          </div>
+          <textarea class="note" placeholder="what is wrong..." rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+-->
+{{CARDS}}
+
+  </div>
+</section>
+
+<section>
+  <h2>{{LIVE_TITLE}}</h2>
+  <div class="live"><ol>
+<!-- one li per interaction-only check:
+    <li><div class="item" id="live-N"><div class="row"><button type="button" class="tgl ok" data-v="ok">OK</button><button type="button" class="tgl fail" data-v="fail">NOT</button><span class="txt"><span class="cls">TAG</span> the reported issue. <span class="where">where to try it</span></span></div><textarea class="note" placeholder="what is wrong..." rows="2"></textarea></div></li>
+-->
+{{LIVE_CHECKS}}
+  </ol></div>
+</section>
+
+<footer>{{FOOTER_SOURCES}} · state persists in this browser (localStorage)</footer>
+
+<script>
+(function () {
+  var items = document.querySelectorAll('.item');
+  var prog = document.getElementById('progress');
+  function stateKey(id) { return '{{STORAGE_PREFIX}}' + id; }
+  function noteKey(id) { return '{{STORAGE_PREFIX}}' + id + ':note'; }
+  function getState(id) {
+    var v;
+    try { v = localStorage.getItem(stateKey(id)); } catch (e) { v = null; }
+    if (v === '1') return 'ok';
+    if (v === 'ok' || v === 'fail') return v;
+    return '';
+  }
+  function setState(id, state) {
+    try {
+      if (state) localStorage.setItem(stateKey(id), state);
+      else localStorage.removeItem(stateKey(id));
+    } catch (e) {}
+  }
+  function getNote(id) {
+    try { return localStorage.getItem(noteKey(id)) || ''; } catch (e) { return ''; }
+  }
+  function setNote(id, text) {
+    try { localStorage.setItem(noteKey(id), text); } catch (e) {}
+  }
+
+  function refresh() {
+    var ok = 0, fail = 0;
+    items.forEach(function (it) {
+      var s = getState(it.id);
+      it.classList.toggle('ok', s === 'ok');
+      it.classList.toggle('fail', s === 'fail');
+      if (s === 'ok') ok++;
+      else if (s === 'fail') fail++;
+    });
+    var total = items.length;
+    var unchecked = total - ok - fail;
+    prog.textContent = ok + ' ok / ' + fail + ' fail / ' + total + ' total' +
+      (ok === total ? ' · ALL CLEAR' : '');
+    document.querySelectorAll('.card').forEach(function (c) {
+      var its = c.querySelectorAll('.item');
+      var allOk = its.length > 0, anyFail = false;
+      its.forEach(function (it) {
+        var s = getState(it.id);
+        if (s !== 'ok') allOk = false;
+        if (s === 'fail') anyFail = true;
+      });
+      c.classList.toggle('done', allOk);
+      c.classList.toggle('has-fail', anyFail);
+    });
+    return { ok: ok, fail: fail, unchecked: unchecked, total: total };
+  }
+
+  items.forEach(function (it) {
+    var note = it.querySelector('.note');
+    note.value = getNote(it.id);
+    note.addEventListener('input', function () {
+      setNote(it.id, note.value);
+    });
+    it.querySelectorAll('.tgl').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var v = btn.dataset.v;
+        setState(it.id, getState(it.id) === v ? '' : v);
+        refresh();
+      });
+    });
+  });
+  refresh();
+
+  function itemInfo(it) {
+    var card = it.closest('.card');
+    var cls = it.querySelector('.cls');
+    var txt = it.querySelector('.txt');
+    return {
+      form: card ? card.querySelector('h3').firstChild.textContent.trim() : 'live check',
+      app: card ? card.dataset.app : it.id,
+      tag: cls ? cls.textContent.trim() : '',
+      text: txt ? txt.textContent.trim() : '',
+      note: getNote(it.id)
+    };
+  }
+
+  function buildReport() {
+    var counts = refresh();
+    var lines = ['# {{REPORT_HEADING}}', ''];
+    var fails = [];
+    items.forEach(function (it) { if (getState(it.id) === 'fail') fails.push(it); });
+    lines.push('NOT CORRECT: ' + fails.length);
+    lines.push('OK: ' + counts.ok);
+    lines.push('Unchecked: ' + counts.unchecked);
+    lines.push('');
+    fails.forEach(function (it) {
+      var info = itemInfo(it);
+      lines.push('## ' + info.form + ' (' + info.app + ') [' + info.tag + ']');
+      lines.push('');
+      lines.push(info.text);
+      lines.push('');
+      lines.push('Note: ' + (info.note.trim() || '(no note)'));
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
+  var exportBtn = document.getElementById('exportBtn');
+  var modalBack = document.getElementById('modalBack');
+  var modalText = document.getElementById('modalText');
+  exportBtn.addEventListener('click', function () {
+    modalText.value = buildReport();
+    modalBack.classList.add('open');
+  });
+  document.getElementById('modalClose').addEventListener('click', function () {
+    modalBack.classList.remove('open');
+  });
+  document.getElementById('modalDownload').addEventListener('click', function () {
+    var blob = new Blob([modalText.value], { type: 'text/markdown' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '{{EXPORT_FILENAME}}';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+</body>
+</html>

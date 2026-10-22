@@ -31,7 +31,5 @@ description: Use when WebFetch or curl returns 403 Forbidden, a Cloudflare "Just
 - Passing an unquoted URL that contains `?` or `&`. zsh globs it, so quote the URL.
 - Treating the "Incomplete Windows font set" stderr warning as an error. It is advice only.
 
-## Setup (already done on the NixOS desktop)
-- venv: `uv venv ~/.local/share/cloakbrowser/.venv && uv pip install --python ~/.local/share/cloakbrowser/.venv/bin/python cloakbrowser`, then `.venv/bin/python -m cloakbrowser install`. This downloads Chromium to `~/.cloakbrowser/`.
-- `ln -s <this dir>/cloakfetch.py ~/.local/bin/cloakfetch`. The shebang points into the venv.
-- NixOS: the prebuilt Chromium needs `programs.nix-ld.libraries` (glib nss nspr atk/at-spi cups dbus expat gbm cairo pango alsa xkbcommon libx11/xcb family). `--headed` needs `weston` installed.
+## Setup
+Done on the NixOS desktop: a venv in `~/.local/share/cloakbrowser/.venv`, Chromium in `~/.cloakbrowser/`, and `~/.local/bin/cloakfetch` linked to `cloakfetch.py`. `cannot open shared object file` means `programs.nix-ld.libraries` in the flake lacks a library. `--headed` needs `weston`.

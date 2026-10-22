@@ -1,6 +1,6 @@
 ---
 name: design-concepts
-description: Use when the user or owner asks for N designs, concepts, mockups, options or takes of a UI, screen, panel, HUD, card, desktop widget, animation, effect or cosmetic roster, to pick one before it is built; also a quick or mini concept of one small element, voting rounds over many items, and any request to change how something looks (redesign, restyle, polish, make it pop) where a size, colour, layout or motion is not given as a value.
+description: Use when the owner asks for concepts, designs, mockups, options, takes or a ballot of a UI, screen, panel, HUD, card, desktop widget, animation, effect or cosmetic roster, to pick one before it is built; also a quick or mini concept of one small element, and voting rounds over many items. Not for restyle, polish or redesign asks that give clear values (size, colour, layout, motion): those go straight to the edit, without this skill.
 ---
 
 # Design concepts
@@ -15,14 +15,15 @@ design docs. After the pick, design-finalize builds and matches it.
 |---|---|---|---|
 | Designer and judge | Opus | Reads first-hand what shapes the design, picks directions, writes and edits every mockup, reviews every PNG, writes `concepts.md`, the recommendation and the owner questions | Hands any of these to another model |
 | Fact gatherer | Haiku | Lookups: config keys and values, helper names and signatures, icon and art files, real names and numbers, earlier sets | Opinions, proposals |
-| Researcher and digester | Sonnet | Fact maps of wide sources the design does not hinge on; library docs via context7; web references (links plus what each shows) | Opinions, proposals, mockups |
+| Researcher and digester | Sonnet | Fact maps of wide sources the design does not hinge on; library docs via the docs MCP; web references (links plus what each shows) | Opinions, proposals, mockups |
 
 - This session on Opus: it is the designer. Otherwise it is only the orchestrator: it sends the
   job to one Agent with `model: "opus"`, whose prompt holds the owner's request word for word, the
   path `~/.claude/skills/design-concepts/SKILL.md` (read it first) and the profile path.
 - Every Agent call names `model`. Never `subagent_type: "fork"` for any role: a fork ignores
   `model` and runs on the caller's. In a Workflow script, every `agent()` passes `model`, and
-  design and judge steps pass `"opus"`.
+  design and judge steps pass `"opus"`. Style-direction and per-item take agents use
+  `subagent_type: "design-builder"` (compacts at 150K); the designer stays `general-purpose`.
 - A designer running as a subagent cannot ask the owner. It returns its questions, options and
   recommendation; the orchestrator puts them into AskUserQuestion word for word and sends the
   answers back word for word to the same agent with SendMessage (load it with ToolSearch). The
@@ -68,7 +69,7 @@ quoted, the today picture by path, each earlier set checked. A set without these
    `~/.claude/skills/design-concepts/chrome.css` into `src/` (the set keeps its own copy). Pages
    link `chrome.css` after the project stylesheet.
 2. In parallel within the caps: Haiku gatherers for the facts; Sonnet researchers for the
-   profile's Research topics (context7: can each direction be built; web: links plus what each
+   profile's Research topics (docs MCP: can each direction be built; web: links plus what each
    shows). Every agent returns facts with file paths and lines. The designer opens each reference
    it leans on.
 3. Pick 3 directions. Write one line each: where it lives, how it is grouped, what it shows first.
@@ -84,9 +85,11 @@ quoted, the today picture by path, each earlier set checked. A set without these
 6. Read every PNG. Fix overlaps, keep-out breaches, clipped or tiny text, wrong scale; render again.
    render.sh does not catch a missing image or stylesheet: check every icon and texture draws.
 7. Write `concepts.md` (shape below). Hand-off (unless the profile names another place):
-   `rm -rf -- ~/Documents/concepts/"${topic:?}" && mkdir -p ~/Documents/concepts/"$topic"`, then
-   copy the PNGs and any viewable HTML with the files it loads (relative paths kept). One folder per
-   set; never loose in `~/Documents/`.
+   `set=<set folder basename>; rm -rf -- ~/Documents/concepts/"${set:?}" && mkdir -p ~/Documents/concepts/"$set"`,
+   then copy the PNGs and any viewable HTML with the files it loads (relative paths kept). The
+   hand-off folder is named after this run's own set folder, never a shared topic, so designers
+   running in parallel never clear each other's work. One folder per set; never loose in
+   `~/Documents/`. An orchestrator running designers in parallel gives each its own set folder.
 8. Report: the hand-off folder, the PNG paths, one line per concept, the recommendation, the owner
    questions. The owner picks with AskUserQuestion. Nothing is built before that answer.
 
@@ -94,34 +97,17 @@ quoted, the today picture by path, each earlier set checked. A set without these
 
 Only when the owner asked for a quick or mini concept of one small element of a built screen.
 Read the owner's screenshot, the code that builds it, and the screen's picked concept. No research
-agents; context7 only for an API the designer is unsure of. 3 takes, plus a plain "as built,
+agents; the docs MCP only for an API the designer is unsure of. 3 takes, plus a plain "as built,
 fixed" baseline when that is a real choice; takes may differ in look alone. Draw the element and a
 little around it at true size in one `src/strip.html`, take N at `?c=N`; render each as
-`src/strip.html?c=N` (writes `strip-cN.png`). No scene and no extra-view page: one caption line
+`src/strip.html?c=N` (writes `strip-cN.webp`). No scene and no extra-view page: one caption line
 per take says how it fits each extra view. Set folder and hand-off as in Full mode. No
 `concepts.md`: the report gives one line per take, how it is built, and the recommendation. The
 owner picks with AskUserQuestion. Nothing is built before that answer.
 
 ## Ballot mode: many items or rounds
 
-For a roster (effects, cosmetics, icons) or more than 3 takes per item.
-1. Optional first round: one Opus agent per style direction, each showing its style on one item
-   per tier; the owner picks per item, not per style.
-2. The designer writes one shared `brief.md` (owner calls, items or pairings table, true scale,
-   kit API, render command, limits) and pre-lists every item in the ballot before any agent
-   starts. Agents never edit shared files.
-3. One Opus agent per item or pairing, within the cap, writes only its own files: 3 takes whose
-   idea differs, not only their numbers, rendered and read by itself.
-4. The designer reads every PNG, then bundles one self-contained ballot (the profile's kit wins)
-   into the set folder and copies it to the hand-off folder (made as in Full mode step 7):
-   `python3 ~/.claude/skills/design-concepts/ballot.py <set>/ballot-r<N>.html "<round title>" <item>/<take>.png ...`
-   (takes may be PNG, JPG, WEBP, OGG, MP3, WAV, or a self-contained HTML page). Animated takes
-   all play at once on load, each row on one clock so its takes stay in sync; the header has a
-   Pause all button and every row a Pause / Resume row button. A project kit must do the same. An animated take draws from time (the
-   requestAnimationFrame timestamp, `performance.now()`, CSS animations), never a frame counter.
-5. The owner votes Favourite, Keep and notes and pastes the Export back. Nothing is built before
-   that. Record votes in the set's `picks.md`. Small tweaks: the designer. Bigger ones: that item's
-   own Opus agent with SendMessage. A tweak round shows only edited or new takes.
+For a roster (effects, cosmetics, icons) or more than 3 takes per item. Read `~/.claude/skills/design-concepts/ballot.md` before starting a ballot; it holds the steps, the ballot.py usage and the export format.
 
 ## concepts.md shape
 
@@ -142,7 +128,8 @@ For a roster (effects, cosmetics, icons) or more than 3 takes per item.
 - Ask the owner only taste and intent. Never offer a lesser look because the better one is more work.
 - Colour is never the only signal. Real data only: no lorem, no "Item 1", no emoji for icons.
 - Never invent asset ids or URLs. Missing art is listed as new art.
-- When the owner has picked, delete the hand-off copy (the set folder keeps the originals).
+- In the turn the owner picks, whoever asked the question (the orchestrator, when the designer is a
+  subagent) deletes that set's hand-off folder; the set folder keeps the originals.
 - Never `git commit` or `git push`; the owner commits. No em-dashes in any file or message.
 
 ## Common mistakes

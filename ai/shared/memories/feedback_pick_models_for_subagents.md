@@ -1,26 +1,24 @@
 ---
 name: feedback_pick_models_for_subagents
-description: When dispatching subagents or structuring multi-stage workflows, pick the model per stage instead of letting everything inherit the most capable model.
+description: When and which model to use for agents: Sonnet by default for checked, fanned-out or research work, Opus 5.5 set explicitly for final or costly output, Haiku for format conversion and locate-and-report.
 metadata:
   type: feedback
 ---
-When dispatching agents or structuring multi-stage workflows, actively assign the model per stage instead of letting every stage inherit the most capable (most expensive) model.
+Set the model per agent or workflow stage on purpose. Settings set CLAUDE_CODE_SUBAGENT_MODEL=sonnet, so an agent with no model param runs on Sonnet. Opus must be set explicitly with `model: "opus"` (`claude-opus-5-5`).
 
-**Stage assignments:**
-- **Opus** for any task involving judgement or logic: code review, architectural reasoning, root-cause analysis, planning, adversarial verification, synthesis, judging outputs. This is the quality-priority tier -- do not downgrade to save cost.
-- **Sonnet** for code-tracing and exploration that does not require deep judgement.
-- **Haiku** for structured summarisation or format conversion.
+**Decision logic (ask in order):**
+1. Is the output final, with no later check? Is a mistake expensive (security, money, auth, data loss, architecture)? Use **Opus 5.5**: planning, root-cause analysis, first-pass review of a non-trivial diff, the one judge that merges many outputs, critical code even when spec'd.
+2. Does a later stage or the main model check the output, or is it fanned out to many agents? Use **Sonnet** (the default): spec'd non-critical implementers, scoped re-reviews of small fixes (escalate to Opus for safety-critical or architectural diffs), scouts before one Opus judge, tracing exploration, research.
+3. Is it summarisation, format conversion or locate-and-report, with no source edits? Use **Haiku**. Not for editors or reviewers.
 
-**Decision question:** Is this agent making judgement calls, or doing structured transformation? Judgement (review, planning, diagnosis) goes to Opus. Transformation/distillation goes to Haiku. Code search or exploration without strong judgement goes to Sonnet.
+**Exploration:** a single grep or one file read with a known target stays inline, because a cold agent costs more. Sweeps across many files or several projects go to an agent (Explore or Haiku for locate-and-report, Sonnet when it needs tracing). The agent returns only the conclusion, so file dumps stay out of the main context.
 
-**Why:** Broad scouting work (web search, fetch, grep sweeps, data extraction) does not benefit from a top-tier model. Expensive models should be reserved for stages that actually need reasoning depth. Conversely, the user prioritises higher-quality logical reasoning over token cost savings -- cost-efficiency arguments for downgrading reasoning-heavy agents to a weaker model do not apply.
+**Research:** web (WebFetch/WebSearch, GitHub issues, docs, forums) and multi-file local digging (decompiles, mod/game files) go to a Sonnet agent. Batch the questions into one prompt with "cite only pages you loaded". The main model keeps a quick first look and the final judgement. Owner quotes: "sonnet research agent, dont waste fable tokens on research" (they interrupted an inline WebFetch). 2026-10-11, mid-way through a Vintage Story mod bug (unzip, ilspycmd, grep): "use sonnet for exploration".
 
-**How to apply:** In workflow scripts use per-agent model/effort options; in the Agent tool use the model param. Do not propose downgrades from Opus for review, planning, or reasoning-heavy agents.
+**Why:** Sonnet is cheaper and good enough when its output gets checked. Opus 5.5 earns its cost where a mistake is final. Judgement stages do not drop to a cheaper model.
 
-**Implementer subagents that write code → Sonnet minimum, not Haiku.** This holds even for fully-spec'd mechanical edits that are pure transcription from a plan. Haiku is only for summarisation and format conversion, never for an agent that edits source files.
+**Fork = main-loop model.** `subagent_type: "fork"` always runs on the main-loop model (model param ignored). Fork only when the task needs the full conversation state and top-tier judgement.
 
-**Reviews and scoped re-reviews default to Sonnet.** Escalate to Opus only when the diff is big, architectural, or safety-critical (live DB, money, auth, data loss). Never Haiku: a re-review verdicts each finding ADDRESSED/NOT ADDRESSED and fact-checks it against source, which is judgement, and it is the fix loop's only brake. Diff size is not a reason to go below Sonnet.
+**Deep-research workflow:** pin `model: "haiku"` on pure fetch/extract stages, Sonnet on scope and search, Opus 5.5 on verify/synthesize.
 
-**Security-critical implementation → Opus, even when fully spec'd.** Escalate the implementer tier, not just the reviewer, for security, anti-cheat, money, or exploit-critical code. Heuristic for the Roblox project: trivial config/JSON/pure-math = Haiku ok; real implementation = Sonnet; security/anti-cheat-critical = Opus.
-
-**Deep-research workflow:** its agents inherit the main-loop model (Opus) by default, which is wasteful for web search. Before running it, edit the script to pin `model: "haiku"` on the search and fetch stages and `model: "sonnet"` on scope/verify/synthesize. Do not launch it at the inherited default.
+See also [[feedback_deep_audit_dispatch]].

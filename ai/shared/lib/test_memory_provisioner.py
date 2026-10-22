@@ -53,6 +53,28 @@ class MemoryProvisionerTest(unittest.TestCase):
         with open(os.path.join(self.destination, "MEMORY.md"), encoding="utf-8") as handle:
             self.assertNotIn("public.md", handle.read())
 
+    def test_removed_private_memory_is_unlinked(self):
+        os.makedirs(self.destination)
+        os.symlink(os.path.join(self.private, "private.md"), os.path.join(self.destination, "private.md"))
+        os.remove(os.path.join(self.private, "private.md"))
+        provision_memory_dir(self.destination, self.public, self.private)
+        self.assertFalse(os.path.lexists(os.path.join(self.destination, "private.md")))
+        with open(os.path.join(self.destination, "MEMORY.md"), encoding="utf-8") as handle:
+            self.assertNotIn("private.md", handle.read())
+
+    def test_linked_index_line_follows_source_but_local_line_stays(self):
+        provision_memory_dir(self.destination, self.public, self.private)
+        self.write(self.destination, "local.md", "local", "local trigger")
+        with open(os.path.join(self.destination, "MEMORY.md"), "a", encoding="utf-8") as handle:
+            handle.write("- [Hand title](local.md) — hand text\n")
+        self.write(self.public, "public.md", "public", "new trigger")
+        provision_memory_dir(self.destination, self.public, self.private)
+        with open(os.path.join(self.destination, "MEMORY.md"), encoding="utf-8") as handle:
+            index = handle.read()
+        self.assertIn("new trigger", index)
+        self.assertNotIn("public trigger", index)
+        self.assertIn("- [Hand title](local.md) — hand text", index)
+
     def test_context_contains_index_not_memory_body(self):
         provision_memory_dir(self.destination, self.public, self.private)
         context = render_index_context(self.destination)
