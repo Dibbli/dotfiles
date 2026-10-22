@@ -25,7 +25,7 @@ Note the reference framing: view, size, camera, scale, state.
 | Role | Model | Does |
 |---|---|---|
 | Lead | Opus | Reads the reference, the concept notes and `.claude/design-profile.md`; writes `plan.md`; picks the builder model per round and logs it; runs the loop; stops only on step 8's conditions |
-| Builder | Opus, as `subagent_type: "design-builder"` (compacts at 150K, keeps state in `plan.md` and `log.md`). Sonnet (same agent type, `model: "sonnet"`) only for an edit list the lead wrote where every line is file, key or line, old value, new value, with nothing left to choose | Applies the plan, then each round's fixes |
+| Builder | Opus, as `subagent_type: "design-builder"` (compacts at 250K, keeps state in `plan.md` and `log.md`). Sonnet (same agent type, `model: "sonnet"`) only for an edit list the lead wrote where every line is file, key or line, old value, new value, with nothing left to choose | Applies the plan, then each round's fixes |
 | Critic | Opus, a new Agent call each round, never resumed, never the builder or the lead | Runs `critic.md` |
 | Gatherers | Haiku lookups; Sonnet digests, docs MCP and web research | Facts only |
 

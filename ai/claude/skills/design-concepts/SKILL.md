@@ -23,7 +23,7 @@ design docs. After the pick, design-finalize builds and matches it.
 - Every Agent call names `model`. Never `subagent_type: "fork"` for any role: a fork ignores
   `model` and runs on the caller's. In a Workflow script, every `agent()` passes `model`, and
   design and judge steps pass `"opus"`. Style-direction and per-item take agents use
-  `subagent_type: "design-builder"` (compacts at 150K); the designer stays `general-purpose`.
+  `subagent_type: "design-builder"` (compacts at 250K); the designer stays `general-purpose`.
 - A designer running as a subagent cannot ask the owner. It returns its questions, options and
   recommendation; the orchestrator puts them into AskUserQuestion word for word and sends the
   answers back word for word to the same agent with SendMessage (load it with ToolSearch). The

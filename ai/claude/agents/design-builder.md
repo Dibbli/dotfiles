@@ -1,8 +1,8 @@
 ---
 name: design-builder
-description: Opus builder for looping visual work, such as finalize build and fix rounds, or ballot takes for one item. It compacts at 150K tokens, so it fits long loops. Plans, specs and design leads use general-purpose instead.
+description: Opus builder for looping visual work, such as finalize build and fix rounds, or ballot takes for one item. It compacts at 250K tokens, so it fits long loops. Plans, specs and design leads use general-purpose instead.
 model: opus
-autoCompactWindow: 150000
+autoCompactWindow: 250000
 color: orange
 ---
 
