@@ -1,27 +1,25 @@
 export const meta = {
   name: 'review-diff',
-  description: 'Multi-agent diff review: specialist fan-out, two-pass confidence scoring, mechanical keep filter. Returns structured findings; the caller formats.',
-  whenToUse: 'Invoked by the /fix and /mr skills. args: {repoPath, diffRange, baseRef, changedPaths, rulePaths, mode:"fix"|"mr", deep, hasTestFramework, touchesTypes}. Every finding passes a blame gate (introduced-by-this-branch vs pre-existing on baseRef) before scoring. Returns {findings, commentFindings}.',
+  description: 'Multi-agent diff review: specialist fan-out, confidence scoring, mechanical keep filter. Returns structured findings; the caller formats.',
+  whenToUse: 'Invoked by the /fix and /mr skills. args: {repoPath, diffRange, baseRef, changedPaths, rulePaths, mode:"fix"|"mr", deep, blame, hasTestFramework, touchesTypes, diff}. `diff` is optional diff text that replaces a live `git diff`. Unless `blame` is false, every finding passes a blame gate (introduced-by-this-branch vs pre-existing on baseRef) before scoring. Returns {mode, findings, commentFindings}.',
   phases: [
     { title: 'Review', detail: 'parallel specialist reviewers over the diff' },
     { title: 'Blame', detail: 'drop findings not introduced by this branch (haiku, 5 per agent)' },
-    { title: 'Score', detail: 'reality + ease scoring (haiku, 5 per agent)' },
+    { title: 'Score', detail: 'reality scoring (haiku, 5 per agent)' },
   ],
 }
 
 const READONLY = [
-  'READ-ONLY MODE. Do NOT call Edit, Write, or NotebookEdit. Do NOT use Bash for any',
-  'state-changing operation: no `>` / `>>` redirects, no `tee`, no `sed -i`, no',
-  '`mv`/`cp`/`rm`, no `git add`/`git commit`/`git checkout --`/`git reset`/`git push`/`git stash`.',
-  'Read, Grep, Glob, and read-only Bash (`git diff`, `git log`, `cat`, `ls`, `grep`, `find`, `rg`) only.',
-  'If you find yourself wanting to apply a fix, return it as a finding instead.',
+  'This review is read-only: the user applies the fixes. Use Bash only for commands that read',
+  '(`git diff`, `git log`, `git show`, `cat`, `ls`, `grep`, `find`, `rg`). No `>` or `>>` redirects, `tee`,',
+  '`sed -i`, `mv`, `cp`, `rm`, or git commands that change state. Return a fix you want to apply as a finding.',
 ].join(' ')
 
 const RETURN_SPEC = [
   'Return findings as `{findings: [...]}` where each item is',
   '`{path, line, severity, issue, fix, ease}` and `ease` is an integer 1-4:',
   '1 = trivial (1-2 line change), 2 = easy (<10 lines), 3 = medium, 4 = hard/invasive.',
-  'The `fix` field must be a concrete change description, not vague advice. No prose.',
+  'The `fix` field must be a concrete change description, not vague advice.',
 ].join(' ')
 
 // The Workflow runtime delivers `args` as a JSON string, not a parsed object.
@@ -45,19 +43,19 @@ const diffSource = frozenDiff
 log(`mode=${mode} diff=${frozenDiff ? 'frozen snapshot' : 'live ' + diffCmd} base=${baseRef}`)
 
 const SCOPE = [
-  '## Scope rule (strict)',
-  'This is a review of ONE ticket branch, not a codebase audit. Report ONLY issues this branch',
-  'is responsible for: bugs on the lines it added or changed, AND consequences its change causes',
-  'elsewhere even in code it did not directly edit (a new enum member an existing Record/switch/',
+  '## Scope',
+  'This reviews one ticket branch, not the whole codebase. Report the issues this branch is',
+  'responsible for: bugs on the lines it added or changed, and consequences its change causes',
+  'elsewhere, even in code it did not edit (a new enum member an existing Record/switch/',
   'exhaustive map no longer covers, a caller that must change because a signature or contract',
-  'changed). Do NOT report pre-existing issues that already exist on the base branch, general',
-  'smells in files this branch did not touch, or missing tests for behavior this branch did not',
-  `alter. The base (pre-branch) state of any file: \`git -C ${repoPath} show ${baseRef}:<path>\`.`,
+  'changed). Leave out issues that already exist on the base branch, general smells in files this',
+  'branch did not touch, and missing tests for behavior this branch did not alter.',
+  `The base (pre-branch) state of any file: \`git -C ${repoPath} show ${baseRef}:<path>\`.`,
 ].join('\n')
 
 const context = [
   diffSource,
-  '', SCOPE,
+  ...(blameEnabled ? ['', SCOPE] : []),
   '', '## Changed file paths (relative to repo root)', changed,
   '', '## Authoritative repo convention files (paths relative to repo root; read on demand if a finding hinges on a convention; do not assume contents)', rules,
 ].join('\n')
@@ -98,7 +96,6 @@ const batchSchema = (name, props) => ({
   required: [name],
 })
 const SCORE_SCHEMA = batchSchema('scores', { score: { type: 'integer' } })
-const EASE_SCHEMA = batchSchema('eases', { ease: { type: 'integer' } })
 const BLAME_SCHEMA = batchSchema('verdicts', { introducedByBranch: { type: 'boolean' }, reason: { type: 'string' } })
 
 const BLAME = [
@@ -119,7 +116,7 @@ const BLAME = [
   '',
   'You are judging a batch of findings, each with an `index`. Judge every one independently.',
   'Return {verdicts: [{index, introducedByBranch, reason: <one short sentence>}, ...]} with one',
-  'entry per finding given, same indexes. No prose.',
+  'entry per finding given, same indexes.',
 ].join('\n')
 
 const SPECIALISTS = [
@@ -179,19 +176,9 @@ const PASS_A = [
   '  81-100 real and load-bearing: correctness bug, security, swallowed error,',
   '         or explicit convention violation.',
   '',
-  'Scope is already filtered upstream; do not down-score for "pre-existing".',
+  'Do not down-score a finding for being pre-existing: scope is decided elsewhere.',
   'Pick a specific number inside the band. Score every finding in the batch independently.',
-  'Return {scores: [{index, score}, ...]} with one entry per finding given, same indexes. No prose.',
-].join('\n')
-
-const PASS_B = [
-  'How invasive is each proposed fix? Rate every one with an integer 1-4.',
-  '  1  trivial, 1-2 line change, no ripple.',
-  '  2  easy, under ~10 lines in one file, no API change.',
-  '  3  medium, multiple files or a small API/shape change.',
-  '  4  hard, broad refactor, public API change, or migration needed.',
-  '',
-  'Return {eases: [{index, ease}, ...]} with one entry per fix given, same indexes. No prose.',
+  'Return {scores: [{index, score}, ...]} with one entry per finding given, same indexes.',
 ].join('\n')
 
 const fjson = f => JSON.stringify({ path: f.path, line: f.line, issue: f.issue, fix: f.fix })
@@ -200,7 +187,7 @@ const chunks = arr => Array.from({ length: Math.ceil(arr.length / BATCH) }, (_, 
 const byIndex = (rows, key) => new Map((rows || []).map(r => [r.index, r[key]]))
 const listOf = (items, render) => items.map((f, i) => `### index ${i}\n${render(f)}`).join('\n\n')
 
-// Findings are batched BATCH-per-agent: one blame agent and two score agents per chunk, not per finding.
+// Findings are batched BATCH-per-agent: one blame agent and one score agent per chunk, not per finding.
 const processed = await pipeline(
   chunks(allFindings),
   // Blame gate: drop anything this branch did not introduce.
@@ -221,18 +208,13 @@ const processed = await pipeline(
     const rest = batch.filter(f => !f.isComment)
     if (!rest.length) return comments
     const label = `${rest[0].path}+${rest.length}`
-    const [sa, sb] = await parallel([
-      () => agent([PASS_A, '', READONLY, '', context, '', '## Findings', listOf(rest, fjson)].join('\n'),
-        { label: `scoreA:${label}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: SCORE_SCHEMA }),
-      () => agent([PASS_B, '', READONLY, '', '## Proposed fixes', listOf(rest, f => f.fix)].join('\n'),
-        { label: `scoreB:${label}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: EASE_SCHEMA }),
-    ])
+    const sa = await agent([PASS_A, '', READONLY, '', context, '', '## Findings', listOf(rest, fjson)].join('\n'),
+      { label: `score:${label}`, phase: 'Score', agentType: 'Explore', model: 'haiku', schema: SCORE_SCHEMA })
     const scores = byIndex(sa && sa.scores, 'score')
-    const eases = byIndex(sb && sb.eases, 'ease')
     return comments.concat(rest.map((f, i) => ({
       ...f,
       score: scores.has(i) ? scores.get(i) : 0,
-      ease: eases.has(i) ? eases.get(i) : (f.ease || 3),
+      ease: f.ease || 3,
     })))
   }
 )

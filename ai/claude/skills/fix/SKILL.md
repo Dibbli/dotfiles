@@ -44,7 +44,7 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
 
 4. **Invoke the review** with the Workflow tool:
    `Workflow({ name: "review-diff", args: { repoPath, diffRange, baseRef, changedPaths, rulePaths, mode: "fix", deep, blame, hasTestFramework, touchesTypes } })`
-   It returns `{ findings, commentFindings }`. `findings` are already blame-gated, scored, and kept; each carries `score` and `ease`. `commentFindings` are comment-analyzer notes, unscored.
+   It returns `{ findings, commentFindings }`. `findings` are already scored and kept, and blame-gated unless `blame` is false; each carries `score` and `ease`. `commentFindings` are comment-analyzer notes, unscored.
 
 5. **Output a fix plan** (do not edit code):
    - **Static gates** (only if any failed): one bullet per failing tool with the failure summary and what must happen to make it pass. Skip the section if all passed or none ran.
@@ -54,7 +54,7 @@ The review itself (specialist fan-out, a blame gate that drops anything not intr
      - One line starting with `Fix:` describing the concrete change; reference related sites inline as `see other-file.ts:269-272`.
      - One tag line: `[ease N, score S]`. For comment findings: `[ease N, score n/a, comments]`.
    - Order files by total severity (most critical first); within a file, by line number.
-   - **Suggested order of operations**: a final numbered list (max 5) sequencing the work — failing gates first, then ease-1 fixes, then larger refactors; group fixes that should land in one commit.
+   - **Suggested order of operations**: a short final numbered list that sequences the work: failing gates first, then ease-1 fixes, then larger refactors; group fixes that should land in one commit.
    - **Hard nos**: no em-dashes (use period, comma, parens, or "see"); no code blocks unless a fix needs a snippet under 5 lines; no padding words ("Concerns:", "Note:", "Consider:"); do not repeat the path in body lines; no airy blank-line spacing within a group.
    - End with a one-line summary outside the plan: `<n> fixes across <m> files. Static gates: <pass/fail per tool>.`
    - If nothing survived and gates passed: output `No fixes needed.` and stop.
